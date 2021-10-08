@@ -35,7 +35,7 @@ CREATE TABLE Products (
 -- Purchases of Products
 CREATE TABLE Purchases (
 	order_id INT NOT NULL PRIMARY KEY,
-	product_id INT NOT NULL,
+	product_id INT NOT NULL REFERENCES Products(id),
 	buyer_id INT NOT NULL REFERENCES Buyers(id),
 	seller_id INT NOT NULL REFERENCES Sellers(id),
 	payment_amount DECIMAL(10, 2) NOT NULL,
