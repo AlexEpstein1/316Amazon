@@ -25,7 +25,7 @@ CREATE TABLE Category (
 -- Products
 CREATE TABLE Products (
 	id INT NOT NULL PRIMARY KEY,
-	name VARCHAR(255) UNIQUE NOT NULL,
+	name VARCHAR(256) UNIQUE NOT NULL,
 	cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 	price FLOAT NOT NULL,
 	description VARCHAR(1024) NOT NULL,
@@ -34,10 +34,14 @@ CREATE TABLE Products (
 );
 -- Purchases of Products
 CREATE TABLE Purchases (
-	id INT NOT NULL PRIMARY KEY,
-	uid INT NOT NULL REFERENCES Buyers(id),
-	pid INT NOT NULL REFERENCES Sellers(id),
-	time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
+	order_id INT NOT NULL PRIMARY KEY,
+	product_id INT NOT NULL,
+	buyer_id INT NOT NULL REFERENCES Buyers(id),
+	seller_id INT NOT NULL REFERENCES Sellers(id),
+	payment_amount DECIMAL(10, 2) NOT NULL,
+	quantity INT NOT NULL CHECK(quantity >= 0),
+	time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+	status VARCHAR(12) CHECK (status IN ('Complete', 'Incomplete'))
 );
 --- Carts Guru
 -- Cart
@@ -48,16 +52,6 @@ CREATE TABLE Cart (
 	quantity INT NOT NULL CHECK(quantity >= 0),
 	price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
 	PRIMARY KEY(user_id, seller_id, product_id)
-);
--- Submitting Orders
-CREATE TABLE OrderEntry (
-	order_id INT NOT NULL,
-	buyer_id INT NOT NULL REFERENCES Buyers(id),
-	seller_id INT NOT NULL REFERENCES Sellers(id),
-	product_id INT NOT NULL REFERENCES Products(id),
-	payment_amount DECIMAL(10, 2) NOT NULL,
-	quantity INT NOT NULL CHECK(quantity >= 0),
-	PRIMARY KEY(order_id)
 );
 
 --- Sellers Guru
