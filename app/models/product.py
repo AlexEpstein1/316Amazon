@@ -2,7 +2,7 @@ from flask import current_app as app
 
 
 class Product:
-    def __init__(self, id, name, price, description, image_file, available):
+    def __init__(self, id, name, price, cat_name, description, image_file, available):
         self.id = id
         self.name = name
         self.cat_name = cat_name
@@ -14,7 +14,7 @@ class Product:
     @staticmethod
     def get(id):
         rows = app.db.execute('''
-SELECT id, name, price, available
+SELECT id, name, price, cat_name, description, image_file, available
 FROM Products
 WHERE id = :id
 ''',
@@ -24,9 +24,10 @@ WHERE id = :id
     @staticmethod
     def get_all(available=True):
         rows = app.db.execute('''
-SELECT id, name, price, available
+SELECT id, name, price, cat_name, description, image_file, available
 FROM Products
 WHERE available = :available
 ''',
                               available=available)
+        print(rows[0])
         return [Product(*row) for row in rows]
