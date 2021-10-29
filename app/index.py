@@ -23,3 +23,8 @@ def index():
     return render_template('index.html',
                            avail_products=products,
                            purchase_history=purchases)
+
+@bp.route('/submit_prod_review',methods = ['POST', 'GET'])
+def submit_prod_review():
+    # pass in product_id, buyer_id
+    return render_template('submit_prod_review.html')

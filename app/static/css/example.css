@@ -21,3 +21,11 @@ position: absolute;
 right: 0px;
 width: 50%;
 }
+
+.inner_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height:40px;
+  width:100%;
+}
