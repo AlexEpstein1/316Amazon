@@ -35,16 +35,24 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">Purchase ID</th>
-      <th scope="col">Product Name</th>
+      <th scope="col">Product ID</th>
+      <th scope="col">Submit Review</th>
+      <th scope="col">Date Purchased</th>
       <th scope="col">Price</th>
+      <th scope="col">Status</th>
     </tr>
   </thead>
   <tbody>
     {% for purchase in purchase_history%}
       <tr>
-        <th scope="row">{{purchase.id}}</th>
-        <td>{{purchase.pid}}</td>
+        <th scope="row">{{purchase.order_id}}</th>
+        <td>{{purchase.product_id}}</td>
+        <td><form action="/submit_prod_review">
+          <button class = "inner_button" type="submit" name="Submit Review">Submit Review</button>
+        </form></td>
         <td>{{purchase.time_purchased}}</td>
+        <td>{{purchase.payment_amount}}</td>
+        <td>{{purchase.status}}</td>
       </tr>
     {% endfor %}
   </tbody>
