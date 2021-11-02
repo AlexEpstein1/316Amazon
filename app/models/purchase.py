@@ -15,7 +15,7 @@ class Purchase:
     @staticmethod
     def get(order_id):
         rows = app.db.execute('''
-SELECT order_id, product_id, seller_id, payment_amount, quantity, time_purchased, status
+SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
 FROM Purchases
 WHERE order_id = :order_id
 ''',
@@ -25,7 +25,7 @@ WHERE order_id = :order_id
     @staticmethod
     def get_all_by_buyer_id_since(buyer_id, since):
         rows = app.db.execute('''
-SELECT order_id, buyer_id, product_id, seller_id, payment_amount, quantity, time_purchased, status
+SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
 FROM Purchases
 WHERE buyer_id = :buyer_id
 AND time_purchased >= :since

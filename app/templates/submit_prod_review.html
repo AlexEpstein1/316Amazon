@@ -4,7 +4,45 @@
 
 <br><br>
 
-<h2>Test:</h2>
-
+<h2>Adding review for product ID: {{ product_id }} </h2>
+<table class="table table-light table-striped table-hover container">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">Price</th>
+      <th scope="col">Available</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">{{ products.id }}</th>
+      <td>{{ products.name }}</td>
+      <td>{{ products.cat_name }}</td>
+      <td>{{ products.price }}</td>
+      <td>{{ products.available }}</td>
+    </tr>
+  </tbody>
+</table>
+<form action="{{ url_for('index.add_prod_review', product_id=products.id) }}" method="POST">
+  <label for="numstars"><b>Number of Stars: </b></label><br>
+  <input type="number" id="numstars" name="numstars" required step=0.1 min=1 max=5 value="{{ request.form.numstars }}"><br><br>
+  <label for="body"><b>Write your review for {{ products.name }} (max 256 characters): </b></label><br>
+  <textarea id="body" name="body" rows="4" cols="50" maxlength="256" value="{{ request.form.body }}"></textarea><br><br>
+  <input type="submit">
+</form>
 
 {% endblock %}
+
+    <!-- <div>
+    <form action="{{ url_for('addreview', product_id=product_id) }}" method="POST">
+    <label for="numstars"><b>Number of Stars: </b></label><br>
+    <input type="number" id="numstars" name="numstars" required step=0.1 min=1 max=5 value="{{
+    request.form.numstars }}"><br><br>
+    <label for="body"><b>Write your review: </b></label><br>
+    <textarea id="body" name="body" rows="4" cols="50" maxlength="256" value="{{
+    request.form.body }}"></textarea><br><br>
+    <input type="submit">
+  </form>
+</div> -->
