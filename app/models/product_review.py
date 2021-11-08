@@ -1,7 +1,4 @@
-from flask import current_app as app, render_template, request
-from flask_login import current_user
-from sqlalchemy import exc
-import datetime
+from flask import current_app as app
 
 # Reviews of Products
 # CREATE TABLE ProductReview (
@@ -23,56 +20,21 @@ class ProductReview:
         self.rating = rating
 
     @staticmethod
-    def get(user_id, product_id = None):
-        # If no passed in `product_id`, then just return all reviews from that user
-        if product_id is None:
-            rows = app.db.execute('''
-            SELECT user_id, product_id, date_time, description, rating
-            FROM ProductReview
-            WHERE user_id = :user_id
-            ORDER BY date_time DESC
-            ''',
-                                  user_id=user_id)
-        # If `product_id` passed in, then return review from that user for the given product
-        else:
-            rows = app.db.execute('''
-            SELECT user_id, product_id, date_time, description, rating
-            FROM ProductReview
-            WHERE user_id = :user_id AND product_id = :product_id
-            ''',
-                                  user_id=user_id,
-                                  product_id=product_id)
-        return [ProductReview(*row) for row in rows] if rows else None
-        # return ProductReview(*(rows[0])) if rows else None
+    def get(user_id):
+        rows = app.db.execute('''
+SELECT user_id, product_id, date_time, description, rating
+FROM ProductReview
+WHERE user_id = :user_id
+''',
+                              user_id=user_id)
+        return ProductReview(*(rows[0])) if rows else None
 
     @staticmethod
-    def add_prod_review(request, product_id):
-        # Get information to add to review
-        user_id = current_user.id
-        date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-        description = request.form['body']
-        rating = request.form['numstars']
+    def add_prod_review():
 
-        print(user_id)
-        print(date_time)
-        print(description)
-        print(rating)
+        reviews = ProductReview.get(user_id=current_user.id)
 
-        try:
-            rows = app.db.execute("""
-        INSERT INTO ProductReview(user_id, product_id, date_time, description, rating)
-        VALUES(:user_id, :product_id, :date_time, :description, :rating)
-        """,
-                      user_id=user_id,
-                      product_id=product_id,
-                      date_time=date_time,
-                      description=description,
-                      rating=rating)
-        # this means already a review for this product from this user
-        except exc.IntegrityError as e:
-            return False
-
-        return True
+        return reviews
 
 
     # def add_review():
