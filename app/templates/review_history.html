@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="main">
+	<h3>Review history for {{ current_user.firstname }}: </h3>
+	<table class="table table-light table-striped table-hover container">
+		<tr>
+			<th scope="col">Prouduct ID</th>
+			<th scope="col">Date</th>
+			<th scope="col">Rating</th>
+			<th scope="col">Review</th>
+		</tr>
+		{% for review in reviews %}
+		<tr>
+			<td scope="row"><p>{{ review.product_id }}</p></td>
+			<td><p>{{ review.date_time }}</p></td>
+			<td><p>{{ review.rating }}</p></td>
+			<td><p>{{ review.description }}</p></td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+
+{% endblock %}
