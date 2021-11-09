@@ -5,6 +5,13 @@
 <br><br>
 
 <h2>Adding review for product ID: {{ product_id }} </h2>
+
+{% if review_submitted and result %}
+<h5>Successfully completed review for product ID: {{ product_id }} </h5>
+{% elif review_submitted %}
+<h5>Unable to complete review for product ID: {{ product_id }}, perhaps you have already made one</h5>
+{% endif %}
+
 <table class="table table-light table-striped table-hover container">
   <thead class="thead-dark">
     <tr>
@@ -32,11 +39,5 @@
   <textarea id="body" name="body" rows="4" cols="50" maxlength="256" value="{{ request.form.body }}"></textarea><br><br>
   <input type="submit">
 </form>
-
-{% if review_submitted and result %}
-<h4>Successfully completed review for product ID: {{ product_id }} </h4>
-{% elif review_submitted %}
-<h4>Unable to complete review for product ID: {{ product_id }}, perhaps you have already made one</h4>
-{% endif %}
 
 {% endblock %}

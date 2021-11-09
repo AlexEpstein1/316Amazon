@@ -59,9 +59,10 @@ class ProductReview:
         print(rating)
 
         try:
-            app.db.execute("""
+            rows = app.db.execute("""
         INSERT INTO ProductReview(user_id, product_id, date_time, description, rating)
         VALUES(:user_id, :product_id, :date_time, :description, :rating)
+        RETURNING user_id
         """,
                       user_id=user_id,
                       product_id=product_id,
@@ -74,6 +75,17 @@ class ProductReview:
 
         return True
 
+    @staticmethod
+    def delete_review(product_id):
+        rows = app.db.execute("""
+    DELETE FROM ProductReview
+    WHERE user_id = :user_id AND product_id = :product_id
+    RETURNING user_id
+    """,
+                  user_id=current_user.id,
+                  product_id=product_id)
+        flash('Deleted product review for product ID: ' + product_id)
+        return redirect(url_for('index.review_history'))
 
     # def add_review():
     #

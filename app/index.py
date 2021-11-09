@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import redirect, render_template, request
 from flask_login import current_user
 import datetime
 
@@ -33,8 +33,7 @@ def profile():
         return render_template('profile.html')
     # otherwise, back to index
     else:
-        products = Product.get_all(available=True)
-        purchases = None
+        return redirect(url_for('index.index'))
 
     return render_template('index.html',
                            avail_products=products,
@@ -50,8 +49,7 @@ def review_history():
                                reviews=reviews)
     # otherwise, back to index
     else:
-        products = Product.get_all(available=True)
-        purchases = None
+        return redirect(url_for('index.index'))
 
     return render_template('index.html',
                            avail_products=products,
@@ -71,8 +69,8 @@ def write_prod_review(product_id):
 # backend for submit product review
 @bp.route('/add_prod_review/<product_id>/', methods = ['POST', 'GET'])
 def add_prod_review(product_id):
-    print(product_id)
-    print(request.form)
+    # print(product_id)
+    # print(request.form)
     # product_review = ProductReview.get(user_id = current_user.id)
     # print(product_review)
     result = ProductReview.add_prod_review(request = request,

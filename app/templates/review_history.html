@@ -10,6 +10,8 @@
 			<th scope="col">Date</th>
 			<th scope="col">Rating</th>
 			<th scope="col">Review</th>
+			<th scope="col">Edit Review</th>
+			<th scope="col">Delete Review</th>
 		</tr>
 		{% for review in reviews %}
 		<tr>
@@ -17,6 +19,12 @@
 			<td><p>{{ review.date_time }}</p></td>
 			<td><p>{{ review.rating }}</p></td>
 			<td><p>{{ review.description }}</p></td>
+			<td><form action="{{ url_for('index.write_prod_review', product_id=review.product_id) }}" method="POST">
+        <button class = "btn btn-outline-primary inner_button" type="submit">Edit</button>
+      </form></td>
+			<td><form action="{{ url_for('index.write_prod_review', product_id=review.product_id) }}" method="POST">
+        <button class = "btn btn-outline-primary inner_button" type="submit">Delete</button>
+      </form></td>
 		</tr>
 		{% endfor %}
 	</table>
