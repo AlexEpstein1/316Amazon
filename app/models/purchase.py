@@ -34,3 +34,5 @@ ORDER BY time_purchased DESC
                               buyer_id=buyer_id,
                               since=since)
         return [Purchase(*row) for row in rows]
+
+    

@@ -23,6 +23,20 @@ class ProductReview:
         self.rating = rating
 
     @staticmethod
+    def get_reviews(product_id):
+        # If no passed in `product_id`, then just return all reviews from that user
+        
+        rows = app.db.execute('''
+        SELECT user_id, product_id, date_time, description, rating
+        FROM ProductReview
+        WHERE product_id = :product_id
+        ORDER BY date_time DESC
+        ''',
+             product_id=product_id)
+        # If `product_id` passed in, then return review from that user for the given product
+        
+        return [ProductReview(*row) for row in rows] if rows else None
+    @staticmethod
     def get(user_id, product_id = None):
         # If no passed in `product_id`, then just return all reviews from that user
         if product_id is None:

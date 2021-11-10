@@ -42,3 +42,16 @@ class Product:
             ''',
             id=id)
             return [Product(*row) for row in rows]
+
+    @staticmethod
+    def get_by_cat(cat):
+        rows = app.db.execute('''
+        SELECT id, name, price, cat_name, description, image_file, available
+        FROM Products
+        WHERE cat_name = :cat
+        ''',
+        cat=cat)
+        return [Product(*row) for row in rows]
+
+   
+

@@ -15,6 +15,10 @@ bp = Blueprint('index', __name__)
 def index():
     # get all available products for sale:
     products = Product.get_all(available=True)
+    categories = []
+    for x in products:
+        categories.append(x.cat_name)
+    categories = set(categories)
     # find the products current user has bought:
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
@@ -24,7 +28,8 @@ def index():
 
     return render_template('index.html',
                            avail_products=products,
-                           purchase_history=purchases)
+                           purchase_history=purchases,
+                           categories=categories)
 # home_profile html
 @bp.route('/profile')
 def profile():

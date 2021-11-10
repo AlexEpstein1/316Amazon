@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br>
+<a href="{{ url_for('index.index') }}">Home</a>
+<br>
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Sellers
+    </button>
+    
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      {% for name in sellers %}
+      <a class="dropdown-item" href="#">{{name}}</a>
+      {% endfor %}
+    </div>
+  </div>
+<div style="text-align: center">
+   
+      {% if seller %}
+      <h5>Seller: {{seller.name}}</h5>
+      <h5>Stock: {{seller.name}}</h5>
+      {% endif %}
+		<h2> {{product.name}} </h2>
+        <p>ID: {{product.id}}</p>
+		{% if product.available %}
+		    <h5 style="font-size: 24px; color:green"> In Stock</h5>
+        {% else %}
+            <h5 style="font-size: 24px; color:red"> Out of Stock </h5>
+        {% endif %}
+		<h5>Category: {{product.cat_name}}</h5>
+		<h5>Price: {{product.price}}</h5>
+		<h5>Description: {{product.description}}</h5>
+		<h5>Reviews: </h5>
+        {% for review in reviews %}
+        <p>User: {{review.user_id}}</p>
+        <p>Rating: {{review.rating}}</p>
+        <p>Description: {{review.description}}</p>
+        {% endfor %}
+	</div>
+{% endblock %}
