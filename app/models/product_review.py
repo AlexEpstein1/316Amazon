@@ -1,4 +1,4 @@
-from flask import current_app as app, render_template, request
+from flask import current_app as app, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 from sqlalchemy import exc
 import datetime
@@ -85,8 +85,8 @@ class ProductReview:
     """,
                   user_id=current_user.id,
                   product_id=product_id)
-        flash('Deleted product review for product ID: ' + product_id)
-        return redirect(url_for('index.review_history'))
+        # flash('Deleted product review for product ID: ' + product_id)
+        return 'Deleted product review for product ID: ' + product_id
 
     # def add_review():
     #
@@ -145,7 +145,7 @@ class ProductReviewWithName:
     @staticmethod
     def get_reviews(product_id):
         # If no passed in `product_id`, then just return all reviews from that user
-        
+
         rows = app.db.execute('''
         SELECT user_id, firstname, lastname, product_id, date_time, description, rating
         FROM ProductReview, Users
@@ -154,5 +154,5 @@ class ProductReviewWithName:
         ''',
              product_id=product_id)
         # If `product_id` passed in, then return review from that user for the given product
-        
+
         return [ProductReviewWithName(*row) for row in rows] if rows else None

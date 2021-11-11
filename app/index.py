@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request
+from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user
 import datetime
 
@@ -84,6 +84,7 @@ def review_history():
         return redirect(url_for('index.index'))
 
     return render_template('index.html',
+                           # message=message,
                            avail_products=products,
                            purchase_history=purchases)
 
@@ -109,10 +110,18 @@ def add_prod_review(product_id):
     result = ProductReview.add_prod_review(request = request,
                                            product_id = product_id)
 
-    products = Product.get_all(available=False, id=product_id)
+    products = Product.get_all(available = False, id = product_id)
 
     return render_template('submit_prod_review.html',
                            product_id = product_id,
                            products = products[0],
                            review_submitted = True,
                            result = result)
+
+# backend for deleting product review
+@bp.route('/delete_prod_review/<product_id>/', methods = ['POST', 'GET'])
+def delete_prod_review(product_id):
+
+    result = ProductReview.delete_review(product_id = product_id)
+    print(result)
+    return redirect(url_for('index.review_history'))

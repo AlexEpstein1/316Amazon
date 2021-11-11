@@ -82,6 +82,7 @@
         </button>
         <div class="dropdown-content" id="user_drop">
           <p style="font-size: 16px">Current balance: <b>${{ current_user.balance }}</b></p>
+          <a href="{{ url_for('index.index') }}">Home Page</a>
           <a href="{{ url_for('index.profile') }}">View Profile</a>
           <a href="{{ url_for('users.logout') }}">View Cart</a>
           <a href="{{ url_for('users.logout') }}">Add Balance</a>
