@@ -49,7 +49,7 @@ def review_history():
     # if user is authenticated, go to home profile
     if current_user.is_authenticated:
         reviews = ProductReview.get(user_id = current_user.id)
-        print(reviews[0])
+        # print(reviews[0])
         return render_template('review_history.html',
                                reviews=reviews)
     # otherwise, back to index
