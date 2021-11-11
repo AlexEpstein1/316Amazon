@@ -38,7 +38,7 @@ def gen_users(num_users):
             firstname = name_components[0]
             lastname = name_components[-1]
             balance = random.random()*10000
-            writer.writerow([uid, email, plain_password, firstname, lastname, balance])
+            writer.writerow([uid, email, password, firstname, lastname, balance])
         print(f'{num_users} generated')
     return
 
