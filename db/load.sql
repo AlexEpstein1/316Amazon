@@ -1,4 +1,4 @@
-
+/*
 \COPY Users FROM 'data/Users.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Buyers FROM 'data/Buyers.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Sellers FROM 'data/Sellers.csv' WITH DELIMITER ',' NULL '' CSV
@@ -9,8 +9,8 @@
 \COPY SellsItem FROM 'data/SellsItem.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY ProductReview FROM 'data/ProductReview.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY SellerReview FROM 'data/SellerReview.csv' WITH DELIMITER ',' NULL '' CSV
+*/
 
-/*
 \COPY Users FROM 'generated/Users.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Buyers FROM 'generated/Buyers.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Sellers FROM 'generated/Sellers.csv' WITH DELIMITER ',' NULL '' CSV
@@ -21,4 +21,3 @@
 \COPY SellsItem FROM 'generated/SellsItem.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY ProductReview FROM 'generated/ProductReview.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY SellerReview FROM 'generated/SellerReview.csv' WITH DELIMITER ',' NULL '' CSV
-*/
