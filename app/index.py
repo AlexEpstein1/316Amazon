@@ -6,15 +6,29 @@ from .models.product import Product
 from .models.purchase import Purchase
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
+from .models.product_review import ProductReviewWithName
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
 
 # index html
+
+def get_avg(id):
+    reviews = ProductReviewWithName.get_reviews(product_id=id)
+    avg_rating = 0
+    if reviews:
+        for x in reviews:
+            avg_rating+=x.rating
+        avg_rating = avg_rating / len(reviews)
+    return avg_rating
+
+
 @bp.route('/')
 def index():
     # get all available products for sale:
     products = Product.get_all(available=True)
+    for x in products:
+        x.rating = get_avg(x.id)
     categories = []
     for x in products:
         categories.append(x.cat_name)
