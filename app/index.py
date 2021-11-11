@@ -43,6 +43,19 @@ def profile():
     return render_template('index.html',
                            avail_products=products,
                            purchase_history=purchases)
+
+# purchase_history html
+@bp.route('/purchase_history')
+def purchase_history():
+    # find the products current user has bought:
+    if current_user.is_authenticated:
+        purchases = Purchase.get_all_by_buyer_id(buyer_id = current_user.id)
+    else:
+        purchases = None
+
+    return render_template('purchase_history.html',
+                           purchase_history=purchases)
+
 # review_history html
 @bp.route('/review_history')
 def review_history():
@@ -59,6 +72,7 @@ def review_history():
     return render_template('index.html',
                            avail_products=products,
                            purchase_history=purchases)
+
 # direct to front-end submit product review
 @bp.route('/write_prod_review/<product_id>', methods = ['POST', 'GET'])
 def write_prod_review(product_id):
