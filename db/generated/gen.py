@@ -9,6 +9,7 @@ num_products = 1000
 num_purchases = 1500
 num_cart = 3000
 num_item_sold = 4000
+num_product_review = 10000
 max_stock_unit = 1000
 max_purchase_unit = 10
 status_list = ['Complete', 'Incomplete']
@@ -119,9 +120,23 @@ def gen_SellsIten(num_item_sold, product_dict):
     return
 
 
+def gen_ProductReview(num_product_review, product_dict):
+    with open('ProductReview.csv', 'w') as f:
+        writer = get_csv_writer(f)
+        for i in range(num_product_review):
+            uid = fake.random_int(min=0, max=num_users-1)
+            pid = fake.random_element(elements=product_dict.keys())
+            time = fake.date_time()
+            description = fake.sentence(nb_words=10)[:-1]
+            rating = fake.random_int(min=0, max=10)
+            writer.writerow([uid, pid, time, description,rating])
+        print(f'{num_category} generated; {len(available_category)} available')
+    return 
+
 gen_users(num_users)
 available_category = gen_category(num_category);
 product_dict = gen_products(num_products)
 gen_purchases(num_purchases, product_dict)
 gen_cart(num_cart, product_dict)
 gen_SellsIten(num_item_sold, product_dict)
+gen_ProductReview(num_product_review, product_dict)
