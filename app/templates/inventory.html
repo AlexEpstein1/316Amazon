@@ -9,21 +9,21 @@
 <table class="table table-light table-striped table-hover container">
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Product ID</th>
-      <th scope="col">Product Name</th>
-      <th scope="col">Category</th>
+      <th scope="col">Seller ID</th>
+      <th scope="col">Seller Name</th>
+      <th scope="col">Product</th>
       <th scope="col">Price</th>
-      <th scope="col">Available</th>
+      <th scope="col">Stock</th>
     </tr>
   </thead>
   <tbody>
-    {% for product in avail_products %}
+    {% for inventory in sold_products %}
     <tr>
-      <th scope="row">{{ product.id }}</th>
-      <td>{{ product.name }}</td>
-      <td>{{ product.cat_name }}</td>
-      <td>{{ product.price }}</td>
-      <td>{{ product.available }}</td>
+      <th scope="row">{{ inventory.seller_id }}</th>
+      <td>{{ inventory.lastname + ", " + inventory.firstname }}</td>
+      <td>{{ inventory.prod_name }}</td>
+      <td>{{ inventory.price }}</td>
+      <td>{{ inventory.stock }}</td>
     </tr>
     {% endfor %}
   </tbody>

@@ -53,7 +53,7 @@ def inventory():
         purchases = None
 
     return render_template('inventory.html',
-                           avail_products=inventory,
+                           sold_products=inventory,
                            purchase_history=purchases)
 
 # review_history html
