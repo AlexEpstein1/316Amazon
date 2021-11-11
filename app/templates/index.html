@@ -34,6 +34,7 @@ Filtering on: {{cat_name}}
       <th scope="col">Category</th>
       <th scope="col">Price</th>
       <th scope="col">Available</th>
+      <th scope="col">Rating</th>
     </tr>
   </thead>
   <tbody>
@@ -44,6 +45,7 @@ Filtering on: {{cat_name}}
       <td>{{ product.cat_name }}</td>
       <td>{{ product.price }}</td>
       <td>{{ product.available }}</td>
+      <td>{{ product.rating }}</td>
     </tr>
     {% endfor %}
   </tbody>
