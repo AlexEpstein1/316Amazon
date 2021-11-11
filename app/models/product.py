@@ -72,5 +72,5 @@ class ProductSellers:
         WHERE s.product_id = :id AND s.seller_id = u.id
         ''',
         id=id)
-        return [ProductSellers(*row) for row in rows] if rows is not None else 'hi'
+        return [ProductSellers(*row) for row in rows] if rows is not None else 'No current sellers'
 
