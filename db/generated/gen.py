@@ -3,14 +3,14 @@ import csv
 import random
 from faker import Faker
 
-num_users = 50
-num_category = 50
-num_products = 200
-num_purchases = 500
-num_cart = 500
+num_users = 100
+num_category = 30
+num_products = 100
+num_purchases = 100
+num_cart = 100
 num_item_sold = 100
-num_product_review = 500
-num_seller_review = 500
+num_product_review = 100
+num_seller_review = 100
 max_stock_unit = 1000
 max_purchase_unit = 10
 status_list = ['Complete', 'Incomplete']
@@ -38,7 +38,7 @@ def gen_users(num_users):
             firstname = name_components[0]
             lastname = name_components[-1]
             balance = random.random()*10000
-            writer.writerow([uid, email, password, firstname, lastname, balance])
+            writer.writerow([uid, email, plain_password, firstname, lastname, balance])
         print(f'{num_users} generated')
     return
 
@@ -70,8 +70,7 @@ def gen_category(num_category):
         for pid in range(num_category):
             name = fake.sentence(nb_words=1)[:-1]
             description = fake.sentence(nb_words=10)[:-1]
-            exists =  name in available_category
-            if exists == False:
+            if name not in available_category:
                 writer.writerow([name, description])
                 available_category.append(name)
         print(f'{num_category} generated; {len(available_category)} available')
@@ -92,12 +91,10 @@ def gen_products(num_products, available_category):
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             available = fake.random_element(elements=('true', 'false'))
             img = 'img'
-            exists = name in product_name
-            if available == 'true':
-                if exists == False:
-                    product_dict[pid] = price
-                    product_name.append(name)
-            writer.writerow([pid, name, cat_name, price, product_description, img, available])
+            if name not in product_name:
+                product_dict[pid] = price
+                product_name.append(name)
+                writer.writerow([pid, name, cat_name, price, product_description, img, available])
         print(f'{num_products} generated; {len(product_dict)} available')
     return product_dict
 
