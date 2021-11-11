@@ -60,6 +60,7 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('index.index'))
     form = RegistrationForm()
+
     if form.validate_on_submit():
         if User.register(form.email.data,
                          form.password.data,
