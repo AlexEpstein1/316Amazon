@@ -7,6 +7,8 @@ num_users = 50
 num_category = 50
 num_products = 1000
 num_purchases = 1500
+max_purchase_unit = 10
+status_list = ['Complete', 'Incomplete']
 
 Faker.seed(0)
 fake = Faker()
@@ -51,6 +53,7 @@ def gen_category(num_category):
 def gen_products(num_products):
     available_pids = []
     pid_price = []
+    product_dict = {}
     with open('Products.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Products...', end=' ', flush=True)
@@ -63,14 +66,13 @@ def gen_products(num_products):
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             available = fake.random_element(elements=('true', 'false'))
             if available == 'true':
-                available_pids.append(pid)
-                pid_price.append(price)
+                product_dict[pid] = price
             writer.writerow([pid, name, cat_name, price, product_description, available])
-        print(f'{num_products} generated; {len(available_pids)} available')
-    return dict(map(available_pids, pid_price))
+        print(f'{num_products} generated; {len(product_dict)} available')
+    return product_dict
 
 
-def gen_purchases(num_purchases, available_pids):
+def gen_purchases(num_purchases, product_dict):
     with open('Purchases.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Purchases...', end=' ', flush=True)
@@ -78,14 +80,18 @@ def gen_purchases(num_purchases, available_pids):
             if id % 100 == 0:
                 print(f'{id}', end=' ', flush=True)
             uid = fake.random_int(min=0, max=num_users-1)
-            pid = fake.random_element(elements=available_pids)
+            sid = fake.random_int(min=0, max=num_users-1)
+            pid = fake.random_element(elements=product_dict.keys())
+            status = fake.random_element(elements=status_list)
             time_purchased = fake.date_time()
-            writer.writerow([id, uid, pid, time_purchased])
+            quantity = fake.random_int(min=0, max=max_purchase_unit)
+            payment_amount = product_dict.get(pid)*quantity
+            writer.writerow([id, pid, uid, sid, payment_amount, quantity, time_purchased, status])
         print(f'{num_purchases} generated')
     return
 
 
 gen_users(num_users)
 available_category = gen_category(num_category);
-pid_price_map = gen_products(num_products)
-gen_purchases(num_purchases, pid_price_map.keys())
+product_dict = gen_products(num_products)
+gen_purchases(num_purchases, product_dict)
