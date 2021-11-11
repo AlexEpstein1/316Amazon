@@ -3,14 +3,14 @@ import csv
 import random
 from faker import Faker
 
-num_users = 100
+num_users = 200
 num_category = 30
-num_products = 100
-num_purchases = 100
-num_cart = 100
-num_item_sold = 100
-num_product_review = 100
-num_seller_review = 100
+num_products = 1000
+num_purchases = 1000
+num_cart = 2000
+num_item_sold = 2000
+num_product_review = 5000
+num_seller_review = 5000
 max_stock_unit = 1000
 max_purchase_unit = 10
 status_list = ['Complete', 'Incomplete']
@@ -118,6 +118,7 @@ def gen_purchases(num_purchases, product_dict):
     return
 
 def gen_cart(num_cart, product_dict):
+    cart_id = []
     with open('Cart.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Cart...', end=' ', flush=True)
@@ -127,12 +128,15 @@ def gen_cart(num_cart, product_dict):
             pid = fake.random_element(elements=product_dict.keys())
             quantity = fake.random_int(min=0, max=max_purchase_unit)
             price = product_dict.get(pid)
-            writer.writerow([uid, sid, pid, quantity, price])
+            key = [uid, sid, pid]
+            if key not in cart_id:
+                cart_id.append(key)
+                writer.writerow([uid, sid, pid, quantity, price])
         print(f'{num_cart} generated')
     return
 
 def gen_SellsIten(num_item_sold, product_dict):
-
+    sold_item_id = []
     with open('SellsItem.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('SellsItem...', end=' ', flush=True)
@@ -141,12 +145,16 @@ def gen_SellsIten(num_item_sold, product_dict):
             pid = fake.random_element(elements=product_dict.keys())
             price = product_dict.get(pid)
             stock = fake.random_int(min=0, max=max_stock_unit)
-            writer.writerow([sid, pid, price, stock])
+            key = [sid, pid]
+            if key not in sold_item_id:
+                sold_item_id.append(key)
+                writer.writerow([sid, pid, price, stock])
         print(f'{num_item_sold} generated')
     return
 
 
 def gen_ProductReview(num_product_review, product_dict):
+    key_list = []
     with open('ProductReview.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('ProductReview...', end=' ', flush=True)
@@ -156,11 +164,15 @@ def gen_ProductReview(num_product_review, product_dict):
             time = fake.date_time()
             description = fake.sentence(nb_words=10)[:-1]
             rating = fake.random_int(min=1, max=5)
-            writer.writerow([uid, pid, time, description,rating])
+            key = [uid, pid]
+            if key not in key_list:
+                key_list.append(key)
+                writer.writerow([uid, pid, time, description,rating])
         print(f'{num_product_review} generated')
     return 
 
 def gen_SellerReview(num_seller_review):
+    key_list = []
     with open('SellerReview.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('SellerReview...', end=' ', flush=True)
@@ -170,7 +182,10 @@ def gen_SellerReview(num_seller_review):
             time = fake.date_time()
             description = fake.sentence(nb_words=10)[:-1]
             rating = fake.random_int(min=1, max=5)
-            writer.writerow([uid, sid, time, description,rating])
+            key = [uid, sid]
+            if key not in key_list:
+                key_list.append(key)
+                writer.writerow([uid, sid, time, description,rating])
         print(f'{num_seller_review} generated')
     return 
 
