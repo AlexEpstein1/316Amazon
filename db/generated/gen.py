@@ -7,6 +7,9 @@ num_users = 50
 num_category = 50
 num_products = 1000
 num_purchases = 1500
+num_cart = 3000
+num_item_sold = 4000
+max_stock_unit = 1000
 max_purchase_unit = 10
 status_list = ['Complete', 'Incomplete']
 
@@ -85,8 +88,33 @@ def gen_purchases(num_purchases, product_dict):
             status = fake.random_element(elements=status_list)
             time_purchased = fake.date_time()
             quantity = fake.random_int(min=0, max=max_purchase_unit)
-            payment_amount = product_dict.get(pid)*quantity
+            payment_amount = float(product_dict.get(pid)) * int(quantity)
             writer.writerow([id, pid, uid, sid, payment_amount, quantity, time_purchased, status])
+        print(f'{num_purchases} generated')
+    return
+
+def gen_cart(num_cart, product_dict):
+    with open('Cart.csv', 'w') as f:
+        writer = get_csv_writer(f)
+        for id in range(num_cart):
+            uid = fake.random_int(min=0, max=num_users-1)
+            sid = fake.random_int(min=0, max=num_users-1)
+            pid = fake.random_element(elements=product_dict.keys())
+            quantity = fake.random_int(min=0, max=max_purchase_unit)
+            price = product_dict.get(pid)
+            writer.writerow([uid, sid, pid, quantity, price])
+        print(f'{num_purchases} generated')
+    return
+
+def gen_SellsIten(num_item_sold, product_dict):
+    with open('SellsItem.csv', 'w') as f:
+        writer = get_csv_writer(f)
+        for id in range(num_item_sold):
+            sid = fake.random_int(min=0, max=num_users-1)
+            pid = fake.random_element(elements=product_dict.keys())
+            price = product_dict.get(pid)
+            stock = fake.random_int(min=0, max=max_stock_unit)
+            writer.writerow([sid, pid, price, stock])
         print(f'{num_purchases} generated')
     return
 
@@ -95,3 +123,5 @@ gen_users(num_users)
 available_category = gen_category(num_category);
 product_dict = gen_products(num_products)
 gen_purchases(num_purchases, product_dict)
+gen_cart(num_cart, product_dict)
+gen_SellsIten(num_item_sold, product_dict)
