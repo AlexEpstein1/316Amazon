@@ -12,7 +12,7 @@
   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Filter by Category
   </button>
-  
+
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     {% for cat_name in categories %}
     <a class="dropdown-item" href="{{ url_for('products.filterCat',cat=cat_name) }}">{{cat_name}}</a>
@@ -86,5 +86,7 @@ Filtering on: {{cat_name}}
   <p><a href="{{ url_for('users.register') }}" class="btn btn-dark" role="button">Register</a>&nbsp;<a href="{{ url_for('users.login') }}" class="btn btn-dark" role="button">Log in</a></p>
 </div>
 {% endif %}
+
+<br><br>
 
 {% endblock %}

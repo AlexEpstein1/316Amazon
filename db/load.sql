@@ -12,8 +12,8 @@
 */
 
 \COPY Users FROM 'generated/Users.csv' WITH DELIMITER ',' NULL '' CSV
-\COPY Buyers FROM 'generated/Buyers.csv' WITH DELIMITER ',' NULL '' CSV
-\COPY Sellers FROM 'generated/Sellers.csv' WITH DELIMITER ',' NULL '' CSV
+-- \COPY Buyers FROM 'generated/Buyers.csv' WITH DELIMITER ',' NULL '' CSV
+-- \COPY Sellers FROM 'generated/Sellers.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Category FROM 'generated/Category.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Products FROM 'generated/Products.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Purchases FROM 'generated/Purchases.csv' WITH DELIMITER ',' NULL '' CSV
