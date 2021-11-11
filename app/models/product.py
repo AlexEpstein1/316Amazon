@@ -53,5 +53,24 @@ class Product:
         cat=cat)
         return [Product(*row) for row in rows]
 
-   
+class ProductSellers:
+    def __init__(self, id, price, stock, seller_id, firstname, lastname):
+        self.product_id = id
+        self.price = price
+        self.stock = stock
+        self.seller_id = seller_id
+        self.firstname = firstname
+        self.lastname = lastname
+        
+
+
+    @staticmethod
+    def productSellers(id):
+        rows = app.db.execute('''
+        SELECT s.product_id, s.price, s.stock, s.seller_id, u.firstname, u.lastname
+        FROM SellsItem s, Users u
+        WHERE s.product_id = :id AND s.seller_id = u.id
+        ''',
+        id=id)
+        return [ProductSellers(*row) for row in rows] if rows is not None else 'hi'
 

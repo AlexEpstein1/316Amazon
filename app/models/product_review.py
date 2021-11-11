@@ -22,20 +22,7 @@ class ProductReview:
         self.description = description
         self.rating = rating
 
-    @staticmethod
-    def get_reviews(product_id):
-        # If no passed in `product_id`, then just return all reviews from that user
-        
-        rows = app.db.execute('''
-        SELECT user_id, product_id, date_time, description, rating
-        FROM ProductReview
-        WHERE product_id = :product_id
-        ORDER BY date_time DESC
-        ''',
-             product_id=product_id)
-        # If `product_id` passed in, then return review from that user for the given product
-        
-        return [ProductReview(*row) for row in rows] if rows else None
+
     @staticmethod
     def get(user_id, product_id = None):
         # If no passed in `product_id`, then just return all reviews from that user
@@ -143,3 +130,29 @@ class ProductReview:
     #     "itemname": item_name
     # }
     # return render_template("reviews.html", item=item)
+
+
+class ProductReviewWithName:
+    def __init__(self, user_id, firstname, lastname, product_id, date_time, description, rating):
+        self.user_id = user_id
+        self.firstname = firstname
+        self.lastname = lastname
+        self.product_id = product_id
+        self.date_time = date_time
+        self.description = description
+        self.rating = rating
+
+    @staticmethod
+    def get_reviews(product_id):
+        # If no passed in `product_id`, then just return all reviews from that user
+        
+        rows = app.db.execute('''
+        SELECT user_id, firstname, lastname, product_id, date_time, description, rating
+        FROM ProductReview, Users
+        WHERE product_id = :product_id AND user_id = id
+        ORDER BY date_time DESC
+        ''',
+             product_id=product_id)
+        # If `product_id` passed in, then return review from that user for the given product
+        
+        return [ProductReviewWithName(*row) for row in rows] if rows else None

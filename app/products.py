@@ -3,9 +3,11 @@ from flask_login import current_user
 import datetime
 
 from .models.product import Product
+from .models.product import ProductSellers
 from .models.purchase import Purchase
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
+from .models.product_review import ProductReviewWithName
 
 from flask import Blueprint
 bp = Blueprint('products', __name__)
@@ -34,8 +36,8 @@ def filterCat(cat):
 @bp.route('/productPage/<id>', methods = ['POST', 'GET'])
 def productPage(id):
     product = Product.get(id)
-    sellers = []
-    reviews = ProductReview.get_reviews(product_id=id)
+    sellers = ProductSellers.productSellers(id=id)
+    reviews = ProductReviewWithName.get_reviews(product_id=id)
     return render_template('productPage.html',
                            product=product,
                             sellers=sellers,
