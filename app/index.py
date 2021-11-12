@@ -119,6 +119,21 @@ def add_prod_review(product_id):
                            review_submitted = True,
                            result = result)
 
+@bp.route('/inventory')
+def inventory():
+    # if user is authenticated, go to home profile
+    inventory = Inventory.get_all(available=True)
+    # find the products current user has bought:
+    if current_user.is_authenticated:
+        purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
+                                                       since = datetime.datetime(1980, 9, 14, 0, 0, 0))
+    else:
+        purchases = None
+
+    return render_template('inventory.html',
+                           sold_products=inventory,
+
+
 # backend for deleting product review
 @bp.route('/delete_prod_review/<product_id>/', methods = ['POST', 'GET'])
 def delete_prod_review(product_id):
