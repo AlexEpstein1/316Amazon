@@ -9,13 +9,13 @@ CREATE TABLE Users (
 	balance DECIMAL(10,2) NOT NULL
 );
 -- Sellers
-CREATE TABLE Sellers (
-	id INT NOT NULL PRIMARY KEY REFERENCES Users(id)
-);
--- Buyers
-CREATE TABLE Buyers (
-	id INT NOT NULL PRIMARY KEY REFERENCES Users(id)
-);
+-- CREATE TABLE Sellers (
+-- 	id INT NOT NULL PRIMARY KEY REFERENCES Users(id)
+-- );
+-- -- Buyers
+-- CREATE TABLE Buyers (
+-- 	id INT NOT NULL PRIMARY KEY REFERENCES Users(id)
+-- );
 --- Products Guru
 -- Categories of Products
 CREATE TABLE Category (
@@ -36,8 +36,8 @@ CREATE TABLE Products (
 CREATE TABLE Purchases (
 	order_id INT NOT NULL PRIMARY KEY,
 	product_id INT NOT NULL REFERENCES Products(id),
-	buyer_id INT NOT NULL REFERENCES Buyers(id),
-	seller_id INT NOT NULL REFERENCES Sellers(id),
+	buyer_id INT NOT NULL REFERENCES Users(id),
+	seller_id INT NOT NULL REFERENCES Users(id),
 	payment_amount DECIMAL(10, 2) NOT NULL,
 	quantity INT NOT NULL CHECK(quantity >= 0),
 	time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
@@ -47,7 +47,7 @@ CREATE TABLE Purchases (
 -- Cart
 CREATE TABLE Cart (
 	user_id INT NOT NULL REFERENCES Users(id),
-	seller_id INT NOT NULL REFERENCES Sellers(id),
+	seller_id INT NOT NULL REFERENCES Users(id),
 	product_id INT NOT NULL REFERENCES Products(id),
 	quantity INT NOT NULL CHECK(quantity >= 0),
 	price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
@@ -57,7 +57,7 @@ CREATE TABLE Cart (
 --- Sellers Guru
 -- For Sale
 CREATE TABLE SellsItem (
-	seller_id INT NOT NULL REFERENCES Sellers(id),
+	seller_id INT NOT NULL REFERENCES Users(id),
 	product_id INT NOT NULL REFERENCES Products(id),
 	price DECIMAL(10, 2) NOT NULL CHECK(price >= 0),
 	stock INT NOT NULL CHECK(stock >= 0),
@@ -80,7 +80,7 @@ CREATE TABLE ProductReview (
 -- Reviews of Sellers
 CREATE TABLE SellerReview (
 	user_id INT NOT NULL REFERENCES Users(id),
-	seller_id INT NOT NULL REFERENCES Sellers(id),
+	seller_id INT NOT NULL REFERENCES Users(id),
 	date_time DATE NOT NULL,
 	description VARCHAR(256) NOT NULL,
 	rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
