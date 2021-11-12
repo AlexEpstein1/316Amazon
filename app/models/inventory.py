@@ -43,6 +43,7 @@ class Inventory:
             SELECT si.seller_id, si.product_id, si.price, p.name, si.stock, u.firstname, u.lastname
             FROM SellsItem si, Products p, Users u
             WHERE si.product_id = p.id AND u.id = si.seller_id
+            ORDER BY si.seller_id
             
             '''.format(available),
             available=available)
