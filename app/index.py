@@ -3,6 +3,7 @@ from flask_login import current_user
 import datetime
 
 from .models.product import Product
+from .models.inventory import Inventory
 from .models.purchase import Purchase
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
