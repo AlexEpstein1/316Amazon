@@ -131,7 +131,7 @@ def inventory():
         purchases = None
 
     return render_template('inventory.html',
-                           sold_products=inventory,
+                           sold_products=inventory)
 
 
 # backend for deleting product review
