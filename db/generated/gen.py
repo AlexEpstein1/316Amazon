@@ -42,24 +42,6 @@ def gen_users(num_users):
         print(f'{num_users} generated')
     return
 
-def gen_Sellers(num_users):
-    with open('Sellers.csv', 'w') as f:
-        writer = get_csv_writer(f)
-        print('Sellers...', end=' ', flush=True)
-        for uid in range(num_users):
-            writer.writerow([uid])
-        print(f'{num_users} generated')
-    return
-
-def gen_Buyers(num_users):
-    with open('Buyers.csv', 'w') as f:
-        writer = get_csv_writer(f)
-        print('Buyers...', end=' ', flush=True)
-        for uid in range(num_users):
-            writer.writerow([uid])
-        print(f'{num_users} generated')
-    return
-
 
 
 def gen_category(num_category):
@@ -191,8 +173,6 @@ def gen_SellerReview(num_seller_review):
 
 
 gen_users(num_users)
-gen_Sellers(num_users)
-gen_Buyers(num_users)
 available_category = gen_category(num_category);
 product_dict = gen_products(num_products, available_category)
 gen_purchases(num_purchases, product_dict)
