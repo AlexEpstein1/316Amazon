@@ -5,9 +5,13 @@
   <title>Mini Amazon</title>
   <script type="text/javascript" src="../static/javascript/dropdown.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/example.css') }}">
   <style>
   body {
@@ -21,9 +25,17 @@
 
   .sidenav {
     height: 100%;
-    background-color: #000;
+    background-color: #373F51;
     overflow-x: hidden;
     padding-top: 20px;
+    padding-left: 2vw;
+    padding-right: 2vw;
+  }
+
+  .sidenav input {
+    margin-top: 2vh;
+    padding-left: 5px;
+    border-radius: 5px;
   }
 
   .main {
@@ -44,14 +56,25 @@
     background-color: #000 !important;
     color: #fff;
   }
+
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #373F51;
+    color: #A9BCD0;
+    text-align: center;
+  }
   </style>
 </head>
 
 <body>
   <div class="sidenav">
     {% block msg %}
-    <h1 style="color:white">Welcome to Mini Amazon</h1>
-    <div style="color:black; text-align: right; margin-bottom: 25px">
+    <h1 style="color:white; float: left; padding-right: 3vw;"><a href="{{ url_for('index.index') }}" style="text-decoration: inherit; color: inherit;">Mini Amazon</a></h1>
+    <input type="text" placeholder="Search...">
+    <div style="color:black; text-align: right; margin-bottom: 25px; float: right;">
       {% if current_user.is_authenticated %}
       <div class="dropdown">
         <button class="dropbtn" onclick="openDropdown('user_drop')">Hi {{ current_user.firstname }}!
@@ -59,15 +82,15 @@
         </button>
         <div class="dropdown-content" id="user_drop">
           <p style="font-size: 16px">Current balance: <b>${{ current_user.balance }}</b></p>
+          <a href="{{ url_for('index.index') }}">Home Page</a>
           <a href="{{ url_for('index.profile') }}">View Profile</a>
           <a href="{{ url_for('users.logout') }}">View Cart</a>
           <a href="{{ url_for('users.logout') }}">Add Balance</a>
-          <a href="{{ url_for('users.logout') }}">Purchase History</a>
+          <a href="{{ url_for('index.purchase_history') }}">Purchase History</a>
           <a href="{{ url_for('index.review_history') }}">Review History</a>
           <a href="{{ url_for('index.inventory') }}">Browse Sellers</a>
         </div>
       </div>
-      <br>
       <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
       {% else %}
       <a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
@@ -80,7 +103,7 @@
   </div>
 </body>
 <div class="footer">
-  <p><i>CS316 Project, Fall 2021</i></p>
+  <p style="margin-top: 1vh;"><i>Created by Team WAMYJ</i></p>
 </div>
 
 </html>
