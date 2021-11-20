@@ -2,15 +2,14 @@
 
 {% block content %}
 
-<br><br>
-
-<h2>Adding review for product ID: {{ product_id }} </h2>
-
+<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Adding review for product ID: {{ product_id }}: </h2>
 {% if review_submitted and result %}
 <h5>Successfully completed review for product ID: {{ product_id }} </h5>
 {% elif review_submitted %}
 <h5>Unable to complete review for product ID: {{ product_id }}, perhaps you have already made one</h5>
 {% endif %}
+
+Update: {{ prev_review.exists }}
 
 <table class="table table-light table-striped table-hover container">
   <thead class="thead-dark">
@@ -27,19 +26,48 @@
       <th scope="row">{{ products.id }}</th>
       <td>{{ products.name }}</td>
       <td>{{ products.cat_name }}</td>
-      <td>{{ products.price }}</td>
+      <td>${{ products.price }}</td>
       <td>{{ products.available }}</td>
     </tr>
   </tbody>
 </table>
-<form action="{{ url_for('index.add_prod_review', product_id=product_id) }}" method="POST">
+
+{% if prev_review.exists %}
+<h5>Currently saved review: </h5>
+<table class="table table-light table-striped table-hover container">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Rating</th>
+      <th scope="col">Review</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">{{ prev_review.rating }}</th>
+      <td>{{ prev_review.description }}</td>
+    </tr>
+  </tbody>
+</table>
+{% endif %}
+
+<form action="{{ url_for('reviews.add_prod_review', product_id=product_id, update=prev_review.exists) }}" method="POST">
   <label for="numstars"><b>Number of Stars: </b></label><br>
-  <input type="number" id="numstars" name="numstars" required step=0.1 min=1 max=5 value="{{ request.form.numstars }}"><br><br>
-  <label for="body"><b>Write your review for {{ products.name }} (max 256 characters): </b></label><br>
-  <textarea id="body" name="body" rows="4" cols="50" maxlength="256" value="{{ request.form.body }}"></textarea><br><br>
-  <input type="submit">
+  <input type="number" id="numstars" name="numstars" required step=0.1 min=1 max=5 value="{{ prev_review.rating }}"><br><br>
+  <!-- If a review already exists, change label to 'Edit' -->
+  {% if prev_review.exists %}
+  <label for="body"><b>Edit your review for '{{ products.name }}' (max 256 characters): </b></label><br>
+  {% else %}
+  <label for="body"><b>Write your review for '{{ products.name }}' (max 256 characters): </b></label><br>
+  {% endif %}
+  <textarea id="body" name="body" rows="4" cols="50" maxlength="256">{{prev_review.description}}</textarea><br><br>
+  <!-- If a review already exists, change button label to 'Update' -->
+  {% if prev_review.exists %}
+  <input type="submit" value="Update">
+  {% else %}
+  <input type="submit" value="Submit">
+  {% endif %}
 </form>
 
-<br><br>
+<br><br><br>
 
 {% endblock %}

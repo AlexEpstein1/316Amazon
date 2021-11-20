@@ -15,13 +15,13 @@ import datetime
 # );
 
 class ProductReview:
-    def __init__(self, user_id, product_id, date_time, description, rating):
-        self.user_id = user_id
-        self.product_id = product_id
-        self.date_time = date_time
-        self.description = description
-        self.rating = rating
-
+    def __init__(self, **kwargs):
+        self.user_id = kwargs.get('user_id')
+        self.product_id = kwargs.get('product_id')
+        self.date_time = kwargs.get('date_time')
+        self.description = kwargs.get('description', '')
+        self.rating = kwargs.get('rating')
+        self.exists = kwargs.get('exists')
 
     @staticmethod
     def get(user_id, product_id = None):
@@ -33,7 +33,7 @@ class ProductReview:
             WHERE user_id = :user_id
             ORDER BY date_time DESC
             ''',
-                                  user_id=user_id)
+                                  user_id = user_id)
         # If `product_id` passed in, then return review from that user for the given product
         else:
             rows = app.db.execute('''
@@ -41,23 +41,31 @@ class ProductReview:
             FROM ProductReview
             WHERE user_id = :user_id AND product_id = :product_id
             ''',
-                                  user_id=user_id,
-                                  product_id=product_id)
-        return [ProductReview(*row) for row in rows] if rows else None
-        # return ProductReview(*(rows[0])) if rows else None
+                                  user_id = user_id,
+                                  product_id = product_id)
+
+        # If there exists a previous review, create the object
+        if rows:
+            return[ProductReview(user_id = row[0],
+                                 product_id = row[1],
+                                 date_time = row[2],
+                                 description = row[3],
+                                 rating = row[4],
+                                 exists = True) for row in rows]
+        # Otherwise, create an empty ProductReview object
+        else:
+            return(ProductReview(exists = False))
 
     @staticmethod
     def add_prod_review(request, product_id):
         # Get information to add to review
-        user_id = current_user.id
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         description = request.form['body']
         rating = request.form['numstars']
 
-        print(user_id)
-        print(date_time)
-        print(description)
-        print(rating)
+        # print(date_time)
+        # print(description)
+        # print(rating)
 
         try:
             rows = app.db.execute("""
@@ -65,14 +73,34 @@ class ProductReview:
         VALUES(:user_id, :product_id, :date_time, :description, :rating)
         RETURNING user_id
         """,
-                      user_id=user_id,
-                      product_id=product_id,
-                      date_time=date_time,
-                      description=description,
-                      rating=rating)
+                      user_id = current_user.id,
+                      product_id = product_id,
+                      date_time = date_time,
+                      description = description,
+                      rating = rating)
         # this means already a review for this product from this user
         except exc.IntegrityError as e:
             return False
+
+        return True
+
+    @staticmethod
+    def update_review(request, product_id):
+
+        date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        description = request.form['body']
+        rating = request.form['numstars']
+
+        rows = app.db.execute("""
+    UPDATE ProductReview
+    SET rating = :rating, description = :description
+    WHERE user_id = :user_id AND product_id = :product_id
+    RETURNING user_id
+    """,
+                  rating = rating,
+                  description = description,
+                  user_id = current_user.id,
+                  product_id = product_id)
 
         return True
 
@@ -83,8 +111,8 @@ class ProductReview:
     WHERE user_id = :user_id AND product_id = :product_id
     RETURNING user_id
     """,
-                  user_id=current_user.id,
-                  product_id=product_id)
+                  user_id = current_user.id,
+                  product_id = product_id)
         # flash('Deleted product review for product ID: ' + product_id)
         return 'Deleted product review for product ID: ' + product_id
 
