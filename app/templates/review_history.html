@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="main">
-	<h3>Review history for {{ current_user.firstname }}: </h3>
+	<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Review history for {{ current_user.firstname }}: </h2>
 	{% if message is not none %}
 	<h5> {{ message }} </h5>
 	{% endif %}
@@ -13,8 +13,8 @@
 			<th scope="col">Date</th>
 			<th scope="col">Rating</th>
 			<th scope="col">Review</th>
-			<th scope="col">Edit Review</th>
-			<th scope="col">Delete Review</th>
+			<th scope="col"></th>
+			<th scope="col"></th>
 		</tr>
 		{% if reviews is not none %}
 		{% for review in reviews %}
@@ -23,10 +23,10 @@
 			<td><p>{{ review.date_time }}</p></td>
 			<td><p>{{ review.rating }}</p></td>
 			<td><p>{{ review.description }}</p></td>
-			<td><form action="{{ url_for('index.write_prod_review', product_id=review.product_id) }}" method="POST">
+			<td><form action="{{ url_for('reviews.write_prod_review', product_id=review.product_id) }}" method="POST">
 				<button class = "btn btn-outline-primary inner_button" type="submit">Edit</button>
 			</form></td>
-			<td><form action="{{ url_for('index.delete_prod_review', product_id=review.product_id) }}" method="POST">
+			<td><form action="{{ url_for('reviews.delete_prod_review', product_id=review.product_id) }}" method="POST">
 				<button class = "btn btn-outline-primary inner_button" type="submit">Delete</button>
 			</form></td>
 		</tr>
@@ -34,5 +34,7 @@
 		{% endif %}
 	</table>
 </div>
+
+<br><br>
 
 {% endblock %}
