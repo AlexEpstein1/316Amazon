@@ -3,13 +3,21 @@
 {% block content %}
 
 <div class="main">
-	<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Review history for {{ current_user.firstname }}: </h2>
+	{% if type == 'products' %}
+	<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Product Review history for {{ current_user.firstname }}: </h2>
+	{% else %}
+	<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Seller Review history for {{ current_user.firstname }}: </h2>
+	{% endif %}
 	{% if message is not none %}
 	<h5> {{ message }} </h5>
 	{% endif %}
 	<table class="table table-light table-striped table-hover container">
 		<tr>
+			{% if type == 'products' %}
 			<th scope="col">Prouduct ID</th>
+			{% else %}
+			<th scope="col">Seller ID</th>
+			{% endif %}
 			<th scope="col">Date</th>
 			<th scope="col">Rating</th>
 			<th scope="col">Review</th>
@@ -19,7 +27,11 @@
 		{% if reviews is not none %}
 		{% for review in reviews %}
 		<tr>
+			{% if type == 'products' %}
 			<td scope="row"><p>{{ review.product_id }}</p></td>
+			{% else %}
+			<td scope="row"><p>{{ review.seller_id }}</p></td>
+			{% endif %}
 			<td><p>{{ review.date_time }}</p></td>
 			<td><p>{{ review.rating }}</p></td>
 			<td><p>{{ review.description }}</p></td>

@@ -3,6 +3,7 @@ from flask_login import current_user
 import datetime
 
 from .models.product import Product
+from .models.product import ProductSummary
 from .models.inventory import Inventory
 from .models.purchase import Purchase
 from .models.seller_review import SellerReview
@@ -71,14 +72,20 @@ def purchase_history():
                            purchase_history=purchases)
 
 # review_history html
-@bp.route('/review_history')
-def review_history():
-    # if user is authenticated, go to home profile
+@bp.route('/review_history/<type>', methods = ['POST', 'GET'])
+def review_history(type):
+    # if user is authenticated, go to review history for one of `products`, 'sellers'
     if current_user.is_authenticated:
-        reviews = ProductReview.get(user_id = current_user.id)
-        # print(reviews[0])
+        if type == 'products':
+            reviews = ProductReview.get(user_id = current_user.id)
+
+        else:
+            reviews = SellerReview.get(user_id = current_user.id)
+
         return render_template('review_history.html',
-                               reviews=reviews)
+                               reviews = reviews,
+                               type = type)
+
     # otherwise, back to index
     else:
         return redirect(url_for('index.index'))
@@ -87,6 +94,32 @@ def review_history():
                            # message=message,
                            avail_products=products,
                            purchase_history=purchases)
+
+# review_history html
+@bp.route('/reviews_landing/<order_id>', methods = ['POST', 'GET'])
+def reviews_landing(order_id):
+
+    # If just a landing page to view either product or seller reviews
+    if order_id == 'nav':
+        # Get user information on their review history
+        prod_stats = ProductReview.get_product_review_stats(user_id = current_user.id)
+        seller_stats = SellerReview.get_seller_review_stats(user_id = current_user.id)
+
+        return render_template('reviews_landing.html',
+                               prod_stats = prod_stats,
+                               seller_stats = seller_stats)
+    # Else, get the specific purchase to review
+    purchase = Purchase.get_all_by_buyer_id(buyer_id = current_user.id,
+                                            order_id = order_id)
+    # This should never happen
+    if purchase is None:
+        return redirect(url_for('index.index'))
+
+    product_summary = ProductSummary.get(product_id = purchase[0].product_id)
+
+    return render_template('reviews_landing.html',
+                           purchase = purchase[0],
+                           product_summary = product_summary[0])
 
 @bp.route('/inventory')
 def inventory():

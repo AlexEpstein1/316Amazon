@@ -61,8 +61,6 @@ class ProductSellers:
         self.seller_id = seller_id
         self.firstname = firstname
         self.lastname = lastname
-        
-
 
     @staticmethod
     def productSellers(id):
@@ -74,3 +72,25 @@ class ProductSellers:
         id=id)
         return [ProductSellers(*row) for row in rows] if rows is not None else 'No current sellers'
 
+class ProductSummary:
+    def __init__(self, product_id, name, cat_name, description, sellers, avg_price, total_stock, reviews, avg_rating):
+        self.product_id = product_id
+        self.name = name
+        self.cat_name = cat_name
+        self.description = description
+        self.sellers = sellers
+        self.avg_price = avg_price
+        self.total_stock = total_stock
+        self.reviews = reviews
+        self.avg_rating = avg_rating
+
+    @staticmethod
+    def get(product_id):
+        rows = app.db.execute('''
+        SELECT *
+        FROM ProductSummary
+        WHERE product_id = :product_id
+        ''',
+             product_id=product_id)
+
+        return [ProductSummary(*row) for row in rows] if rows else None
