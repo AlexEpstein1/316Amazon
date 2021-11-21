@@ -87,3 +87,18 @@ CREATE TABLE SellerReview (
 	PRIMARY KEY (user_id, seller_id)
 	-- ,FOREIGN KEY (user_id, seller_id) REFERENCES Purchases(uid, pid)
 );
+
+-- View of product summary statistics
+CREATE VIEW ProductSummary AS
+WITH
+sells_summary AS (SELECT product_id, COUNT(*) AS sellers, AVG(price) AS avg_price, SUM(stock) AS total_stock
+									FROM SellsItem
+									GROUP BY product_id),
+review_summary AS (SELECT product_id, COUNT(*) AS reviews, AVG(rating) AS avg_rating
+									 FROM ProductReview
+									 GROUP BY product_id)
+SELECT p.id AS product_id, p.name, p.cat_name, p.description, COALESCE(s.sellers, 0) AS sellers, s.avg_price,
+COALESCE(s.total_stock, 0) AS total_stock, COALESCE(r.reviews, 0) AS reviews, r.avg_rating
+FROM Products p
+FULL OUTER JOIN sells_summary s ON p.id = s.product_id
+FULL OUTER JOIN review_summary r ON p.id = r.product_id
