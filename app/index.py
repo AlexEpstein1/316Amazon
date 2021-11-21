@@ -4,6 +4,7 @@ import datetime
 
 from .models.product import Product
 from .models.product import ProductSummary
+from .models.product_sellers import SellerSummary
 from .models.inventory import Inventory
 from .models.purchase import Purchase
 from .models.seller_review import SellerReview
@@ -116,10 +117,12 @@ def reviews_landing(order_id):
         return redirect(url_for('index.index'))
 
     product_summary = ProductSummary.get(product_id = purchase[0].product_id)
+    seller_summary = SellerSummary.get(seller_id = purchase[0].seller_id)
 
     return render_template('reviews_landing.html',
                            purchase = purchase[0],
-                           product_summary = product_summary[0])
+                           product_summary = product_summary[0],
+                           seller_summary = seller_summary[0])
 
 @bp.route('/inventory')
 def inventory():

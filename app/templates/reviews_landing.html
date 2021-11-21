@@ -19,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <tr onclick="window.location.href='{{ url_for('products.productPage', id=purchase.product_id)}}'">
       <th scope="row">{{ purchase.order_id }}</th>
       <td>{{ purchase.product_id }}</td>
       <td>{{ purchase.quantity }}</td>
@@ -37,15 +37,16 @@
       <h5 class="card-title">Submit review for product '{{ product_summary.name }}'</h5>
       <p class="card-text">Description: {{ product_summary.description }}</p>
       <p class="card-text">Average Rating: {{ product_summary.avg_rating|round(2, 'common') }}</p>
-      <p class="card-text"><small class="text-muted"> {{ product_summary.reviews }} total reviews</small></p>
+      <p class="card-text"><small class="text-muted">{{ product_summary.reviews }} Total Reviews</small></p>
     </div>
   </div>
   <div class="card" style="min-width: 18rem;">
     <div class="card-body">
-      <h5 class="card-title">Submit review for seller {{ purchase.seller_id }}</h5>
-      <p class="card-text">User: </p>
-      <p class="card-text">Description: </p>
-      <p class="card-text"><small class="text-muted"> Hi </small></p>
+      <h5 class="card-title">Submit review for seller {{ seller_summary.firstname }} {{ seller_summary.lastname }}</h5>
+      <p class="card-text">Total Items Sold: {{ seller_summary.items_sold }}</p>
+      <p class="card-text">Average Rating: {{ seller_summary.avg_rating|round(2, 'common') }}</p>
+      <p class="card-text">Last Sold Item: {{ seller_summary.last_sold.strftime('%Y-%m-%d') }}</p>
+      <p class="card-text"><small class="text-muted">{{ seller_summary.reviews }} Total Reviews</small></p>
     </div>
   </div>
 </div>

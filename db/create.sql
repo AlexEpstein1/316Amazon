@@ -101,4 +101,25 @@ SELECT p.id AS product_id, p.name, p.cat_name, p.description, COALESCE(s.sellers
 COALESCE(s.total_stock, 0) AS total_stock, COALESCE(r.reviews, 0) AS reviews, r.avg_rating
 FROM Products p
 FULL OUTER JOIN sells_summary s ON p.id = s.product_id
-FULL OUTER JOIN review_summary r ON p.id = r.product_id
+FULL OUTER JOIN review_summary r ON p.id = r.product_id;
+
+-- View of seller summary statistics
+CREATE VIEW SellerSummary AS
+WITH
+sells_summary AS (SELECT seller_id, COUNT(*) AS products, AVG(price) AS avg_price, SUM(stock) AS total_stock
+									FROM SellsItem
+									GROUP BY seller_id),
+review_summary AS (SELECT seller_id, COUNT(*) AS reviews, AVG(rating) AS avg_rating
+									 FROM SellerReview
+									 GROUP BY seller_id),
+purchase_summary AS (SELECT seller_id, SUM(quantity) AS items_sold, MAX(time_purchased) AS last_sold
+										 FROM Purchases
+									   GROUP BY seller_id)
+SELECT u.id AS seller_id, u.firstname, u.lastname, COALESCE(s.products, 0) AS products, s.avg_price,
+COALESCE(s.total_stock, 0) AS total_stock, COALESCE(r.reviews, 0) AS reviews, r.avg_rating,
+COALESCE(p.items_sold, 0) AS items_sold, p.last_sold
+FROM Users u
+-- WHERE u.is_seller = 1
+FULL OUTER JOIN sells_summary s ON u.id = s.seller_id
+FULL OUTER JOIN review_summary r ON u.id = r.seller_id
+FULL OUTER JOIN purchase_summary p ON u.id = p.seller_id;

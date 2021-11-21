@@ -111,6 +111,7 @@ b-card.p-review {
 
 .card-body:hover {
   background-color: #373F51;
+  opacity: 0.6;
   cursor: pointer;
   color: white;
 }

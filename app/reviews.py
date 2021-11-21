@@ -48,15 +48,13 @@ def write_prod_review(product_id):
 # Backend for submit product review
 @bp.route('/add_prod_review/<product_id>/<update>', methods = ['POST', 'GET'])
 def add_prod_review(product_id, update):
-    print(update)
+    # print(update)
     # If adding new review (update = False)
     if update == 'False':
-        print('here')
         result = ProductReview.add_prod_review(request = request,
                                                product_id = product_id)
     # If editing/updating review
     else:
-        print('not here')
         result = ProductReview.update_review(request = request,
                                              product_id = product_id)
 
