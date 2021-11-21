@@ -22,6 +22,9 @@ class ProductReview:
         self.description = kwargs.get('description', '')
         self.rating = kwargs.get('rating')
         self.exists = kwargs.get('exists')
+        self.reviews = kwargs.get('reviews')
+        self.last_review = kwargs.get('last_review')
+        self.avg_rating = kwargs.get('avg_rating')
 
     @staticmethod
     def get(user_id, product_id = None):
@@ -46,12 +49,17 @@ class ProductReview:
 
         # If there exists a previous review, create the object
         if rows:
-            return[ProductReview(user_id = row[0],
-                                 product_id = row[1],
-                                 date_time = row[2],
-                                 description = row[3],
-                                 rating = row[4],
-                                 exists = True) for row in rows]
+            reviews = [ProductReview(user_id = row[0],
+                                     product_id = row[1],
+                                     date_time = row[2],
+                                     description = row[3],
+                                     rating = row[4],
+                                     exists = True) for row in rows]
+            if product_id is None:
+                return reviews
+            else:
+                return reviews[0]
+
         # Otherwise, create an empty ProductReview object
         else:
             return(ProductReview(exists = False))
@@ -62,10 +70,6 @@ class ProductReview:
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         description = request.form['body']
         rating = request.form['numstars']
-
-        # print(date_time)
-        # print(description)
-        # print(rating)
 
         try:
             rows = app.db.execute("""
@@ -78,7 +82,7 @@ class ProductReview:
                       date_time = date_time,
                       description = description,
                       rating = rating)
-        # this means already a review for this product from this user
+        # This means already a review for this product from this user
         except exc.IntegrityError as e:
             return False
 
@@ -116,49 +120,28 @@ class ProductReview:
         # flash('Deleted product review for product ID: ' + product_id)
         return 'Deleted product review for product ID: ' + product_id
 
-    # def add_review():
-    #
-    # item_id = request.args['itemid']
-    # if request.method == 'POST':
-    #     username= session['username']
-    #     username = "'" +str(username)+"'"
-    #     dt_string = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-    #     day = "'"+str(dt_string)+"'"
-    #     content = str(request.form['body'])
-    #     content = "'"+str(content)+"'"
-    #     stars= float(request.form['numstars'])
-    #     cur = conn.cursor()
-    #     checkSeller = "SELECT * FROM SellsItem WHERE seller_username = %s AND item_id=%d;" % (username, int(item_id))
-    #     cur.execute(checkSeller)
-    #     checker=cur.fetchall()
-    #     if len(checker)>0:
-    #         flash("Cannot review an item you are selling!")
-    #         return redirect(url_for('productDescription', itemid=item_id))
-    #     else:
-    #         cur = conn.cursor()
-    #         AlreadyReviewToday = "SELECT * FROM Reviews WHERE username = %s AND item_id=%d AND date_time=%s;" % (username, int(item_id), day)
-    #         cur.execute(AlreadyReviewToday)
-    #         checker2=cur.fetchall()
-    #         if len(checker2)>0:
-    #             flash("Cannot review an item twice on same day!")
-    #             return redirect(url_for('productDescription', itemid=item_id))
-    #         else:
-    #             cur = conn.cursor()
-    #             addRev = "INSERT INTO Reviews VALUES (%s, %d, %s, %s, %d);" % (username, int(item_id), day, content, stars)
-    #             cur.execute(addRev)
-    #             conn.commit()
-    #             flash("Review submitted successfully")
-    #             return redirect(url_for('productDescription', itemid=item_id))
-    # getName = "SELECT name FROM Items WHERE item_id = %d;" % int(item_id)
-    # cur = conn.cursor()
-    # cur.execute(getName)
-    # item_name = cur.fetchall()[0][0]
-    # item = {
-    #     "itemid": item_id,
-    #     "itemname": item_name
-    # }
-    # return render_template("reviews.html", item=item)
+    @staticmethod
+    def get_product_review_stats(user_id):
 
+        rows = app.db.execute('''
+        SELECT user_id, COUNT(*) AS reviews, MAX(date_time) AS last_review, AVG(rating) AS avg_rating
+        FROM ProductReview
+        WHERE user_id = :user_id
+        GROUP BY user_id
+        ''',
+                              user_id = user_id)
+
+        # If there exists a previous review, create the object
+        if rows:
+            return [ProductReview(user_id = row[0],
+                                  reviews = row[1],
+                                  last_review = row[2],
+                                  avg_rating = row[3],
+                                  exists = True) for row in rows][0]
+
+        # Otherwise, create an empty ProductReview object
+        else:
+            return (ProductReview(exists = False))
 
 class ProductReviewWithName:
     def __init__(self, user_id, firstname, lastname, product_id, date_time, description, rating):
@@ -172,8 +155,6 @@ class ProductReviewWithName:
 
     @staticmethod
     def get_reviews(product_id):
-        # If no passed in `product_id`, then just return all reviews from that user
-
         rows = app.db.execute('''
         SELECT user_id, firstname, lastname, product_id, date_time, description, rating
         FROM ProductReview, Users
@@ -181,6 +162,5 @@ class ProductReviewWithName:
         ORDER BY date_time DESC
         ''',
              product_id=product_id)
-        # If `product_id` passed in, then return review from that user for the given product
 
         return [ProductReviewWithName(*row) for row in rows] if rows else None

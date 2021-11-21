@@ -65,6 +65,19 @@ section {
   z-index: 1;
 }
 
+.btn btn-secondary dropdown-toggle {
+  display: none;
+  position: relative;
+  color: black;
+  font-size: 13px;
+  right: 0;
+  overflow: auto;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
 /* Links inside the dropdown */
 .dropdown-content a, .dropdown-content p {
   color: black; /* color of text */
@@ -83,16 +96,21 @@ section {
   display: block;
 }
 
-tr:hover { 
-  background: red; 
+tr:hover {
+  background: red;
 }
-td a { 
-  display: block; 
+td a {
+  display: block;
   border: 1px solid black;
-  padding: 16px; 
+  padding: 16px;
 }
 
 b-card.p-review {
   border: 1px solid black;
+}
 
+.card-body:hover {
+  background-color: #373F51;
+  cursor: pointer;
+  color: white;
 }

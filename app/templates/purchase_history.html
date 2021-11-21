@@ -20,7 +20,8 @@
     </thead>
     <tbody>
         {% for purchase in purchase_history %}
-        <tr onclick="window.location.href='{{ url_for('reviews.write_prod_review', product_id=purchase.product_id)}}'">
+        <!-- <tr onclick="window.location.href='{{ url_for('reviews.write_prod_review', product_id=purchase.product_id)}}'"> -->
+        <tr onclick="window.location.href='{{ url_for('index.reviews_landing', order_id=purchase.order_id)}}'">
         <th scope="row">{{ purchase.order_id }}</th>
         <td>{{ purchase.product_id }}</td>
         <td>{{ purchase.quantity }}</td>
