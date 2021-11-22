@@ -80,11 +80,18 @@ def review_history(type, page = 0):
     page = int(page)
     offset = page * 10
     if type == 'products':
+        product_id = ''
         reviews = ProductReview.get(user_id = current_user.id,
                                     offset = offset)
-    else:
+    elif type == 'sellers':
+        product_id = ''
         reviews = SellerReview.get(user_id = current_user.id,
                                    offset = offset)
+    elif type == 'product_history':
+        product_id = request.args.get('product_id')
+        reviews = ProductReview.get(user_id = None,
+                                    product_id = product_id,
+                                    offset = offset)
     # If `reviews` is returned as a list (means there is data)
     if isinstance(reviews, list):
         exists = True
@@ -95,6 +102,7 @@ def review_history(type, page = 0):
     return render_template('review_history.html',
                            page = page,
                            exists = exists,
+                           product_id = product_id,
                            reviews = reviews,
                            type = type)
 

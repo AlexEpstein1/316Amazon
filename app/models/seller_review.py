@@ -59,11 +59,11 @@ class SellerReview:
                                     description = row[3],
                                     rating = row[4],
                                     exists = True) for row in rows]
+            # If no seller_id passed in, return just the first element, not the list
             if seller_id is None:
                 return reviews
             else:
                 return reviews[0]
-
         # Otherwise, create an empty SellerReview object
         else:
             return(SellerReview(exists = False))
@@ -77,15 +77,15 @@ class SellerReview:
 
         try:
             rows = app.db.execute("""
-        INSERT INTO SellerReview(user_id, seller_id, date_time, description, rating)
-        VALUES(:user_id, :seller_id, :date_time, :description, :rating)
-        RETURNING user_id
-        """,
-                      user_id = current_user.id,
-                      seller_id = seller_id,
-                      date_time = date_time,
-                      description = description,
-                      rating = rating)
+            INSERT INTO SellerReview(user_id, seller_id, date_time, description, rating)
+            VALUES(:user_id, :seller_id, :date_time, :description, :rating)
+            RETURNING user_id
+            """,
+                                  user_id = current_user.id,
+                                  seller_id = seller_id,
+                                  date_time = date_time,
+                                  description = description,
+                                  rating = rating)
         # this means already a review for this seller from this user
         except exc.IntegrityError as e:
             return False
@@ -94,40 +94,38 @@ class SellerReview:
 
     @staticmethod
     def update_review(request, seller_id):
-
+        # Get information to add to review
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         description = request.form['body']
         rating = request.form['numstars']
 
         rows = app.db.execute("""
-    UPDATE SellerReview
-    SET rating = :rating, description = :description, date_time = :date_time
-    WHERE user_id = :user_id AND seller_id = :seller_id
-    RETURNING user_id
-    """,
-                  rating = rating,
-                  description = description,
-                  date_time = date_time,
-                  user_id = current_user.id,
-                  seller_id = seller_id)
-
+        UPDATE SellerReview
+        SET rating = :rating, description = :description, date_time = :date_time
+        WHERE user_id = :user_id AND seller_id = :seller_id
+        RETURNING user_id
+        """,
+                             rating = rating,
+                             description = description,
+                             date_time = date_time,
+                             user_id = current_user.id,
+                             seller_id = seller_id)
         return True
 
     @staticmethod
     def delete_review(seller_id):
         rows = app.db.execute("""
-    DELETE FROM SellerReview
-    WHERE user_id = :user_id AND seller_id = :seller_id
-    RETURNING user_id
-    """,
-                  user_id = current_user.id,
-                  seller_id = seller_id)
+        DELETE FROM SellerReview
+        WHERE user_id = :user_id AND seller_id = :seller_id
+        RETURNING user_id
+        """,
+                              user_id = current_user.id,
+                              seller_id = seller_id)
         # flash('Deleted product review for product ID: ' + product_id)
         return 'Deleted seller review for seller ID: ' + seller_id
 
     @staticmethod
     def get_review_stats(user_id):
-
         rows = app.db.execute('''
         SELECT user_id, COUNT(*) AS reviews, MAX(date_time) AS last_review, AVG(rating) AS avg_rating
         FROM SellerReview
@@ -135,7 +133,6 @@ class SellerReview:
         GROUP BY user_id
         ''',
                               user_id = user_id)
-
         # If there exists a previous review, create the object
         if rows:
             return [SellerReview(user_id = row[0],

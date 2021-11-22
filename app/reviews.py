@@ -91,8 +91,9 @@ def add_review(object_id, type, update):
 
 # Backend for deleting review
 # object_id one of product_id/seller_id, type one of 'products'/'sellers'
-@bp.route('/delete_review/<object_id>/', methods = ['POST', 'GET'])
-def delete_review(object_id):
+@bp.route('/delete_review/<type>/<object_id>/', methods = ['POST', 'GET'])
+def delete_review(type, object_id):
+    page = request.args.get('page')
     if type == 'products':
         # Delete the product review
         result = ProductReview.delete_review(product_id = object_id)
@@ -101,4 +102,5 @@ def delete_review(object_id):
         result = SellerReview.delete_review(seller_id = object_id)
     # print(result)
     return redirect(url_for('index.review_history',
-                            type = type))
+                            type = type,
+                            page = page))
