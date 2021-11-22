@@ -115,3 +115,7 @@ b-card.p-review {
   cursor: pointer;
   color: white;
 }
+
+.table:hover {
+  cursor: pointer;
+}

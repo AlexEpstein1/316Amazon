@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user
 import statistics
 import datetime
@@ -7,6 +7,7 @@ from .models.product import Product
 from .models.product import ProductSummary
 from .models.product import ProductSellers
 from .models.purchase import Purchase
+from .models.product_sellers import SellerSummary
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
@@ -14,64 +15,90 @@ from .models.product_review import ProductReviewWithName
 from flask import Blueprint
 bp = Blueprint('reviews', __name__)
 
-def get_prod_info(product_id):
-    # Get previous user review for the product
-    prev_review = ProductReview.get(user_id = current_user.id,
-                                    product_id = product_id)
-    # Get product information
-    # products = Product.get_all(available = False,
-    #                            id = product_id)
-    # Get product summary
-    product_summary = ProductSummary.get(product_id = product_id)
+# Get information related to specified user and product/seller
+def get_info(object_id, type):
+    # Get information related to specified user and product
+    if type == 'products':
+        # Get previous user review for the product
+        prev_review = ProductReview.get(user_id = current_user.id,
+                                        product_id = object_id)
+        # Get product summary
+        summary = ProductSummary.get(product_id = object_id)[0]
+    # Get information related to specified user and seller
+    else:
+        # Get previous user review for the seller
+        prev_review = SellerReview.get(user_id = current_user.id,
+                                       seller_id = object_id)
+        # Get seller summary
+        summary = SellerSummary.get(seller_id = object_id)[0]
+        summary.name = summary.firstname + ' ' + summary.lastname # Make seller name as first last
 
     info = {
     "prev_review": prev_review,
-    # "products": products[0],
-    "product_summary": product_summary[0]
+    "summary": summary
     }
-
     return info
 
-# Direct to front-end submit product review
-@bp.route('/write_prod_review/<product_id>', methods = ['POST', 'GET'])
-def write_prod_review(product_id):
+# Front-end submitting review
+# object_id one of product_id/seller_id, type one of 'products' or 'sellers'
+@bp.route('/write_review/<object_id>/<type>', methods = ['POST', 'GET'])
+def write_review(object_id, type):
+    # Get product/seller information for product/seller review
+    info = get_info(object_id = object_id, type = type)
 
-    info = get_prod_info(product_id = product_id)
-
-    return render_template('submit_prod_review.html',
-                           product_id = product_id,
-                           # products = info.get('products'),
+    return render_template('submit_review.html',
+                           object_id = object_id,
+                           type = type, # Either 'products' or 'sellers'
                            prev_review = info.get('prev_review'),
-                           product_summary = info.get('product_summary'),
+                           summary = info.get('summary'),
                            review_submitted = False)
 
-# Backend for submit product review
-@bp.route('/add_prod_review/<product_id>/<update>', methods = ['POST', 'GET'])
-def add_prod_review(product_id, update):
-    # print(update)
+# Backend for submitting review
+# object_id one of product_id/seller_id, type one of 'products'/'sellers', update one of 'True'/'False'
+@bp.route('/add_review/<object_id>/<type>/<update>', methods = ['POST', 'GET'])
+def add_review(object_id, type, update):
     # If adding new review (update = False)
     if update == 'False':
-        result = ProductReview.add_prod_review(request = request,
-                                               product_id = product_id)
+        # If adding a product review
+        if type == 'products':
+            result = ProductReview.add_review(request = request,
+                                              product_id = object_id)
+        # If adding a seller review
+        else:
+            result = SellerReview.add_review(request = request,
+                                             seller_id = object_id)
     # If editing/updating review
     else:
-        result = ProductReview.update_review(request = request,
-                                             product_id = product_id)
+        # If updating a product review
+        if type == 'products':
+            result = ProductReview.update_review(request = request,
+                                                 product_id = object_id)
+        # If updating a seller review
+        else:
+            result = SellerReview.update_review(request = request,
+                                                seller_id = object_id)
 
-    info = get_prod_info(product_id = product_id)
+    # Get information related to specific product/seller
+    info = get_info(object_id = object_id, type = type)
 
-    return render_template('submit_prod_review.html',
-                           product_id = product_id,
-                           # products = info.get('products'),
+    return render_template('submit_review.html',
+                           object_id = object_id,
+                           type = type,
                            prev_review = info.get('prev_review'),
-                           product_summary = info.get('product_summary'),
+                           summary = info.get('summary'),
                            review_submitted = True,
                            result = result)
 
-# Backend for deleting product review
-@bp.route('/delete_prod_review/<product_id>/', methods = ['POST', 'GET'])
-def delete_prod_review(product_id):
-
-    result = ProductReview.delete_review(product_id = product_id)
+# Backend for deleting review
+# object_id one of product_id/seller_id, type one of 'products'/'sellers'
+@bp.route('/delete_review/<object_id>/', methods = ['POST', 'GET'])
+def delete_review(object_id):
+    if type == 'products':
+        # Delete the product review
+        result = ProductReview.delete_review(product_id = object_id)
+    else:
+        # Delete the seller review
+        result = SellerReview.delete_review(seller_id = object_id)
     # print(result)
-    return redirect(url_for('index.review_history'))
+    return redirect(url_for('index.review_history',
+                            type = type))

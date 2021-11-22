@@ -75,7 +75,7 @@ def purchase_history():
 # review_history html
 @bp.route('/review_history/<type>', methods = ['POST', 'GET'])
 def review_history(type):
-    # if user is authenticated, go to review history for one of `products`, 'sellers'
+    # If user is authenticated, go to review history for one of `products`, 'sellers'
     if current_user.is_authenticated:
         if type == 'products':
             reviews = ProductReview.get(user_id = current_user.id)
@@ -87,24 +87,18 @@ def review_history(type):
                                reviews = reviews,
                                type = type)
 
-    # otherwise, back to index
+    # Otherwise, back to index
     else:
         return redirect(url_for('index.index'))
 
-    return render_template('index.html',
-                           # message=message,
-                           avail_products=products,
-                           purchase_history=purchases)
-
-# review_history html
+# reviews_landing html
 @bp.route('/reviews_landing/<order_id>', methods = ['POST', 'GET'])
 def reviews_landing(order_id):
-
     # If just a landing page to view either product or seller reviews
     if order_id == 'nav':
         # Get user information on their review history
-        prod_stats = ProductReview.get_product_review_stats(user_id = current_user.id)
-        seller_stats = SellerReview.get_seller_review_stats(user_id = current_user.id)
+        prod_stats = ProductReview.get_review_stats(user_id = current_user.id)
+        seller_stats = SellerReview.get_review_stats(user_id = current_user.id)
 
         return render_template('reviews_landing.html',
                                prod_stats = prod_stats,
@@ -116,6 +110,7 @@ def reviews_landing(order_id):
     if purchase is None:
         return redirect(url_for('index.index'))
 
+    # Get product and seller summary statistics
     product_summary = ProductSummary.get(product_id = purchase[0].product_id)
     seller_summary = SellerSummary.get(seller_id = purchase[0].seller_id)
 

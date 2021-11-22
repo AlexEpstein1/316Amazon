@@ -45,16 +45,16 @@ class SellerReview:
             WHERE user_id = :user_id AND seller_id = :seller_id
             ''',
                                   user_id = user_id,
-                                  product_id = seller_id)
+                                  seller_id = seller_id)
 
         # If there exists a previous review, create the object
         if rows:
             reviews = [SellerReview(user_id = row[0],
-                                     seller_id = row[1],
-                                     date_time = row[2],
-                                     description = row[3],
-                                     rating = row[4],
-                                     exists = True) for row in rows]
+                                    seller_id = row[1],
+                                    date_time = row[2],
+                                    description = row[3],
+                                    rating = row[4],
+                                    exists = True) for row in rows]
             if seller_id is None:
                 return reviews
             else:
@@ -64,63 +64,65 @@ class SellerReview:
         else:
             return(SellerReview(exists = False))
 
-    # @staticmethod
-    # def add_prod_review(request, product_id):
-    #     # Get information to add to review
-    #     date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-    #     description = request.form['body']
-    #     rating = request.form['numstars']
-    #
-    #     try:
-    #         rows = app.db.execute("""
-    #     INSERT INTO ProductReview(user_id, product_id, date_time, description, rating)
-    #     VALUES(:user_id, :product_id, :date_time, :description, :rating)
-    #     RETURNING user_id
-    #     """,
-    #                   user_id = current_user.id,
-    #                   product_id = product_id,
-    #                   date_time = date_time,
-    #                   description = description,
-    #                   rating = rating)
-    #     # this means already a review for this product from this user
-    #     except exc.IntegrityError as e:
-    #         return False
-    #
-    #     return True
-    #
-    # @staticmethod
-    # def update_review(request, product_id):
-    #
-    #     date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
-    #     description = request.form['body']
-    #     rating = request.form['numstars']
-    #
-    #     rows = app.db.execute("""
-    # UPDATE ProductReview
-    # SET rating = :rating, description = :description
-    # WHERE user_id = :user_id AND product_id = :product_id
-    # RETURNING user_id
-    # """,
-    #               rating = rating,
-    #               description = description,
-    #               user_id = current_user.id,
-    #               product_id = product_id)
-    #
-    #     return True
-    #
-    # @staticmethod
-    # def delete_review(product_id):
-    #     rows = app.db.execute("""
-    # DELETE FROM ProductReview
-    # WHERE user_id = :user_id AND product_id = :product_id
-    # RETURNING user_id
-    # """,
-    #               user_id = current_user.id,
-    #               product_id = product_id)
-    #     # flash('Deleted product review for product ID: ' + product_id)
-    #     return 'Deleted product review for product ID: ' + product_id
     @staticmethod
-    def get_seller_review_stats(user_id):
+    def add_review(request, seller_id):
+        # Get information to add to review
+        date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        description = request.form['body']
+        rating = request.form['numstars']
+
+        try:
+            rows = app.db.execute("""
+        INSERT INTO SellerReview(user_id, seller_id, date_time, description, rating)
+        VALUES(:user_id, :seller_id, :date_time, :description, :rating)
+        RETURNING user_id
+        """,
+                      user_id = current_user.id,
+                      seller_id = seller_id,
+                      date_time = date_time,
+                      description = description,
+                      rating = rating)
+        # this means already a review for this seller from this user
+        except exc.IntegrityError as e:
+            return False
+
+        return True
+
+    @staticmethod
+    def update_review(request, seller_id):
+
+        date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+        description = request.form['body']
+        rating = request.form['numstars']
+
+        rows = app.db.execute("""
+    UPDATE SellerReview
+    SET rating = :rating, description = :description, date_time = :date_time
+    WHERE user_id = :user_id AND seller_id = :seller_id
+    RETURNING user_id
+    """,
+                  rating = rating,
+                  description = description,
+                  date_time = date_time,
+                  user_id = current_user.id,
+                  seller_id = seller_id)
+
+        return True
+
+    @staticmethod
+    def delete_review(seller_id):
+        rows = app.db.execute("""
+    DELETE FROM SellerReview
+    WHERE user_id = :user_id AND seller_id = :seller_id
+    RETURNING user_id
+    """,
+                  user_id = current_user.id,
+                  seller_id = seller_id)
+        # flash('Deleted product review for product ID: ' + product_id)
+        return 'Deleted seller review for seller ID: ' + seller_id
+
+    @staticmethod
+    def get_review_stats(user_id):
 
         rows = app.db.execute('''
         SELECT user_id, COUNT(*) AS reviews, MAX(date_time) AS last_review, AVG(rating) AS avg_rating
@@ -137,7 +139,6 @@ class SellerReview:
                                  last_review = row[2],
                                  avg_rating = row[3],
                                  exists = True) for row in rows][0]
-
         # Otherwise, create an empty SellerReview object
         else:
             return (SellerReview(exists = False))

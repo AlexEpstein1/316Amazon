@@ -33,7 +33,7 @@
 
 <div class="card-deck">
   <div class="card" style="min-width: 18rem;">
-    <div class="card-body" onclick="window.location.href='{{ url_for('reviews.write_prod_review', product_id=product_summary.product_id)}}'">
+    <div class="card-body" onclick="window.location.href='{{ url_for('reviews.write_review', object_id=product_summary.product_id, type='products')}}'">
       <h5 class="card-title">Submit review for product '{{ product_summary.name }}'</h5>
       <p class="card-text">Description: {{ product_summary.description }}</p>
       <p class="card-text">Average Rating: {{ product_summary.avg_rating|round(2, 'common') }}</p>
@@ -41,7 +41,7 @@
     </div>
   </div>
   <div class="card" style="min-width: 18rem;">
-    <div class="card-body">
+    <div class="card-body" onclick="window.location.href='{{ url_for('reviews.write_review', object_id=seller_summary.seller_id, type='sellers')}}'">
       <h5 class="card-title">Submit review for seller {{ seller_summary.firstname }} {{ seller_summary.lastname }}</h5>
       <p class="card-text">Total Items Sold: {{ seller_summary.items_sold }}</p>
       <p class="card-text">Average Rating: {{ seller_summary.avg_rating|round(2, 'common') }}</p>

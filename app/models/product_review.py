@@ -65,7 +65,7 @@ class ProductReview:
             return(ProductReview(exists = False))
 
     @staticmethod
-    def add_prod_review(request, product_id):
+    def add_review(request, product_id):
         # Get information to add to review
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         description = request.form['body']
@@ -97,12 +97,13 @@ class ProductReview:
 
         rows = app.db.execute("""
     UPDATE ProductReview
-    SET rating = :rating, description = :description
+    SET rating = :rating, description = :description, date_time = :date_time
     WHERE user_id = :user_id AND product_id = :product_id
     RETURNING user_id
     """,
                   rating = rating,
                   description = description,
+                  date_time = date_time,
                   user_id = current_user.id,
                   product_id = product_id)
 
@@ -121,7 +122,7 @@ class ProductReview:
         return 'Deleted product review for product ID: ' + product_id
 
     @staticmethod
-    def get_product_review_stats(user_id):
+    def get_review_stats(user_id):
 
         rows = app.db.execute('''
         SELECT user_id, COUNT(*) AS reviews, MAX(date_time) AS last_review, AVG(rating) AS avg_rating
