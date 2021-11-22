@@ -4,9 +4,17 @@
 
 <div class="main">
 	{% if type == 'products' %}
-	<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Your History of Product Reviews</h2>
+		<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Your History of Product Reviews</h2>
 	{% else %}
-	<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Your History of Seller Reviews</h2>
+		<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Your History of Seller Reviews</h2>
+	{% endif %}
+
+	<h5><i>Showing page {{ page+1 }}</i></h5>
+	<!-- No previous page -->
+	{% if page == 0 %}
+		<a href="{{ url_for('index.review_history', type=type, page=page+1) }}" class="btn btn-dark" role="button" style="float: right;">Next</a>
+	{% else %}
+		<a href="{{ url_for('index.review_history', type=type, page=page+1) }}" class="btn btn-dark" role="button" style="float: right;">Next</a><a href="{{ url_for('index.review_history', type=type, page=page-1) }}" class="btn btn-dark" role="button" style="float: right;">Previous</a>
 	{% endif %}
 
 	<table class="table table-light table-striped table-hover container">
@@ -22,34 +30,34 @@
 			<th scope="col"></th>
 			<th scope="col"></th>
 		</tr>
-		{% if reviews is not none %}
-		{% for review in reviews %}
-		<tr>
-			{% if type == 'products' %}
-			<td scope="row"><p>{{ review.product_id }}</p></td>
-			{% else %}
-			<td scope="row"><p>{{ review.seller_id }}</p></td>
-			{% endif %}
-			<td><p>{{ review.date_time }}</p></td>
-			<td><p>{{ review.rating }}</p></td>
-			<td><p>{{ review.description }}</p></td>
-			{% if type == 'products' %}
-			<td><form action="{{ url_for('reviews.write_review', object_id=review.product_id, type=type) }}" method="POST">
-				<button class = "btn btn-outline-primary inner_button" type="submit">Edit</button>
-			</form></td>
-			<td><form action="{{ url_for('reviews.delete_review', object_id=review.product_id, type=type) }}" method="POST">
-				<button class = "btn btn-outline-primary inner_button" type="submit" onclick="return confirm('Are you sure you want to delete this review?')">Delete</button>
-			</form></td>
-			{% else %}
-			<td><form action="{{ url_for('reviews.write_review', object_id=review.seller_id, type=type) }}" method="POST">
-				<button class = "btn btn-outline-primary inner_button" type="submit">Edit</button>
-			</form></td>
-			<td><form action="{{ url_for('reviews.delete_review', object_id=review.seller_id, type=type) }}" method="POST">
-				<button class = "btn btn-outline-primary inner_button" type="submit" onclick="return confirm('Are you sure you want to delete this review?')">Delete</button>
-			</form></td>
-			{% endif %}
-		</tr>
-		{% endfor %}
+		{% if exists %}
+			{% for review in reviews %}
+			<tr>
+				{% if type == 'products' %}
+				<td><p>{{ review.product_id }}</p></td>
+				{% else %}
+				<td><p>{{ review.seller_id }}</p></td>
+				{% endif %}
+				<td><p>{{ review.date_time }}</p></td>
+				<td><p>{{ review.rating }}</p></td>
+				<td><p>{{ review.description }}</p></td>
+				{% if type == 'products' %}
+				<td><form action="{{ url_for('reviews.write_review', object_id=review.product_id, type=type) }}" method="POST">
+					<button class = "btn btn-outline-primary inner_button" type="submit">Edit</button>
+				</form></td>
+				<td><form action="{{ url_for('reviews.delete_review', object_id=review.product_id, type=type) }}" method="POST">
+					<button class = "btn btn-outline-primary inner_button" type="submit" onclick="return confirm('Are you sure you want to delete this review?')">Delete</button>
+				</form></td>
+				{% else %}
+				<td><form action="{{ url_for('reviews.write_review', object_id=review.seller_id, type=type) }}" method="POST">
+					<button class = "btn btn-outline-primary inner_button" type="submit">Edit</button>
+				</form></td>
+				<td><form action="{{ url_for('reviews.delete_review', object_id=review.seller_id, type=type) }}" method="POST">
+					<button class = "btn btn-outline-primary inner_button" type="submit" onclick="return confirm('Are you sure you want to delete this review?')">Delete</button>
+				</form></td>
+				{% endif %}
+			</tr>
+			{% endfor %}
 		{% endif %}
 	</table>
 </div>

@@ -55,7 +55,7 @@
 <h2 style="margin-top: 2vh; margin-bottom: 2vh;">{{ current_user.firstname }}'s Review History:</h2>
 <div class="card-deck">
   <div class="card" style="min-width: 18rem;">
-    <div class="card-body" onclick="window.location.href='{{ url_for('index.review_history', type='products')}}'">
+    <div class="card-body" onclick="window.location.href='{{ url_for('index.review_history', page=0, type='products')}}'">
       <h5 class="card-title">Product Reviews</h5>
       <p class="card-text"><i>View your reviews from products you've purchased</i></p>
       <p class="card-text">Your Average Rating: {{ prod_stats.avg_rating|round(2, 'common') }}</p>
@@ -64,7 +64,7 @@
     </div>
   </div>
   <div class="card" style="min-width: 18rem;">
-    <div class="card-body" onclick="window.location.href='{{ url_for('index.review_history', type='sellers')}}'">
+    <div class="card-body" onclick="window.location.href='{{ url_for('index.review_history', page=0, type='sellers')}}'">
       <h5 class="card-title">Seller Reviews</h5>
       <p class="card-text"><i>View your reviews for sellers you have purchased from</i></p>
       <p class="card-text">Your Average Rating: {{ seller_stats.avg_rating|round(2, 'common') }}</p>

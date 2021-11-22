@@ -27,7 +27,7 @@ class SellerReview:
         self.avg_rating = kwargs.get('avg_rating')
 
     @staticmethod
-    def get(user_id, seller_id = None):
+    def get(user_id, offset = 0, seller_id = None):
         # If no passed in `seller_id`, then just return all reviews from that user
         if seller_id is None:
             rows = app.db.execute('''
@@ -35,16 +35,20 @@ class SellerReview:
             FROM SellerReview
             WHERE user_id = :user_id
             ORDER BY date_time DESC
+            LIMIT 10 OFFSET :offset
             ''',
-                                  user_id = user_id)
+                                  user_id = user_id,
+                                  offset = offset)
         # If `seller_id` passed in, then return review from that user for the given seller_id
         else:
             rows = app.db.execute('''
             SELECT user_id, seller_id, date_time, description, rating
             FROM SellerReview
             WHERE user_id = :user_id AND seller_id = :seller_id
+            LIMIT 10 OFFSET :offset
             ''',
                                   user_id = user_id,
+                                  offset = offset,
                                   seller_id = seller_id)
 
         # If there exists a previous review, create the object

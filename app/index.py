@@ -73,23 +73,30 @@ def purchase_history():
                            purchase_history=purchases)
 
 # review_history html
-@bp.route('/review_history/<type>', methods = ['POST', 'GET'])
-def review_history(type):
-    # If user is authenticated, go to review history for one of `products`, 'sellers'
-    if current_user.is_authenticated:
-        if type == 'products':
-            reviews = ProductReview.get(user_id = current_user.id)
-
-        else:
-            reviews = SellerReview.get(user_id = current_user.id)
-
-        return render_template('review_history.html',
-                               reviews = reviews,
-                               type = type)
-
-    # Otherwise, back to index
+@bp.route('/review_history/<type>/<page>', methods = ['POST', 'GET'])
+def review_history(type, page = 0):
+    # Get offset to query as * 10 of page number
+    # page 0 (0-9) 0, page 1 (10-19) 10, page 2 (20-29) 20
+    page = int(page)
+    offset = page * 10
+    if type == 'products':
+        reviews = ProductReview.get(user_id = current_user.id,
+                                    offset = offset)
     else:
-        return redirect(url_for('index.index'))
+        reviews = SellerReview.get(user_id = current_user.id,
+                                   offset = offset)
+    # If `reviews` is returned as a list (means there is data)
+    if isinstance(reviews, list):
+        exists = True
+    # Otherwise, just an empty object with .exists flag as False
+    else:
+        exists = reviews.exists
+
+    return render_template('review_history.html',
+                           page = page,
+                           exists = exists,
+                           reviews = reviews,
+                           type = type)
 
 # reviews_landing html
 @bp.route('/reviews_landing/<order_id>', methods = ['POST', 'GET'])

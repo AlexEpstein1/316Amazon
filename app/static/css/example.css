@@ -26,43 +26,8 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  height:40px;
+  height:35px;
   width:100%;
-}
-
-/* Dropdown Button */
-.dropbtn {
-  background-color: black;
-  color: white;
-  padding: 10px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-}
-
-/* Dropdown button on hover & focus */
-.dropbtn:hover, .dropbtn:focus {
-  background-color: #2980B9;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: relative;
-  color: black;
-  font-size: 13px;
-  right: 0;
-  overflow: auto;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
 }
 
 .btn btn-secondary dropdown-toggle {
@@ -76,24 +41,6 @@ section {
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
-}
-
-/* Links inside the dropdown */
-.dropdown-content a, .dropdown-content p {
-  color: black; /* color of text */
-  padding: 8px 10px;
-  text-decoration: none;
-  display: block;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-  background-color: #ddd
-}
-
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {
-  display: block;
 }
 
 tr:hover {
@@ -118,4 +65,9 @@ b-card.p-review {
 
 .table:hover {
   cursor: pointer;
+}
+
+.table p {
+  padding: 0px;
+  margin: 0px;
 }
