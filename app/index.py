@@ -163,3 +163,17 @@ def cart_page():
     return render_template('cart_page.html',
                            cart_content = carts,
                            total_price = price)
+
+# cart_update html
+@bp.route('/cart_update/<uid>/<sid>/<pid>/<quan>/<price>', methods = ['POST', 'GET'])
+def cart_update(uid, sid, pid, quan, price):
+
+    return render_template('cart_update.html',
+                           user_id = uid,
+                           seller_id = sid,
+                           product_id = pid,
+                           quantity = quan,
+                           price_per_item = price)
+
+
+

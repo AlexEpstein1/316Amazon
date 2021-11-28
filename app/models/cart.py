@@ -74,7 +74,7 @@ class cart:
 
     @staticmethod
     # backend method to update quantity of product in cart
-    def update_cart_product(user_id, seller_id, product_id, quantity):
+    def update_cart(user_id, seller_id, product_id, quantity):
         app.db.execute('''
         UPDATE Cart
         SET quantity = :quantity
