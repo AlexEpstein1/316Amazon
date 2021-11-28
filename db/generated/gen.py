@@ -39,27 +39,6 @@ def gen_users(num_users):
             lastname = name_components[-1]
             balance = random.random()*10000
             writer.writerow([uid, email, password, firstname, lastname, balance])
-<<<<<<< HEAD
-        print(f'{num_users} generated')
-    return
-
-def gen_Sellers(num_users):
-    with open('Sellers.csv', 'w') as f:
-        writer = get_csv_writer(f)
-        print('Sellers...', end=' ', flush=True)
-        for uid in range(num_users):
-            writer.writerow([uid])
-        print(f'{num_users} generated')
-    return
-
-def gen_Buyers(num_users):
-    with open('Buyers.csv', 'w') as f:
-        writer = get_csv_writer(f)
-        print('Buyers...', end=' ', flush=True)
-        for uid in range(num_users):
-            writer.writerow([uid])
-=======
->>>>>>> f397c735cc9969d852fe9a3fd205abdca22e0894
         print(f'{num_users} generated')
     return
 
