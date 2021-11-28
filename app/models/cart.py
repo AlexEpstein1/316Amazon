@@ -23,7 +23,7 @@ class cart:
         self.price_per_item = price_per_item
     
     @staticmethod
-    # method to get the exact input in the cart 
+    # method to get the exact line in the cart 
     def get(user_id, seller_id, product_id):
         rows = app.db.execute('''
             SELECT user_id, seller_id, product_id, quantity, price_per_item
@@ -46,7 +46,7 @@ class cart:
 
     
     @staticmethod
-    #method to calculate the total price of products in the cart 
+    # method to calculate the total price of products in the cart 
     def get_total_price(user_id):
         total = 0
         cart_content = cart.get_all_cart_input(user_id)
@@ -55,5 +55,42 @@ class cart:
             total += c.price_per_item*c.quantity
         
         return total
+
+    @staticmethod
+    # backend method to add product to cart of a user
+    def add_to_cart(user_id, seller_id, product_id, quantity):
+        price_per_item = app.db.execute('''
+            SELECT price
+            FROM SellsItem
+            WHERE product_id = :product_id AND seller_id = :seller_id
+            ''',
+                              product_id = product_id, seller_id = seller_id)
+        app.db.execute('''
+            INSERT INTO Cart(user_id, seller_id, product_id, quantity, price_per_item)
+            VALUES(:user_id, :seller_id, :product_id, :quantity, :price_per_item)
+            RETURNING user_id
+            ''',
+                              user_id = user_id, seller_id = seller_id, product_id = product_id)
+
+    @staticmethod
+    # backend method to update quantity of product in cart
+    def update_cart_product(user_id, seller_id, product_id, quantity):
+        app.db.execute('''
+        UPDATE Cart
+        SET quantity = :quantity
+        WHERE user_id = :user_id AND seller_id = :seller_id AND product_id = :product_id
+        RETURNING user_id
+            ''',
+                              user_id = user_id, seller_id = seller_id, product_id = product_id)
+
+    @staticmethod
+    # backend method to remove product in cart
+    def remove_product_in_cart(user_id, seller_id, product_id):
+        app.db.execute('''
+        DELETE FROM Cart
+        WHERE user_id = :user_id AND seller_id = :seller_id AND product_id = :product_id
+        RETURNING user_id
+            ''',
+                              user_id = user_id, seller_id = seller_id, product_id = product_id)
         
 
