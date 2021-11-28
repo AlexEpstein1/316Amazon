@@ -39,6 +39,7 @@ def gen_users(num_users):
             lastname = name_components[-1]
             balance = random.random()*10000
             writer.writerow([uid, email, password, firstname, lastname, balance])
+<<<<<<< HEAD
         print(f'{num_users} generated')
     return
 
@@ -57,6 +58,8 @@ def gen_Buyers(num_users):
         print('Buyers...', end=' ', flush=True)
         for uid in range(num_users):
             writer.writerow([uid])
+=======
+>>>>>>> f397c735cc9969d852fe9a3fd205abdca22e0894
         print(f'{num_users} generated')
     return
 
@@ -191,8 +194,6 @@ def gen_SellerReview(num_seller_review):
 
 
 gen_users(num_users)
-gen_Sellers(num_users)
-gen_Buyers(num_users)
 available_category = gen_category(num_category);
 product_dict = gen_products(num_products, available_category)
 gen_purchases(num_purchases, product_dict)

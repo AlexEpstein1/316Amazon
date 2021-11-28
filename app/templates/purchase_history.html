@@ -5,6 +5,7 @@
 <div class="main">
     {% if current_user.is_authenticated %}
     <h2 style="margin-top: 2vh; margin-bottom: 2vh;">{{ current_user.firstname }}'s Purchase History:</h2>
+    <h5><i>Click on any product to write a review</i></h5>
     <table class="table table-light table-striped table-hover container">
     <thead class="thead-dark">
         <tr>
@@ -19,12 +20,12 @@
     </thead>
     <tbody>
         {% for purchase in purchase_history %}
-        <tr>
+        <tr onclick="window.location.href='{{ url_for('index.reviews_landing', order_id=purchase.order_id) }}'">
         <th scope="row">{{ purchase.order_id }}</th>
         <td>{{ purchase.product_id }}</td>
         <td>{{ purchase.quantity }}</td>
         <td>{{ purchase.seller_id }}</td>
-        <td>{{ purchase.payment_amount }}</td>
+        <td>${{ purchase.payment_amount }}</td>
         <td>{{ purchase.status }}</td>
         <td>{{ purchase.time_purchased }}</td>
         </tr>
@@ -37,5 +38,7 @@
     </div>
     {% endif %}
 </div>
+
+<br><br>
 
 {% endblock %}

@@ -1,6 +1,8 @@
 from flask_login import UserMixin
 from flask import current_app as app
 from werkzeug.security import generate_password_hash, check_password_hash
+from app import db
+
 
 from .. import login
 
@@ -69,3 +71,4 @@ WHERE id = :id
 """,
                               id=id)
         return User(*(rows[0])) if rows else None
+

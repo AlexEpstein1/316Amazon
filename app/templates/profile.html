@@ -11,8 +11,9 @@
 		<h5 style="font-size: 24px">Current balance: <b>${{ current_user.balance }}</b></h5>
 		<h5><a href="{{ url_for('users.logout') }}">Cart</a></h5>
 		<h5><a href="{{ url_for('users.logout') }}">Add Balance</a></h5>
-		<h5><a href="{{ url_for('users.logout') }}">Purchase History</a></h5>
-		<h5><a href="{{ url_for('index.review_history') }}">Review History</a></h5>
+		<h5><a href="{{ url_for('index.purchase_history') }}">Purchase History</a></h5>
+		<h5><a href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a></h5>
+		<h5><a href="{{ url_for('index.inventory') }}">Seller Inventory</a></h5>
 		<h5><a href="{{ url_for('index.index') }}">Back to Front Page</a></h5>
 	</div>
 {% endblock %}

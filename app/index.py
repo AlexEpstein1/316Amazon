@@ -3,6 +3,9 @@ from flask_login import current_user
 import datetime
 
 from .models.product import Product
+from .models.product import ProductSummary
+from .models.product_sellers import SellerSummary
+from .models.inventory import Inventory
 from .models.purchase import Purchase
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
@@ -12,7 +15,6 @@ from flask import Blueprint
 bp = Blueprint('index', __name__)
 
 # index html
-
 def get_avg(id):
     reviews = ProductReviewWithName.get_reviews(product_id=id)
     avg_rating = 0
@@ -71,57 +73,77 @@ def purchase_history():
                            purchase_history=purchases)
 
 # review_history html
-@bp.route('/review_history')
-def review_history():
-    # if user is authenticated, go to home profile
-    if current_user.is_authenticated:
-        reviews = ProductReview.get(user_id = current_user.id)
-        # print(reviews[0])
-        return render_template('review_history.html',
-                               reviews=reviews)
-    # otherwise, back to index
+@bp.route('/review_history/<type>/<page>', methods = ['POST', 'GET'])
+def review_history(type, page = 0):
+    # Get offset to query as * 10 of page number
+    # page 0 (0-9) 0, page 1 (10-19) 10, page 2 (20-29) 20
+    page = int(page)
+    offset = page * 10
+    if type == 'products':
+        product_id = ''
+        reviews = ProductReview.get(user_id = current_user.id,
+                                    offset = offset)
+    elif type == 'sellers':
+        product_id = ''
+        reviews = SellerReview.get(user_id = current_user.id,
+                                   offset = offset)
+    elif type == 'product_history':
+        product_id = request.args.get('product_id')
+        reviews = ProductReview.get(user_id = None,
+                                    product_id = product_id,
+                                    offset = offset)
+    # If `reviews` is returned as a list (means there is data)
+    if isinstance(reviews, list):
+        exists = True
+    # Otherwise, just an empty object with .exists flag as False
     else:
+        exists = reviews.exists
+
+    return render_template('review_history.html',
+                           page = page,
+                           exists = exists,
+                           product_id = product_id,
+                           reviews = reviews,
+                           type = type)
+
+# reviews_landing html
+@bp.route('/reviews_landing/<order_id>', methods = ['POST', 'GET'])
+def reviews_landing(order_id):
+    # If just a landing page to view either product or seller reviews
+    if order_id == 'nav':
+        # Get user information on their review history
+        prod_stats = ProductReview.get_review_stats(user_id = current_user.id)
+        seller_stats = SellerReview.get_review_stats(user_id = current_user.id)
+
+        return render_template('reviews_landing.html',
+                               prod_stats = prod_stats,
+                               seller_stats = seller_stats)
+    # Else, get the specific purchase to review
+    purchase = Purchase.get_all_by_buyer_id(buyer_id = current_user.id,
+                                            order_id = order_id)
+    # This should never happen
+    if purchase is None:
         return redirect(url_for('index.index'))
 
-    return render_template('index.html',
-                           # message=message,
-                           avail_products=products,
-                           purchase_history=purchases)
+    # Get product and seller summary statistics
+    product_summary = ProductSummary.get(product_id = purchase[0].product_id)
+    seller_summary = SellerSummary.get(seller_id = purchase[0].seller_id)
 
-# direct to front-end submit product review
-@bp.route('/write_prod_review/<product_id>', methods = ['POST', 'GET'])
-def write_prod_review(product_id):
-    # print(product_id)
+    return render_template('reviews_landing.html',
+                           purchase = purchase[0],
+                           product_summary = product_summary[0],
+                           seller_summary = seller_summary[0])
 
-    products = Product.get_all(available=False, id=product_id)
-    # print(products)
+@bp.route('/inventory')
+def inventory():
+    # if user is authenticated, go to home profile
+    inventory = Inventory.get_all(available=True)
+    # find the products current user has bought:
+    if current_user.is_authenticated:
+        purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
+                                                       since = datetime.datetime(1980, 9, 14, 0, 0, 0))
+    else:
+        purchases = None
 
-    return render_template('submit_prod_review.html',
-                           product_id = product_id,
-                           products = products[0],
-                           review_submitted = False)
-# backend for submit product review
-@bp.route('/add_prod_review/<product_id>/', methods = ['POST', 'GET'])
-def add_prod_review(product_id):
-    # print(product_id)
-    # print(request.form)
-    # product_review = ProductReview.get(user_id = current_user.id)
-    # print(product_review)
-    result = ProductReview.add_prod_review(request = request,
-                                           product_id = product_id)
-
-    products = Product.get_all(available = False, id = product_id)
-
-    return render_template('submit_prod_review.html',
-                           product_id = product_id,
-                           products = products[0],
-                           review_submitted = True,
-                           result = result)
-
-# backend for deleting product review
-@bp.route('/delete_prod_review/<product_id>/', methods = ['POST', 'GET'])
-def delete_prod_review(product_id):
-
-    result = ProductReview.delete_review(product_id = product_id)
-    print(result)
-    return redirect(url_for('index.review_history'))
+    return render_template('inventory.html',
+                           sold_products=inventory)

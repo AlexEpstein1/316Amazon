@@ -23,15 +23,27 @@ WHERE order_id = :order_id
         return Purchase(*(rows[0])) if rows else None
 
     @staticmethod
-    def get_all_by_buyer_id(buyer_id):
-        rows = app.db.execute('''
-SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
-FROM Purchases
-WHERE buyer_id = :buyer_id
-ORDER BY time_purchased DESC
-''',
-                              buyer_id=buyer_id)
-        return [Purchase(*row) for row in rows]
+    def get_all_by_buyer_id(buyer_id, order_id = None):
+
+        if order_id is None:
+            rows = app.db.execute('''
+            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+            FROM Purchases
+            WHERE buyer_id = :buyer_id
+            ORDER BY time_purchased DESC
+            ''',
+                                          buyer_id=buyer_id)
+        else:
+            rows = app.db.execute('''
+            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+            FROM Purchases
+            WHERE buyer_id = :buyer_id AND order_id = :order_id
+            ORDER BY time_purchased DESC
+            ''',
+                                          buyer_id=buyer_id,
+                                          order_id=order_id)
+
+        return [Purchase(*row) for row in rows] if rows else None
 
     @staticmethod
     def get_all_by_buyer_id_since(buyer_id, since):
@@ -45,5 +57,3 @@ ORDER BY time_purchased DESC
                               buyer_id=buyer_id,
                               since=since)
         return [Purchase(*row) for row in rows]
-
-    
