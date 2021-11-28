@@ -23,6 +23,7 @@ class cart:
         self.price_per_item = price_per_item
     
     @staticmethod
+    # method to get the exact input in the cart 
     def get(user_id, seller_id, product_id):
         rows = app.db.execute('''
             SELECT user_id, seller_id, product_id, quantity, price_per_item
@@ -33,6 +34,7 @@ class cart:
         return cart(*(rows[0])) if rows else None   
 
     @staticmethod
+    # get all cart input of a user
     def get_all_cart_input(user_id):
         rows = app.db.execute('''
             SELECT user_id, seller_id, product_id, quantity, price_per_item
@@ -41,3 +43,17 @@ class cart:
             ''',
                               user_id = user_id)
         return [cart(*row) for row in rows]
+
+    
+    @staticmethod
+    #method to calculate the total price of products in the cart 
+    def get_total_price(user_id):
+        total = 0
+        cart_content = cart.get_all_cart_input(user_id)
+        
+        for c in cart_content:
+            total += c.price_per_item*c.quantity
+        
+        return total
+        
+

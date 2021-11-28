@@ -156,8 +156,10 @@ def cart_page():
     # find the products current user has bought:
     if current_user.is_authenticated:
         carts = cart.get_all_cart_input(user_id = current_user.id)
+        price = cart.get_total_price(user_id = current_user.id)
     else:
         carts = None
 
     return render_template('cart_page.html',
-                           cart_content = carts)
+                           cart_content = carts,
+                           total_price = price)

@@ -2,19 +2,6 @@
 
 {% block content %}
 
-
-'''
---- Carts Guru
--- Cart
-CREATE TABLE Cart (
-	user_id INT NOT NULL REFERENCES Users(id),
-	seller_id INT NOT NULL REFERENCES Users(id),
-	product_id INT NOT NULL REFERENCES Products(id),
-	quantity INT NOT NULL CHECK(quantity >= 0),
-	price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
-	PRIMARY KEY(user_id, seller_id, product_id)
-);
-'''
 <div class="main">
     {% if current_user.is_authenticated %}
     <h2 style="margin-top: 2vh; margin-bottom: 2vh;">{{ current_user.firstname }}'s Cart:</h2>
@@ -38,6 +25,7 @@ CREATE TABLE Cart (
         {% endfor %}
     </tbody>
     </table>
+    <h5 style="font-size: 24px">Total Price: <b>${{ total_price }}</b></h5>
     {% else %}
     <div>
     <p><a href="{{ url_for('users.register') }}" class="btn btn-dark" role="button">Register</a>&nbsp;<a href="{{ url_for('users.login') }}" class="btn btn-dark" role="button">Log in</a></p>
