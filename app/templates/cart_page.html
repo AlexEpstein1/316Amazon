@@ -25,12 +25,11 @@ CREATE TABLE Cart (
         <th scope="col">Seller ID</th>
         <th scope="col">Product ID</th>
         <th scope="col">Quantity</th>
-        <th scope="col">Price ID</th>
+        <th scope="col">Price</th>
         </tr>
     </thead>
     <tbody>
-        {% for cart in cart %}
-        <th scope="row">{{ cart.user_id }}</th>
+        {% for cart in cart_content %}
         <td>{{ cart.seller_id }}</td>
         <td>{{ cart.product_id }}</td>
         <td>{{ cart.quantity }}</td>

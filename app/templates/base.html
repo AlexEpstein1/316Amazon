@@ -87,7 +87,7 @@
           <p style="font-size: 16px">Current balance: <b>${{ current_user.balance }}</b></p>
           <a class="dropdown-item" href="{{ url_for('index.index') }}">Home Page</a>
           <a class="dropdown-item" href="{{ url_for('index.profile') }}">View Profile</a>
-          <a class="dropdown-item" href="{{ url_for('users.logout') }}">View Cart</a>
+          <a class="dropdown-item" href="{{ url_for('index.cart_page') }}">View Cart</a>
           <a class="dropdown-item" href="{{ url_for('users.logout') }}">Add Balance</a>
           <a class="dropdown-item" href="{{ url_for('index.purchase_history') }}">Purchase History</a>
           <a class="dropdown-item" href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a>

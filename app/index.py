@@ -10,6 +10,8 @@ from .models.purchase import Purchase
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
+from .models.cart import cart
+
 
 from flask import Blueprint
 bp = Blueprint('index', __name__)
@@ -147,3 +149,15 @@ def inventory():
 
     return render_template('inventory.html',
                            sold_products=inventory)
+
+# cart_page html
+@bp.route('/cart_page')
+def cart_page():
+    # find the products current user has bought:
+    if current_user.is_authenticated:
+        carts = cart.get_all_cart_input(user_id = current_user.id)
+    else:
+        carts = None
+
+    return render_template('cart_page.html',
+                           cart_content = carts)
