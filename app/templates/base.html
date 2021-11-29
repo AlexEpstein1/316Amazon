@@ -27,7 +27,9 @@
     height: 100%;
     background-color: #373F51;
     overflow-x: hidden;
+    /* overflow: visible; */
     padding-top: 20px;
+    padding-bottom: 20px;
     padding-left: 2vw;
     padding-right: 2vw;
   }
@@ -76,19 +78,20 @@
     <input type="text" placeholder="Search...">
     <div style="color:black; text-align: right; margin-bottom: 25px; float: right;">
       {% if current_user.is_authenticated %}
+
       <div class="dropdown">
-        <button class="dropbtn" onclick="openDropdown('user_drop')">Hi {{ current_user.firstname }}!
-          <i class="fa fa-caret-down"></i>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false">
+          Hi {{ current_user.firstname }}!
         </button>
-        <div class="dropdown-content" id="user_drop">
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
           <p style="font-size: 16px">Current balance: <b>${{ current_user.balance }}</b></p>
-          <a href="{{ url_for('index.index') }}">Home Page</a>
-          <a href="{{ url_for('index.profile') }}">View Profile</a>
-          <a href="{{ url_for('users.logout') }}">View Cart</a>
-          <a href="{{ url_for('users.logout') }}">Add Balance</a>
-          <a href="{{ url_for('index.purchase_history') }}">Purchase History</a>
-          <a href="{{ url_for('index.review_history') }}">Review History</a>
-          <a href="{{ url_for('index.inventory') }}">Browse Sellers</a>
+          <a class="dropdown-item" href="{{ url_for('index.index') }}">Home Page</a>
+          <a class="dropdown-item" href="{{ url_for('index.profile') }}">View Profile</a>
+          <a class="dropdown-item" href="{{ url_for('index.cart_page') }}">View Cart</a>
+          <a class="dropdown-item" href="{{ url_for('users.logout') }}">Add Balance</a>
+          <a class="dropdown-item" href="{{ url_for('index.purchase_history') }}">Purchase History</a>
+          <a class="dropdown-item" href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a>
+          <a class="dropdown-item" href="{{ url_for('index.inventory') }}">Browse Sellers</a>
         </div>
       </div>
       <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
