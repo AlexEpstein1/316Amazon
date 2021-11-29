@@ -10,10 +10,6 @@
 \COPY ProductReview FROM 'data/ProductReview.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY SellerReview FROM 'data/SellerReview.csv' WITH DELIMITER ',' NULL '' CSV
 */
-<<<<<<< HEAD
-=======
-
->>>>>>> f397c735cc9969d852fe9a3fd205abdca22e0894
 
 \COPY Users FROM 'generated/Users.csv' WITH DELIMITER ',' NULL '' CSV
 -- \COPY Buyers FROM 'generated/Buyers.csv' WITH DELIMITER ',' NULL '' CSV
