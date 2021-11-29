@@ -176,15 +176,25 @@ def cart_update(uid, sid, pid, quan, price):
                            price_per_item = price)
 
 
+# delete_cart_element
 @bp.route('/delete_cart_element/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def delete_cart_element(user_id, seller_id, product_id):
     cart.remove_product_in_cart(user_id = user_id, seller_id = seller_id, product_id = product_id)
 
     return redirect(url_for('index.cart_page'))
 
+#update_cart_quantity
 @bp.route('/update_cart_quantity/<user_id>/<seller_id>/<product_id>/<quantity>/', methods = ['POST', 'GET'])
 def update_cart_quantity(user_id, seller_id, product_id, quantity):
-    cart.update_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = 5)
+    cart.update_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
+
+    return redirect(url_for('index.cart_page'))
+
+#update_cart_quantity
+@bp.route('/purchase_from_cart/<user_id>/', methods = ['POST', 'GET'])
+def purchase_from_cart(user_id):
+    if cart.check_order(user_id = user_id): 
+        cart.make_cart_order(user_id = user_id)
 
     return redirect(url_for('index.cart_page'))
 

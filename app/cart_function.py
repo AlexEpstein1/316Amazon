@@ -19,3 +19,6 @@ def delete_cart_element(user_id, seller_id, product_id):
 
     return redirect(url_for('index.cart_page'))
 
+
+
+

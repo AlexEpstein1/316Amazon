@@ -25,15 +25,22 @@
         <td>{{ cart.quantity }}</td>
         <td>{{ cart.price_per_item }}</td>
         <td>
-        <form action="{{ url_for('index.delete_cart_element', user_id=user_id, seller_id=seller_id, product_id=product_id) }}" method="POST">
-            <button class = "btn btn-outline-primary inner_button" type="submit">Delete</button></form>
+        <form action="{{ url_for('index.delete_cart_element', user_id=cart.user_id, seller_id=cart.seller_id, product_id=cart.product_id) }}" method="POST">
+            <button class = "btn btn-outline-primary inner_button" type="submit">Delete</button>
+        </form>
         <form action="{{ url_for('index.cart_update', uid = cart.user_id, sid = cart.seller_id, pid = cart.product_id, quan = cart.quantity, price = cart.price_per_item) }}" method="POST">
-            <button class = "btn btn-outline-primary inner_button" type="submit">Update Quantity</button></form>
+            <button class = "btn btn-outline-primary inner_button" type="submit">Update Quantity</button>
+        </form>
         </td>
         {% endfor %}
     </tbody>
     </table>
     <h5 style="font-size: 24px">Total Price: <b>${{ total_price }}</b></h5>
+    <form action="{{ url_for('index.purchase_from_cart', user_id = current_user.id) }}" method="POST">
+        <button class = "btn btn-outline-primary inner_button" type="submit">Submit Order</button>
+    </form>
+
+    
     {% else %}
     <div>
     <p><a href="{{ url_for('users.register') }}" class="btn btn-dark" role="button">Register</a>&nbsp;<a href="{{ url_for('users.login') }}" class="btn btn-dark" role="button">Log in</a></p>
