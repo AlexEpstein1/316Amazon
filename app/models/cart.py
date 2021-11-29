@@ -94,5 +94,35 @@ class cart:
         RETURNING user_id
             ''',
                               user_id = user_id, seller_id = seller_id, product_id = product_id)
+
+    @staticmethod
+    # backend method to check if an order could be made
+    def check_order(user_id):
+        cart_content = cart.get_all_cart_input(user_id)
+        total_price = cart.get_total_price(user_id)
+        balance = app.db.execute('''
+        SELECT balance
+        FROM Users
+        WHERE user_id = :user_id 
+        RETURNING balance
+            ''',
+                              user_id = user_id)
+
+        if(balance < total_price): return False
+        for c in cart_content:
+            available = app.db.execute('''
+                    SELECT stock
+                    FROM SellsItem
+                    WHERE seller_id = :c.seller_id AND product_id = :c.product_id
+                    RETURNING stock
+                    ''',
+                                seller_id = c.seller_id, product_id = c.product_id)
+            if(balance < c.quantity): return False
         
+        return True
+
+
+        
+
+
 
