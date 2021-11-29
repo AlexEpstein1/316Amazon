@@ -49,7 +49,7 @@ CREATE TABLE Cart (
 	user_id INT NOT NULL REFERENCES Users(id),
 	seller_id INT NOT NULL REFERENCES Users(id),
 	product_id INT NOT NULL REFERENCES Products(id),
-	quantity INT NOT NULL ,
+	quantity INT NOT NULL CHECK(quantity >= 0),
 	price_per_item DECIMAL(10, 2) NOT NULL CHECK(price_per_item >= 0),
 	PRIMARY KEY(user_id, seller_id, product_id)
 );

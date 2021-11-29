@@ -3,6 +3,7 @@ import csv
 import random
 from faker import Faker
 
+
 num_users = 200
 num_category = 30
 num_products = 1000
