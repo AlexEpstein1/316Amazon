@@ -59,6 +59,7 @@ class cart:
     @staticmethod
     # backend method to add product to cart of a user
     def add_to_cart(user_id, seller_id, product_id, quantity):
+        quant = int(quantity)
         price_per_item = app.db.execute('''
             SELECT price
             FROM SellsItem
@@ -70,18 +71,19 @@ class cart:
             VALUES(:user_id, :seller_id, :product_id, :quantity, :price_per_item)
             RETURNING user_id
             ''',
-                              user_id = user_id, seller_id = seller_id, product_id = product_id)
+                              user_id = user_id, seller_id = seller_id, product_id = product_id, quantity=quantity, price_per_item=price_per_item)
 
     @staticmethod
     # backend method to update quantity of product in cart
     def update_cart(user_id, seller_id, product_id, quantity):
+        quantity = int(quantity)
         app.db.execute('''
         UPDATE Cart
         SET quantity = :quantity
         WHERE user_id = :user_id AND seller_id = :seller_id AND product_id = :product_id
         RETURNING user_id
             ''',
-                              user_id = user_id, seller_id = seller_id, product_id = product_id)
+                              user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
 
     @staticmethod
     # backend method to remove product in cart

@@ -176,4 +176,15 @@ def cart_update(uid, sid, pid, quan, price):
                            price_per_item = price)
 
 
+@bp.route('/delete_cart_element/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
+def delete_cart_element(user_id, seller_id, product_id):
+    cart.remove_product_in_cart(user_id = user_id, seller_id = seller_id, product_id = product_id)
+
+    return redirect(url_for('index.cart_page'))
+
+@bp.route('/update_cart_quantity/<user_id>/<seller_id>/<product_id>/<quantity>/', methods = ['POST', 'GET'])
+def update_cart_quantity(user_id, seller_id, product_id, quantity):
+    cart.update_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = 5)
+
+    return redirect(url_for('index.cart_page'))
 

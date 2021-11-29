@@ -5,7 +5,7 @@
 
 <div class="main">
     {% if current_user.is_authenticated %}
-    <h2 style="margin-top: 2vh; margin-bottom: 2vh;">{{ current_user.firstname }}'s Cart:</h2>
+    <h1>Update Product Quantity</h1>
     <table class="table table-light table-striped table-hover container">
     <thead class="thead-dark">
         <tr>
@@ -23,6 +23,13 @@
         </tr>
     </tbody>
     </table>
+
+    <form action="{{ url_for('index.update_cart_quantity', user_id=user_id, seller_id=seller_id, product_id=product_id, quantity = quantity) }}" method="POST">
+        <label for="quantity">New Quantity:</label>
+        <input type="number" id="quantity" name="quantity" required step=1 min=1 value = quantity><br><br>
+        <input type="submit" value="Update">
+    </form>
+
     {% else %}
     <div>
     <p><a href="{{ url_for('users.register') }}" class="btn btn-dark" role="button">Register</a>&nbsp;<a href="{{ url_for('users.login') }}" class="btn btn-dark" role="button">Log in</a></p>
