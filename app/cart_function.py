@@ -15,6 +15,7 @@ bp = Blueprint('cart_function', __name__)
 
 @bp.route('/delete_cart_element/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def delete_cart_element(user_id, seller_id, product_id):
+    # request.method == 'POST"
     cart.remove_product_in_cart(user_id = user_id, seller_id = seller_id, product_id = product_id)
 
     return redirect(url_for('index.cart_page'))

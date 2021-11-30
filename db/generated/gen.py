@@ -2,6 +2,7 @@ from werkzeug.security import generate_password_hash
 import csv
 import random
 from faker import Faker
+import datetime
 
 
 num_users = 200
@@ -92,8 +93,22 @@ def gen_purchases(num_purchases, product_dict):
             uid = fake.random_int(min=0, max=num_users-1)
             sid = fake.random_int(min=0, max=num_users-1)
             pid = fake.random_element(elements=product_dict.keys())
-            status = fake.random_element(elements=status_list)
             time_purchased = fake.date_time()
+            month = (time_purchased.month + 1)%13
+            if(month == 0): 
+                month = 1
+                year = time_purchased.year + 1
+            else: 
+                year = time_purchased.year
+            day = time_purchased.day
+            if(day > 28):
+                day = time_purchased.day -3
+        
+            time_processed = datetime.datetime(year, month, day, time_purchased.hour,
+            time_purchased.minute, time_purchased.second) # Assumed orders are typically processed in a month but may vary between 27 to 31 days
+            if time_processed > datetime.datetime.now(tz=None): 
+                status = 'Incomplete'
+            else: status = 'Complete'
             quantity = fake.random_int(min=0, max=max_purchase_unit)
             payment_amount = float(product_dict.get(pid)) * int(quantity)
             writer.writerow([id, pid, uid, sid, payment_amount, quantity, time_purchased, status])
@@ -109,7 +124,7 @@ def gen_cart(num_cart, product_dict):
             uid = fake.random_int(min=0, max=num_users-1)
             sid = fake.random_int(min=0, max=num_users-1)
             pid = fake.random_element(elements=product_dict.keys())
-            quantity = fake.random_int(min=0, max=max_purchase_unit)
+            quantity = fake.random_int(min=1, max=max_purchase_unit)
             price = product_dict.get(pid)
             key = [uid, sid, pid]
             if key not in cart_id:
