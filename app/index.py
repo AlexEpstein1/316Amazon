@@ -184,8 +184,9 @@ def delete_cart_element(user_id, seller_id, product_id):
     return redirect(url_for('index.cart_page'))
 
 #update_cart_quantity
-@bp.route('/update_cart_quantity/<user_id>/<seller_id>/<product_id>/<quantity>/', methods = ['POST', 'GET'])
-def update_cart_quantity(user_id, seller_id, product_id, quantity):
+@bp.route('/update_cart_quantity/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
+def update_cart_quantity(user_id, seller_id, product_id):
+    quantity = request.form['quantity']
     cart.update_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
 
     return redirect(url_for('index.cart_page'))
