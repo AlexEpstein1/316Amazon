@@ -41,6 +41,7 @@ CREATE TABLE Purchases (
 	payment_amount DECIMAL(10, 2) NOT NULL,
 	quantity INT NOT NULL CHECK(quantity >= 0),
 	time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+	time_processed timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
 	status VARCHAR(12) CHECK (status IN ('Complete', 'Incomplete'))
 );
 --- Carts Guru
@@ -75,7 +76,7 @@ CREATE TABLE ProductReview (
 	description VARCHAR(256) NOT NULL,
 	rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
 	PRIMARY KEY (user_id, product_id)
-	FOREIGN KEY (user_id, product_id) REFERENCES Purchases(buyer_id, product_id)
+	-- FOREIGN KEY (user_id, product_id) REFERENCES Purchases(buyer_id, product_id)
 );
 -- Reviews of Sellers
 CREATE TABLE SellerReview (
@@ -85,7 +86,7 @@ CREATE TABLE SellerReview (
 	description VARCHAR(256) NOT NULL,
 	rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
 	PRIMARY KEY (user_id, seller_id)
-	FOREIGN KEY (user_id, seller_id) REFERENCES Purchases(buyer_id, seller_id)
+	-- FOREIGN KEY (user_id, seller_id) REFERENCES Purchases(buyer_id, seller_id)
 );
 
 -- View of product summary statistics

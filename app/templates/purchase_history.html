@@ -5,6 +5,7 @@
 <div class="main">
     {% if current_user.is_authenticated %}
     <h2 style="margin-top: 2vh; margin-bottom: 2vh;">{{ current_user.firstname }}'s Purchase History:</h2>
+    <h4><i>Delivered Products</i></h4>
     <h5><i>Click on any product to write a review</i></h5>
     <table class="table table-light table-striped table-hover container">
     <thead class="thead-dark">
