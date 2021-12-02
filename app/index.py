@@ -69,11 +69,15 @@ def purchase_history():
     # find the products current user has bought:
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_buyer_id(buyer_id = current_user.id)
+        complete_purchases = Purchase.get_all_by_buyer_id_completed(buyer_id = current_user.id)
+        incomplete_purchases = Purchase.get_all_by_buyer_id_incomplete(buyer_id = current_user.id)
     else:
         purchases = None
 
     return render_template('purchase_history.html',
-                           purchase_history=purchases)
+                           purchase_history=purchases,
+                           complete_purchases= complete_purchases,
+                           incomplete_purchases = incomplete_purchases)
 
 # review_history html
 @bp.route('/review_history/<type>/<page>', methods = ['POST', 'GET'])

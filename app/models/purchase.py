@@ -11,6 +11,7 @@ class Purchase:
         self.payment_amount = payment_amount
         self.quantity = quantity
         self.time_purchased = time_purchased
+        #self.time_processed = time_processed
         self.status = status
 
     @staticmethod
@@ -62,11 +63,13 @@ ORDER BY time_purchased DESC
     @staticmethod
     def update_order_status(buyer_id):
         status = 'Complete'
-        time = datetime.now - timedelta(month =1)
+        time = datetime.now(tz=None) - timedelta(weeks= 2 )
+
         app.db.execute('''
             Update Purchases
-            SET status = :staus
+            SET status = :status
             WHERE buyer_id = :buyer_id AND time_purchased >= :time
+            RETURNING buyer_id
             ''',
                               buyer_id=buyer_id,
                               status = status,
@@ -81,7 +84,7 @@ ORDER BY time_purchased DESC
 SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
 FROM Purchases
 WHERE buyer_id = :buyer_id
-AND status = status
+AND status = :status
 ORDER BY time_purchased DESC
 ''',
                               buyer_id=buyer_id,
@@ -96,7 +99,7 @@ ORDER BY time_purchased DESC
 SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
 FROM Purchases
 WHERE buyer_id = :buyer_id
-AND status = status
+AND status = :status
 ORDER BY time_purchased DESC
 ''',
                               buyer_id=buyer_id,
