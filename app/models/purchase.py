@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import current_app as app
 
 
@@ -57,3 +58,48 @@ ORDER BY time_purchased DESC
                               buyer_id=buyer_id,
                               since=since)
         return [Purchase(*row) for row in rows]
+
+    @staticmethod
+    def update_order_status(buyer_id):
+        status = 'Complete'
+        time = datetime.now - timedelta(month =1)
+        app.db.execute('''
+            Update Purchases
+            SET status = :staus
+            WHERE buyer_id = :buyer_id AND time_purchased >= :time
+            ''',
+                              buyer_id=buyer_id,
+                              status = status,
+                              time=time)
+
+    
+    @staticmethod
+    def get_all_by_buyer_id_completed(buyer_id):
+        status = 'Complete'
+
+        rows = app.db.execute('''
+SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+FROM Purchases
+WHERE buyer_id = :buyer_id
+AND status = status
+ORDER BY time_purchased DESC
+''',
+                              buyer_id=buyer_id,
+                              status=status)
+        return [Purchase(*row) for row in rows]
+
+    @staticmethod
+    def get_all_by_buyer_id_incomplete(buyer_id):
+        status = 'Incomplete'
+
+        rows = app.db.execute('''
+SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+FROM Purchases
+WHERE buyer_id = :buyer_id
+AND status = status
+ORDER BY time_purchased DESC
+''',
+                              buyer_id=buyer_id,
+                              status=status)
+        return [Purchase(*row) for row in rows]
+
