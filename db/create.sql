@@ -41,7 +41,7 @@ CREATE TABLE Purchases (
 	payment_amount DECIMAL(10, 2) NOT NULL,
 	quantity INT NOT NULL CHECK(quantity >= 0),
 	time_purchased timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-	time_processed timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
+	time_processed timestamp without time zone NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
 	status VARCHAR(12) CHECK (status IN ('Complete', 'Incomplete'))
 );
 --- Carts Guru
