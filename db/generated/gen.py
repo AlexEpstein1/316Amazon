@@ -78,7 +78,7 @@ def gen_products(num_products, available_category):
             if name not in product_name:
                 product_dict[pid] = price
                 product_name.append(name)
-                writer.writerow([pid, name, cat_name, price, product_description, img, available])
+                writer.writerow([pid, name, cat_name, product_description, img, available])
         print(f'{num_products} generated; {len(product_dict)} available')
     return product_dict
 
