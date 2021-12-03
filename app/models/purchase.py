@@ -3,7 +3,7 @@ from flask import current_app as app
 
 
 class Purchase:
-    def __init__(self, order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status):
+    def __init__(self, order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status, time_processed):
         self.order_id = order_id
         self.product_id = product_id
         self.buyer_id = buyer_id
@@ -11,7 +11,7 @@ class Purchase:
         self.payment_amount = payment_amount
         self.quantity = quantity
         self.time_purchased = time_purchased
-        #self.time_processed = time_processed
+        self.time_processed = time_processed
         self.status = status
 
     @staticmethod
