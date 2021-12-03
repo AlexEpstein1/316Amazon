@@ -42,9 +42,9 @@ Filtering on: {{cat_name}}
       <th scope="row">{{ product.id }}</th>
       <td>{{ product.name }}</td>
       <td>{{ product.cat_name }}</td>
-      <td>${{ product.price|round(2, 'common') }}</td>
+      <td>${{ product.price }}</td>
       <td>{{ product.available }}</td>
-      <td>{{ product.rating|round(2, 'common') }}</td>
+      <td>{{ product.rating }}</td>
     </tr>
     {% endfor %}
   </tbody>

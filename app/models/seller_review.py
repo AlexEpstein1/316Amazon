@@ -70,6 +70,19 @@ class SellerReview:
 
     @staticmethod
     def add_review(request, seller_id):
+
+        # Add in a check to see if the user has bought from this seller
+        rows = app.db.execute('''
+        SELECT order_id
+        FROM Purchases
+        WHERE buyer_id = :buyer_id AND seller_id = :seller_id
+        ''',
+                                      buyer_id = current_user.id,
+                                      seller_id = seller_id)
+        # This means that user has not bought from this seller
+        if not rows:
+            return 'you have not made a purchase from this seller'
+
         # Get information to add to review
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         description = request.form['body']
@@ -86,11 +99,11 @@ class SellerReview:
                                   date_time = date_time,
                                   description = description,
                                   rating = rating)
-        # this means already a review for this seller from this user
+        # This means already a review for this seller from this user
         except exc.IntegrityError as e:
-            return False
+            return 'you have already made a review for this seller'
 
-        return True
+        return 'Done'
 
     @staticmethod
     def update_review(request, seller_id):
@@ -110,7 +123,7 @@ class SellerReview:
                              date_time = date_time,
                              user_id = current_user.id,
                              seller_id = seller_id)
-        return True
+        return 'Done'
 
     @staticmethod
     def delete_review(seller_id):

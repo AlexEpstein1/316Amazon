@@ -2,6 +2,8 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user
 import datetime
 
+from .reviews import format_value
+
 from .models.product import Product
 from .models.product import ProductSummary
 from .models.product_sellers import SellerSummary
@@ -122,6 +124,9 @@ def reviews_landing(order_id):
         prod_stats = ProductReview.get_review_stats(user_id = current_user.id)
         seller_stats = SellerReview.get_review_stats(user_id = current_user.id)
 
+        prod_stats.avg_rating = format_value(prod_stats.avg_rating, type = 'avg_rating')
+        seller_stats.avg_rating = format_value(seller_stats.avg_rating, type = 'avg_rating')
+
         return render_template('reviews_landing.html',
                                prod_stats = prod_stats,
                                seller_stats = seller_stats)
@@ -133,13 +138,18 @@ def reviews_landing(order_id):
         return redirect(url_for('index.index'))
 
     # Get product and seller summary statistics
-    product_summary = ProductSummary.get(product_id = purchase[0].product_id)
-    seller_summary = SellerSummary.get(seller_id = purchase[0].seller_id)
+    product_summary = ProductSummary.get(product_id = purchase[0].product_id)[0]
+    seller_summary = SellerSummary.get(seller_id = purchase[0].seller_id)[0]
+
+    product_summary.avg_price = format_value(product_summary.avg_price, type = 'avg_price')
+    product_summary.avg_rating = format_value(product_summary.avg_rating, type = 'avg_rating')
+    seller_summary.avg_price = format_value(seller_summary.avg_price, type = 'avg_price')
+    seller_summary.avg_rating = format_value(seller_summary.avg_rating, type = 'avg_rating')
 
     return render_template('reviews_landing.html',
                            purchase = purchase[0],
-                           product_summary = product_summary[0],
-                           seller_summary = seller_summary[0])
+                           product_summary = product_summary,
+                           seller_summary = seller_summary)
 
 @bp.route('/inventory')
 def inventory():
@@ -199,7 +209,7 @@ def update_cart_quantity(user_id, seller_id, product_id):
 #update_cart_quantity
 @bp.route('/purchase_from_cart/<user_id>/', methods = ['POST', 'GET'])
 def purchase_from_cart(user_id):
-    if cart.check_order(user_id = user_id): 
+    if cart.check_order(user_id = user_id):
         cart.make_cart_order(user_id = user_id)
 
     return redirect(url_for('index.cart_page'))
@@ -211,8 +221,3 @@ def add_to_cart(user_id, seller_id, product_id, quantity):
     quantity = request.form['quantity']
     cart.add_to_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
     return redirect(url_for('index.cart_page'))
-
-
-
-
-
