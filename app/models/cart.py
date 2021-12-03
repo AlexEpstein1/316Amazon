@@ -41,7 +41,20 @@ class cart:
         rows = app.db.execute('''
             SELECT user_id, seller_id, product_id, quantity, price_per_item
             FROM Cart
-            WHERE user_id = :user_id
+            WHERE user_id = :user_id AND quantity > 0
+            ORDER BY seller_id 
+            ''',
+                              user_id = user_id)
+        return [cart(*row) for row in rows]
+
+    @staticmethod
+    # get all cart input of a user
+    def get_save_cart(user_id):
+        rows = app.db.execute('''
+            SELECT user_id, seller_id, product_id, quantity, price_per_item
+            FROM Cart
+            WHERE user_id = :user_id AND quantity = 0
+            ORDER BY seller_id 
             ''',
                               user_id = user_id)
         return [cart(*row) for row in rows]
@@ -105,53 +118,56 @@ class cart:
             ''',
                               id = id)
 
-        if(balance[0][0] < total_price): return False
-        
-        for c in cart_content:
-            seller_id = c.seller_id
-            product_id = c.product_id
-            available = app.db.execute('''
-                    SELECT stock
-                    FROM SellsItem
-                    WHERE seller_id = :seller_id AND product_id = :product_id
-                    ''',
-                                seller_id = seller_id, product_id = product_id)
-            if(len(available) == 0 ): return False
-            if(available < c.quantity): return False
-        
-        return True
+        if(balance[0][0] < total_price): return 1
+        else :
+            for c in cart_content:
+                seller_id = c.seller_id
+                product_id = c.product_id
+                available = app.db.execute('''
+                        SELECT stock
+                        FROM SellsItem
+                        WHERE seller_id = :seller_id AND product_id = :product_id
+                        ''',
+                                    seller_id = seller_id, product_id = product_id)
+                if(len(available) == 0 ): return 2
+                if(available[0][0] < c.quantity): return 2
+        return 0
 
     @staticmethod
     # backend method to order all products inside cart
     def make_cart_order(user_id):
         cart_content = cart.get_all_cart_input(user_id)
         for c in cart_content:
-            cart.remove_product_in_cart(c.user_id, c.seller_id, c.product_id)
-            cart.purchase(c.user_id, c.seller_id, c.product_id, c.quantity)
+            if c.quantity != 0:
+                cart.remove_product_in_cart(c.user_id, c.seller_id, c.product_id)
+                cart.purchase(c.user_id, c.seller_id, c.product_id, c.quantity)
 
     @staticmethod
     # backend method to order a product
     def purchase(user_id, seller_id, product_id, quantity):
-        order_id = app.db.execute('''
+        total_order = app.db.execute('''
                     SELECT COUNT(order_id)
                     FROM Purchases
-                    RETURNING COUNT(order_id)
-                    ''',) + 1
+                    ''',)
+        order_id = total_order[0][0] + 1
         payment_amount = cart.get_product_price(product_id, seller_id)*quantity
-        time_purchased = datetime.now
+        time_purchased = datetime.now(tz=None)
+        time_processed = datetime(1, 1, 1, 1, 1, 1)
+        status = 'Incomplete'
+
         
         app.db.execute('''
-            INSERT INTO Purchases(order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased)
-            VALUES(:order_id, :product_id, :user_id, :seller_id, :payment_amount, :quantity, :time_purchased)
-            RETURNING user_id
+            INSERT INTO Purchases(order_id, product_id, buyer_id, seller_id, payment_amount, quantity,time_purchased, time_processed, status)
+            VALUES(:order_id, :product_id, :buyer_id, :seller_id, :payment_amount, :quantity, :time_purchased, :time_processed, :status) 
+            RETURNING order_id
             ''',
-                              order_id = order_id, product_id = product_id, payment_amount = payment_amount, quantity=quantity, time_purchased=time_purchased, status = 'Incomplete')
+                              order_id = order_id, buyer_id = user_id, seller_id=seller_id, product_id = product_id, payment_amount = payment_amount, quantity=quantity, time_purchased=time_purchased, time_processed = time_processed, status = status)
         
         app.db.execute('''
         UPDATE SellsItem
         SET stock = stock - :quantity
         WHERE seller_id = :seller_id AND product_id = :product_id 
-        RETURNING user_id
+        RETURNING product_id
             ''',
                               seller_id = seller_id, product_id = product_id, quantity = quantity)
 
@@ -166,7 +182,7 @@ class cart:
             WHERE product_id = :product_id AND seller_id = :seller_id
             ''',
                               product_id = product_id, seller_id = seller_id)
-        return price_per_item
+        return price_per_item[0][0]
 
 
 

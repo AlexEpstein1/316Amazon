@@ -29,7 +29,7 @@ WHERE order_id = :order_id
 
         if order_id is None:
             rows = app.db.execute('''
-            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, time_processed, status
+            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, time_processed,status
             FROM Purchases
             WHERE buyer_id = :buyer_id
             ORDER BY time_purchased DESC
@@ -68,7 +68,7 @@ ORDER BY time_purchased DESC
         app.db.execute('''
             Update Purchases
             SET status = :status
-            WHERE buyer_id = :buyer_id AND time_purchased >= :time
+            WHERE buyer_id = :buyer_id AND time_purchased <= :time
             RETURNING buyer_id
             ''',
                               buyer_id=buyer_id,
