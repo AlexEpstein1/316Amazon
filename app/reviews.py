@@ -15,6 +15,22 @@ from .models.product_review import ProductReviewWithName
 from flask import Blueprint
 bp = Blueprint('reviews', __name__)
 
+# Format NoneType values correctly
+def format_value(value, type):
+
+    if value is None:
+        if type == 'avg_price':
+            value = 'No current listings'
+        else:
+            value = 'No reviews'
+    else:
+        if type == 'avg_price':
+            value = '$' + str(round(value, 2))
+        else:
+            value = str(round(value, 2))
+
+    return value
+
 # Get information related to specified user and product/seller
 def get_info(object_id, type):
     # Get information related to specified user and product
@@ -24,6 +40,7 @@ def get_info(object_id, type):
                                         product_id = object_id)
         # Get product summary
         summary = ProductSummary.get(product_id = object_id)[0]
+
     # Get information related to specified user and seller
     else:
         # Get previous user review for the seller
@@ -32,6 +49,9 @@ def get_info(object_id, type):
         # Get seller summary
         summary = SellerSummary.get(seller_id = object_id)[0]
         summary.name = summary.firstname + ' ' + summary.lastname # Make seller name as first last
+
+    summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
+    summary.avg_rating = format_value(summary.avg_rating, type = 'avg_rating')
 
     info = {
     "prev_review": prev_review,

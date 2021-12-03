@@ -75,7 +75,7 @@ ORDER BY time_purchased DESC
                               status = status,
                               time=time)
 
-    
+
     @staticmethod
     def get_all_by_buyer_id_completed(buyer_id):
         status = 'Complete'
@@ -105,4 +105,3 @@ ORDER BY time_purchased DESC
                               buyer_id=buyer_id,
                               status=status)
         return [Purchase(*row) for row in rows]
-

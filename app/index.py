@@ -2,6 +2,8 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user
 import datetime
 
+from .reviews import format_value
+
 from .models.product import Product
 from .models.product import ProductSummary
 from .models.product_sellers import SellerSummary
@@ -48,6 +50,30 @@ def index():
                            avail_products=products,
                            purchase_history=purchases,
                            categories=categories)
+
+@bp.route('/createProduct', methods = ['POST', 'GET'])
+def createProduct():
+    # get all available products for sale:
+    products = Product.get_all(available=True)
+    
+    return render_template('create_product.html',
+                           products=products)
+
+@bp.route('/search_product', methods = ['POST', 'GET'])
+def searchProducts():
+    # get all available products for sale:
+    body = request.form['body']
+    first_search = True
+    if body is None:
+        products = Product.get_all(available=True)
+    else: 
+        products = Product.search(search=body, available=True)
+        first_search = False
+    return render_template('create_product.html',
+                           products=products, 
+                           search=body,
+                           display_search=not first_search)
+
 # home_profile html
 @bp.route('/profile')
 def profile():
@@ -122,6 +148,9 @@ def reviews_landing(order_id):
         prod_stats = ProductReview.get_review_stats(user_id = current_user.id)
         seller_stats = SellerReview.get_review_stats(user_id = current_user.id)
 
+        prod_stats.avg_rating = format_value(prod_stats.avg_rating, type = 'avg_rating')
+        seller_stats.avg_rating = format_value(seller_stats.avg_rating, type = 'avg_rating')
+
         return render_template('reviews_landing.html',
                                prod_stats = prod_stats,
                                seller_stats = seller_stats)
@@ -133,18 +162,23 @@ def reviews_landing(order_id):
         return redirect(url_for('index.index'))
 
     # Get product and seller summary statistics
-    product_summary = ProductSummary.get(product_id = purchase[0].product_id)
-    seller_summary = SellerSummary.get(seller_id = purchase[0].seller_id)
+    product_summary = ProductSummary.get(product_id = purchase[0].product_id)[0]
+    seller_summary = SellerSummary.get(seller_id = purchase[0].seller_id)[0]
+
+    product_summary.avg_price = format_value(product_summary.avg_price, type = 'avg_price')
+    product_summary.avg_rating = format_value(product_summary.avg_rating, type = 'avg_rating')
+    seller_summary.avg_price = format_value(seller_summary.avg_price, type = 'avg_price')
+    seller_summary.avg_rating = format_value(seller_summary.avg_rating, type = 'avg_rating')
 
     return render_template('reviews_landing.html',
                            purchase = purchase[0],
-                           product_summary = product_summary[0],
-                           seller_summary = seller_summary[0])
+                           product_summary = product_summary,
+                           seller_summary = seller_summary)
 
 @bp.route('/inventory')
 def inventory():
     # if user is authenticated, go to home profile
-    inventory = Inventory.get_all(available=True)
+    inventory = Inventory.get_all(available=True, seller_id=current_user.id)
     # find the products current user has bought:
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
@@ -205,8 +239,3 @@ def add_to_cart(user_id, seller_id, product_id, quantity):
     quantity = request.form['quantity']
     cart.add_to_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
     return redirect(url_for('index.cart_page'))
-
-
-
-
-

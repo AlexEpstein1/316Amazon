@@ -1,4 +1,5 @@
 from flask import current_app as app
+from flask_login import current_user
 
 
 class Inventory:
@@ -35,9 +36,21 @@ class Inventory:
         seller_id=seller_id)
         return Inventory(*(rows[0])) if rows is not None else None
 
+    @staticmethod
+    def getProduct(product_id):
+        rows = app.db.execute('''
+        SELECT si.seller_id, si.product_id, si.price, p.name, si.stock, u.firstname, u.lastname
+        FROM SellsItem si, Products p, Users u
+        WHERE si.product_id = :product_id AND si.seller_id = :seller_id
+        ''',
+        product_id=product_id,
+        seller_id=current_user.id)
+        return Inventory(*(rows[0])) if rows is not None else None
+
+
 
     @staticmethod
-    def get_all(available=True, seller_id=None):
+    def get_all(available, seller_id):
         if seller_id is None:
             rows = app.db.execute('''
             SELECT si.seller_id, si.product_id, si.price, p.name, si.stock, u.firstname, u.lastname
@@ -50,9 +63,9 @@ class Inventory:
             return [Inventory(*row) for row in rows]
         else:
             rows = app.db.execute('''
-            SELECT s.seller_id, s.product_id, s.price, s.stock, p.name
-            FROM SellsItem s, Products p
-            WHERE s.seller_id = :seller_id AND s.product_id = p.id 
+            SELECT s.seller_id, s.product_id, s.price, p.name, s.stock, u.firstname, u.lastname
+            FROM SellsItem s, Products p, Users u
+            WHERE s.seller_id = :seller_id AND s.product_id = p.id AND u.id = s.seller_id
             ''',
             seller_id=seller_id)
             return [Inventory(*row) for row in rows]

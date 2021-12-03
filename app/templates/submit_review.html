@@ -7,10 +7,10 @@
 
 <!-- Messages at top of page -->
 <h2 style="margin-top: 2vh; margin-bottom: 2vh;">Write your review for {{ summary.name }}:</h2>
-{% if review_submitted and result %}
+{% if review_submitted and result == 'Done' %}
 <h5>Successfully completed review for {{ summary.name }}!</h5>
 {% elif review_submitted %}
-<h5>Unable to complete review for {{ summary.name }}, perhaps you have already made one</h5>
+<h5>Unable to complete review for {{ summary.name }}, {{ result }}</h5>
 {% endif %}
 
 <!-- Summary tables -->
@@ -46,9 +46,9 @@
     <tr onclick="window.location.href='{{ url_for('products.productPage', id=summary.product_id)}}'">
       <th scope="row">{{ summary.sellers }}</th>
       <td>{{ summary.total_stock }}</td>
-      <td>${{ summary.avg_price|round(2, 'common') }}</td>
+      <td>{{ summary.avg_price }}</td>
       <td>{{ summary.reviews }}</td>
-      <td>{{ summary.avg_rating|round(2, 'common') }}</td>
+      <td>{{ summary.avg_rating }}</td>
     </tr>
   </tbody>
 </table>
@@ -87,9 +87,9 @@
     <!-- <tr onclick="window.location.href='{{ url_for('products.productPage', id=summary.product_id)}}'"> -->
       <th scope="row">{{ summary.products }}</th>
       <td>{{ summary.total_stock }}</td>
-      <td>${{ summary.avg_price|round(2, 'common') }}</td>
+      <td>{{ summary.avg_price }}</td>
       <td>{{ summary.reviews }}</td>
-      <td>{{ summary.avg_rating|round(2, 'common') }}</td>
+      <td>{{ summary.avg_rating }}</td>
     </tr>
   </tbody>
 </table>

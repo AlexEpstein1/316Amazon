@@ -82,6 +82,19 @@ class ProductReview:
 
     @staticmethod
     def add_review(request, product_id):
+
+        # Add in a check to see if the user has bought this product
+        rows = app.db.execute('''
+        SELECT order_id
+        FROM Purchases
+        WHERE buyer_id = :buyer_id AND product_id = :product_id
+        ''',
+                                      buyer_id = current_user.id,
+                                      product_id = product_id)
+        # This means that user has not bought from this seller
+        if not rows:
+            return 'you have not made a purchase of this product'
+
         # Get information to add to review
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
         description = request.form['body']
@@ -100,9 +113,9 @@ class ProductReview:
                                   rating = rating)
         # This means already a review for this product from this user
         except exc.IntegrityError as e:
-            return False
+            return 'you have already made a review for this seller'
 
-        return True
+        return 'Done'
 
     @staticmethod
     def update_review(request, product_id):
@@ -122,7 +135,7 @@ class ProductReview:
                               date_time = date_time,
                               user_id = current_user.id,
                               product_id = product_id)
-        return True
+        return 'Done'
 
     @staticmethod
     def delete_review(product_id):
@@ -177,3 +190,4 @@ class ProductReviewWithName:
              product_id = product_id)
 
         return [ProductReviewWithName(*row) for row in rows] if rows else None
+    
