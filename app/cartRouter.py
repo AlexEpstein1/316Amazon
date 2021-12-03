@@ -65,19 +65,14 @@ def profile():
 # purchase_history html
 @bp.route('/purchase_history')
 def purchase_history():
-    Purchase.update_order_status(buyer_id = current_user.id)
     # find the products current user has bought:
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_buyer_id(buyer_id = current_user.id)
-        complete_purchases = Purchase.get_all_by_buyer_id_completed(buyer_id = current_user.id)
-        incomplete_purchases = Purchase.get_all_by_buyer_id_incomplete(buyer_id = current_user.id)
     else:
         purchases = None
 
     return render_template('purchase_history.html',
-                           purchase_history=purchases,
-                           complete_purchases= complete_purchases,
-                           incomplete_purchases = incomplete_purchases)
+                           purchase_history=purchases)
 
 # review_history html
 @bp.route('/review_history/<type>/<page>', methods = ['POST', 'GET'])
@@ -204,15 +199,19 @@ def purchase_from_cart(user_id):
 
     return redirect(url_for('index.cart_page'))
 
+#update_cart_quantity
+@bp.route('/purchase_from_cart/<user_id>/', methods = ['POST', 'GET'])
+def purchase_from_cart(user_id):
+    if cart.check_order(user_id = user_id): 
+        cart.make_cart_order(user_id = user_id)
 
-# add_to_cart
-@bp.route('/add_to_cart/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
-def add_to_cart(user_id, seller_id, product_id, quantity):
-    quantity = request.form['quantity']
-    cart.add_to_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
     return redirect(url_for('index.cart_page'))
 
+# add_to_cart
+@bp.route('/add_to_cart/<user_id>/<seller_id>/<product_id>/<quantity>', methods = ['POST', 'GET'])
+def add_to_cart(user_id, seller_id, product_id, quantity):
+    cart.add_to_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
 
-
+    return redirect(url_for('index.cart_page'))
 
 
