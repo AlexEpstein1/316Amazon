@@ -217,6 +217,16 @@ def cart_update(uid, sid, pid, quan, price):
                            price_per_item = price)
 
 
+@bp.route('/seller_history')
+def seller_history():
+    # find the products current user has bought:
+    complete_purchases = Purchase.get_all_by_seller_id(seller_id = current_user.id, complete=True)
+    incomplete_purchases = Purchase.get_all_by_seller_id(seller_id = current_user.id, complete=False)
+    
+    return render_template('seller_history.html',
+                           complete_purchases=complete_purchases,
+                           incomplete_purchases=incomplete_purchases)
+
 # delete_cart_element
 @bp.route('/delete_cart_element/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def delete_cart_element(user_id, seller_id, product_id):
