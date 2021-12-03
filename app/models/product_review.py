@@ -190,3 +190,4 @@ class ProductReviewWithName:
              product_id = product_id)
 
         return [ProductReviewWithName(*row) for row in rows] if rows else None
+    
