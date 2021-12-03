@@ -3,7 +3,7 @@ from flask import current_app as app
 
 
 class Purchase:
-    def __init__(self, order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status, time_processed):
+    def __init__(self, order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, time_processed, status):
         self.order_id = order_id
         self.product_id = product_id
         self.buyer_id = buyer_id
@@ -17,7 +17,7 @@ class Purchase:
     @staticmethod
     def get(order_id):
         rows = app.db.execute('''
-SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+SELECT *
 FROM Purchases
 WHERE order_id = :order_id
 ''',
@@ -29,7 +29,7 @@ WHERE order_id = :order_id
 
         if order_id is None:
             rows = app.db.execute('''
-            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+            SELECT *
             FROM Purchases
             WHERE buyer_id = :buyer_id
             ORDER BY time_purchased DESC
@@ -37,7 +37,7 @@ WHERE order_id = :order_id
                                           buyer_id=buyer_id)
         else:
             rows = app.db.execute('''
-            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+            SELECT *
             FROM Purchases
             WHERE buyer_id = :buyer_id AND order_id = :order_id
             ORDER BY time_purchased DESC
@@ -50,7 +50,7 @@ WHERE order_id = :order_id
     @staticmethod
     def get_all_by_buyer_id_since(buyer_id, since):
         rows = app.db.execute('''
-SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+SELECT *
 FROM Purchases
 WHERE buyer_id = :buyer_id
 AND time_purchased >= :since
@@ -81,7 +81,7 @@ ORDER BY time_purchased DESC
         status = 'Complete'
 
         rows = app.db.execute('''
-SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+SELECT *
 FROM Purchases
 WHERE buyer_id = :buyer_id
 AND status = :status
@@ -96,7 +96,7 @@ ORDER BY time_purchased DESC
         status = 'Incomplete'
 
         rows = app.db.execute('''
-SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, status
+SELECT *
 FROM Purchases
 WHERE buyer_id = :buyer_id
 AND status = :status
