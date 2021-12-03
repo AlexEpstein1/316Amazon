@@ -1,4 +1,8 @@
 from flask import current_app as app
+from flask_login import current_user
+from sqlalchemy import exc
+
+
 
 
 class Product:
@@ -41,6 +45,19 @@ class Product:
             ''',
             id=id)
             return [Product(*row) for row in rows]
+    
+    @staticmethod
+    def search(search, available):
+        # search products for product name 
+            rows = app.db.execute('''
+            SELECT id, name, price, cat_name, description, image_file, available
+            FROM Products
+            WHERE lower(name) LIKE lower(CONCAT(:search, '%'))
+            '''.format(available),
+            search=search,
+            available=available)
+            return [Product(*row) for row in rows]
+       
 
     @staticmethod
     def get_by_cat(cat):
@@ -71,6 +88,71 @@ class ProductSellers:
         id=id)
         return [ProductSellers(*row) for row in rows] if rows is not None else 'No current sellers'
 
+    @staticmethod
+    def alreadySells(id):
+        rows = app.db.execute('''
+        SELECT s.product_id
+        FROM SellsItem s
+        WHERE s.product_id = :id AND s.seller_id = :seller_id
+        ''',
+        id=id, seller_id=current_user.id)
+        return len(rows) > 0
+
+
+    @staticmethod
+    def addProduct(id, request): 
+        stock = request.form["stock"]    
+        price = request.form["price"]
+        seller_id = current_user.id
+    
+        try:
+            rows = app.db.execute("""
+            INSERT INTO SellsItem(seller_id, product_id, price, stock)
+            VALUES(:seller_id, :product_id, :price, :stock)
+            RETURNING seller_id
+            """,
+                                  seller_id = seller_id,
+                                  product_id = id,
+                                  price = price,
+                                  stock = stock)
+        # this means already a review for this seller from this user
+        except exc.IntegrityError as e:
+            return False
+        return 'Added product '
+
+    @staticmethod
+    def editProduct(id, request): 
+        stock = request.form["stock"]    
+        price = request.form["price"]
+        seller_id = current_user.id
+    
+        rows = app.db.execute("""
+        UPDATE SellsItem
+        SET stock = :stock, price = :price
+        WHERE seller_id = :seller_id AND product_id = :product_id
+        RETURNING seller_id
+        """,
+                             seller_id=seller_id,
+                             product_id=id,
+                             price=price,
+                             stock=stock)
+        return "Edited Product "
+
+    @staticmethod
+    def deleteProduct(id): 
+        seller_id=current_user.id
+        rows = app.db.execute("""
+        DELETE FROM SellsItem
+        WHERE product_id = :product_id AND seller_id = :seller_id
+        RETURNING seller_id
+        """,
+                              product_id = id,
+                              seller_id = seller_id)
+        # flash('Deleted product review for product ID: ' + product_id)
+        return 'Deleted product '
+
+
+
 class ProductSummary:
     def __init__(self, product_id, name, cat_name, description, sellers, avg_price, total_stock, reviews, avg_rating):
         self.product_id = product_id
@@ -93,3 +175,5 @@ class ProductSummary:
              product_id=product_id)
 
         return [ProductSummary(*row) for row in rows] if rows else None
+
+
