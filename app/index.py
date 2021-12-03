@@ -161,13 +161,15 @@ def cart_page():
     # find the products current user has bought:
     if current_user.is_authenticated:
         carts = cart.get_all_cart_input(user_id = current_user.id)
+        saved = cart.get_save_cart(user_id = current_user.id)
         price = cart.get_total_price(user_id = current_user.id)
     else:
         carts = None
 
     return render_template('cart_page.html',
-                           cart_content = carts,
-                           total_price = price)
+                        saved_content = saved,  
+                        cart_content = carts,
+                        total_price = price)
 
 # cart_update html
 @bp.route('/cart_update/<uid>/<sid>/<pid>/<quan>/<price>', methods = ['POST', 'GET'])
@@ -193,14 +195,6 @@ def delete_cart_element(user_id, seller_id, product_id):
 def update_cart_quantity(user_id, seller_id, product_id):
     quantity = request.form['quantity']
     cart.update_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
-
-    return redirect(url_for('index.cart_page'))
-
-#update_cart_quantity
-@bp.route('/purchase_from_cart/<user_id>/', methods = ['POST', 'GET'])
-def purchase_from_cart(user_id):
-    if cart.check_order(user_id = user_id): 
-        cart.make_cart_order(user_id = user_id)
 
     return redirect(url_for('index.cart_page'))
 

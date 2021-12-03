@@ -2,20 +2,23 @@ from werkzeug.security import generate_password_hash
 import csv
 import random
 from faker import Faker
-import datetime
+from datetime import datetime, timedelta
 
 
 num_users = 200
 num_category = 30
 num_products = 1000
-num_purchases = 1000
+num_purchases = 2000
 num_cart = 2000
 num_item_sold = 2000
-num_product_review = 5000
-num_seller_review = 5000
+num_product_review = 1000
+num_seller_review = 1000
 max_stock_unit = 1000
 max_purchase_unit = 10
 status_list = ['Complete', 'Incomplete']
+purchase_user_ID = []
+purchase_seller_ID= []
+purchase_product_ID = []
 
 Faker.seed(0)
 fake = Faker()
@@ -78,7 +81,7 @@ def gen_products(num_products, available_category):
             if name not in product_name:
                 product_dict[pid] = price
                 product_name.append(name)
-                writer.writerow([pid, name, cat_name, price, product_description, img, available])
+                writer.writerow([pid, name, cat_name, product_description, img, available])
         print(f'{num_products} generated; {len(product_dict)} available')
     return product_dict
 
@@ -93,27 +96,22 @@ def gen_purchases(num_purchases, product_dict):
             uid = fake.random_int(min=0, max=num_users-1)
             sid = fake.random_int(min=0, max=num_users-1)
             pid = fake.random_element(elements=product_dict.keys())
+            purchase_user_ID.append(uid)
+            purchase_seller_ID.append(sid)
+            purchase_product_ID.append(pid)
             time_purchased = fake.date_time()
-            month = (time_purchased.month + 1)%13
-            if(month == 0): 
-                month = 1
-                year = time_purchased.year + 1
-            else: 
-                year = time_purchased.year
-            day = time_purchased.day
-            if(day > 28):
-                day = time_purchased.day -3
-        
-            time_processed = datetime.datetime(year, month, day, time_purchased.hour,
-            time_purchased.minute, time_purchased.second) # Assumed orders are typically processed in a month but may vary between 27 to 31 days
-            if time_processed > datetime.datetime.now(tz=None): 
+            time_processed = time_purchased + timedelta(weeks = 2) # Assumed all purchases are processes in a week
+            if time_processed > datetime.now(tz=None): 
                 status = 'Incomplete'
-            else: status = 'Complete'
+                time_processed = datetime(1, 1, 1, 1, 1, 1)
+            else: 
+                status = 'Complete'
             quantity = fake.random_int(min=0, max=max_purchase_unit)
             payment_amount = float(product_dict.get(pid)) * int(quantity)
-            writer.writerow([id, pid, uid, sid, payment_amount, quantity, time_purchased, status])
+            writer.writerow([id, pid, uid, sid, payment_amount, quantity, time_purchased, time_processed, status])
         print(f'{num_purchases} generated')
     return
+
 
 def gen_cart(num_cart, product_dict):
     cart_id = []
@@ -151,14 +149,15 @@ def gen_SellsIten(num_item_sold, product_dict):
     return
 
 
-def gen_ProductReview(num_product_review, product_dict):
+def gen_ProductReview(num_product_review):
     key_list = []
     with open('ProductReview.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('ProductReview...', end=' ', flush=True)
         for i in range(num_product_review):
-            uid = fake.random_int(min=0, max=num_users-1)
-            pid = fake.random_element(elements=product_dict.keys())
+            purchase_record = fake.random_int(min=0, max= len(purchase_user_ID)-1)
+            uid = purchase_user_ID[purchase_record]
+            pid = purchase_product_ID[purchase_record]
             time = fake.date_time()
             description = fake.sentence(nb_words=10)[:-1]
             rating = fake.random_int(min=1, max=5)
@@ -175,8 +174,9 @@ def gen_SellerReview(num_seller_review):
         writer = get_csv_writer(f)
         print('SellerReview...', end=' ', flush=True)
         for i in range(num_seller_review):
-            uid = fake.random_int(min=0, max=num_users-1)
-            sid = fake.random_int(min=0, max=num_users-1)
+            purchase_record = fake.random_int(min=0, max= len(purchase_user_ID)-1)
+            uid = purchase_user_ID[purchase_record]
+            sid = purchase_seller_ID[purchase_record]
             time = fake.date_time()
             description = fake.sentence(nb_words=10)[:-1]
             rating = fake.random_int(min=1, max=5)
@@ -194,5 +194,5 @@ product_dict = gen_products(num_products, available_category)
 gen_purchases(num_purchases, product_dict)
 gen_cart(num_cart, product_dict)
 gen_SellsIten(num_item_sold, product_dict)
-gen_ProductReview(num_product_review, product_dict)
+gen_ProductReview(num_product_review)
 gen_SellerReview(num_seller_review)
