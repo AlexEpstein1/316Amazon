@@ -28,6 +28,7 @@ CREATE TABLE Products (
 	name VARCHAR(256) UNIQUE NOT NULL,
 	cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
 	description VARCHAR(1024) NOT NULL,
+	image_file VARCHAR(256) NOT NULL,
 	available BOOLEAN DEFAULT TRUE
 );
 -- Purchases of Products
