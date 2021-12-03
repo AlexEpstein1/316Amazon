@@ -24,6 +24,32 @@ WHERE order_id = :order_id
                               order_id=order_id)
         return Purchase(*(rows[0])) if rows else None
 
+
+    @staticmethod
+    def get_all_by_seller_id(seller_id, complete):
+        if complete: 
+            rows = app.db.execute('''
+            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, time_processed,status
+            FROM Purchases
+            WHERE seller_id = :seller_id AND status=:status
+            ORDER BY time_purchased DESC
+            ''',
+                                            seller_id=seller_id,
+                                            status="Complete")
+            return [Purchase(*row) for row in rows] if rows else None
+        else: 
+            rows = app.db.execute('''
+            SELECT order_id, product_id, buyer_id, seller_id, payment_amount, quantity, time_purchased, time_processed,status
+            FROM Purchases
+            WHERE seller_id = :seller_id AND status=:status
+            ORDER BY time_purchased DESC
+            ''',
+                                            seller_id=seller_id,
+                                            status="Incomplete")
+            return [Purchase(*row) for row in rows] if rows else None
+
+
+
     @staticmethod
     def get_all_by_buyer_id(buyer_id, order_id = None):
 
