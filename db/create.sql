@@ -27,9 +27,7 @@ CREATE TABLE Products (
 	id INT NOT NULL PRIMARY KEY,
 	name VARCHAR(256) UNIQUE NOT NULL,
 	cat_name VARCHAR(256) NOT NULL REFERENCES Category(cat_name),
-	price FLOAT NOT NULL,
 	description VARCHAR(1024) NOT NULL,
-	image_file VARCHAR(256) NOT NULL,
 	available BOOLEAN DEFAULT TRUE
 );
 -- Purchases of Products
@@ -75,8 +73,8 @@ CREATE TABLE ProductReview (
 	date_time DATE NOT NULL,
 	description VARCHAR(256) NOT NULL,
 	rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
-	PRIMARY KEY (user_id, product_id)
-	-- FOREIGN KEY (user_id, product_id) REFERENCES Purchases(buyer_id, product_id)
+	PRIMARY KEY (user_id, product_id),
+	FOREIGN KEY (user_id, product_id) REFERENCES Purchases(buyer_id, product_id)
 );
 -- Reviews of Sellers
 CREATE TABLE SellerReview (
@@ -85,8 +83,8 @@ CREATE TABLE SellerReview (
 	date_time DATE NOT NULL,
 	description VARCHAR(256) NOT NULL,
 	rating DECIMAL(10, 2) NOT NULL CHECK(rating >= 1 AND rating <= 5),
-	PRIMARY KEY (user_id, seller_id)
-	-- FOREIGN KEY (user_id, seller_id) REFERENCES Purchases(buyer_id, seller_id)
+	PRIMARY KEY (user_id, seller_id),
+	FOREIGN KEY (user_id, seller_id) REFERENCES Purchases(buyer_id, seller_id)
 );
 
 -- View of product summary statistics
