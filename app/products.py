@@ -4,12 +4,14 @@ import statistics
 import datetime
 
 from .models.product import Product
+from .models.product import ProductSummary
 from .models.product import ProductSellers
 from .models.purchase import Purchase
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
 from .models.inventory import Inventory
+from .models.categories import Category
 
 
 from flask import Blueprint
@@ -23,31 +25,19 @@ def get_avg(reviews):
         avg_rating = avg_rating / len(reviews)
     return avg_rating
 
-def get_unique_cats(products):
-    categories = []
-    all_products = Product.get_all(available=True)
-    for x in all_products:
-        categories.append(x.cat_name)
-    categories = set(categories)
-    return categories
-
 
 @bp.route('/filterCat/<cat>', methods = ['POST', 'GET'])
 def filterCat(cat):
-    products = Product.get_by_cat(cat=cat)
-    categories = get_unique_cats(products)
-    # find the products current user has bought:
-    if current_user.is_authenticated:
-        purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
-                                                       since = datetime.datetime(1980, 9, 14, 0, 0, 0))
-    else:
-        purchases = None
+    products = Product.get_by_cat(cat=cat_name)
+    categories = Category.get_all()
     
-    return render_template('index.html',
-                           cat_name=cat,
-                           avail_products=products,
-                           purchase_history=purchases,
+    # find the products current user has bought:
+    
+    return render_template('product_by_cat.html',
+                            cat_name=cat,
+                           products=products,
                            categories = categories)
+
 
 
 @bp.route('/productPage/<id>', methods = ['POST', 'GET'])
@@ -161,4 +151,34 @@ def delete_product(id):
     return render_template('inventory.html',
                            sold_products=inventory,
                            message=message+product.name + " from your inventory")
+
+
+@bp.route('/products_by_cat/<cat_name>', methods = ['POST', 'GET'])
+def products_by_cat(cat_name):
+    products = Product.get_by_cat(cat=cat_name)
+    categories = Category.get_all()
+    # find the products current user has bought:
+    
+    return render_template('products_by_cat.html',
+
+                            cat_name=cat_name,
+                           products=products,
+                           categories = categories)
+
+
+@bp.route('/create_new_product/', methods = ['POST', 'GET'])
+def create_new_product():
+    categories = Category.get_all()
+    return render_template('new_product.html',
+                           categories = categories)
+
+@bp.route('/add_new_product/', methods = ['POST', 'GET'])
+def add_new_product():
+    num_products = len(Product.get_all(available=True))
+    Product.add_new_product(user_id=current_user.id, request=resquest, num_products=num_products)
+    return render_template('new_product.html',
+                           categories = categories)
+
+
+
 

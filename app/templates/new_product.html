@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Thank you for contributing to the marketplace!</h2>
+
+<br><br>
+
+<h3>Enter New Product Details:</h3>
+
+<form action="" method="post"> 
+    <div class="form-group">
+        <label for="cat_name">Category:</label>
+        <select class="form-select" aria-label="Default select example" id="cat_name">
+    
+            {% for cat in categories %}
+            <option value="cat.cat_name">{{cat.cat_name}}</option>
+            {% endfor %}
+        </select>
+        
+        <small id="description" class="form-text text-muted">Choose a category for your item to be listed under</small>
+    </div>
+
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" name="name">
+      <small id="name" class="form-text text-muted">The name for the item to be listed under</small>
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea class="form-control" id="description" rows="3"></textarea>
+        <small id="description" class="form-text text-muted">Enter a brief description of the item</small>
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price</label>
+        <input type="text" class="form-control" id="price" name="price">
+        <small id="price" class="form-text text-muted">Price of item (to two decimals max)</small>
+    </div>
+
+    <div class="form-group">
+        <label for="quantity">Quantity? </label>
+        <input type="number" name="quantity" min="1">
+        <small id="quantity" class="form-text text-muted">How many of this item are you listing at this time? (Must be offering min. 1)</small>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Product!</button>
+  </form>
+
+
+
+<br><br><br>
+
+{% endblock %}
