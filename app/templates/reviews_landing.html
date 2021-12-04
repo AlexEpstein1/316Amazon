@@ -4,7 +4,7 @@
 
 <!-- If coming from purchase history page (can decide what type of review to write for that purchase)-->
 {% if purchase is defined %}
-<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Write Your Review for Purchase ID purchase.order_id</h2>
+<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Write Your Review for Purchase ID: {{ purchase.order_id }} </h2>
 <table class="table table-light table-striped table-hover container">
   <thead class="thead-dark">
     <tr>

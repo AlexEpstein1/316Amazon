@@ -152,8 +152,10 @@ def reviews_landing(order_id):
         seller_stats.avg_rating = format_value(seller_stats.avg_rating, type = 'avg_rating')
 
         return render_template('reviews_landing.html',
+                                order_id= order_id,
                                prod_stats = prod_stats,
                                seller_stats = seller_stats)
+
     # Else, get the specific purchase to review
     purchase = Purchase.get_all_by_buyer_id(buyer_id = current_user.id,
                                             order_id = order_id)
@@ -205,18 +207,6 @@ def cart_page():
                         cart_content = carts,
                         total_price = price)
 
-# cart_update html
-@bp.route('/cart_update/<uid>/<sid>/<pid>/<quan>/<price>', methods = ['POST', 'GET'])
-def cart_update(uid, sid, pid, quan, price):
-
-    return render_template('cart_update.html',
-                           user_id = uid,
-                           seller_id = sid,
-                           product_id = pid,
-                           quantity = quan,
-                           price_per_item = price)
-
-
 @bp.route('/seller_history')
 def seller_history():
     # find the products current user has bought:
@@ -227,25 +217,3 @@ def seller_history():
                            complete_purchases=complete_purchases,
                            incomplete_purchases=incomplete_purchases)
 
-# delete_cart_element
-@bp.route('/delete_cart_element/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
-def delete_cart_element(user_id, seller_id, product_id):
-    cart.remove_product_in_cart(user_id = user_id, seller_id = seller_id, product_id = product_id)
-
-    return redirect(url_for('index.cart_page'))
-
-#update_cart_quantity
-@bp.route('/update_cart_quantity/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
-def update_cart_quantity(user_id, seller_id, product_id):
-    quantity = request.form['quantity']
-    cart.update_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
-
-    return redirect(url_for('index.cart_page'))
-
-
-# add_to_cart
-@bp.route('/add_to_cart/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
-def add_to_cart(user_id, seller_id, product_id, quantity):
-    quantity = request.form['quantity']
-    cart.add_to_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
-    return redirect(url_for('index.cart_page'))

@@ -68,16 +68,32 @@ def order_result_page(type):
 
 
 # add_to_cart
-@bp.route('/add_to_cart/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
-def add_to_cart(user_id, seller_id, product_id, quantity):
+@bp.route('/add_cart/<user_id>/<seller_id>/<product_id>/<quantity>/', methods = ['POST', 'GET'])
+def add_cart(user_id, seller_id, product_id, quantity):
     quantity = request.form['quantity']
-    cart.add_to_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
+    cart.add_item_to_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
     return redirect(url_for('index.cart_page'))
 
-#update_cart_quantity
+
+#save_for_later
 @bp.route('/save_for_later/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def save_for_later(user_id, seller_id, product_id):
     quantity = 0
     cart.update_cart(user_id = user_id, seller_id = seller_id, product_id = product_id, quantity = quantity)
 
+    return redirect(url_for('index.cart_page'))
+
+#apply_promo_product
+@bp.route('/apply_promo_product/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
+def apply_promo_product(user_id, seller_id, product_id):
+    code = request.form['code']
+    cart.apply_promo(code = code, user_id = user_id, seller_id = seller_id, product_id = product_id)
+    return redirect(url_for('index.cart_page'))
+
+
+#apply_promo_cart
+@bp.route('/apply_promo_cart/<user_id>/', methods = ['POST', 'GET'])
+def apply_promo_cart(user_id):
+    code = request.form['code']
+    cart.apply_promo_cart(code = code, user_id = user_id)
     return redirect(url_for('index.cart_page'))
