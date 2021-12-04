@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{cat_name}}</h2>
+
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Filter by Category
+  </button>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    {% for name in categories %}
+    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=name) }}">{{cat_name}}</a>
+    {% endfor %}
+  </div>
+</div>
+<br>
+<!-- how to stop filtering by category -->
+<!-- {% if cat_name %}
+<a href="{{ url_for('index.index') }}" style="float:left" type="button" class="btn-close" aria-label="Close"></a>
+Filtering on: {{cat_name}}
+{% endif %}
+<br> -->
+
+<div class="card-deck">
+    {% for product in products %}
+  <div class="card" style="min-width: 18rem;">
+    <div class="card-body" onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
+      <h5 class="card-title">{{product.name}}</h5>
+      <p class="card-text">Price: {{product.price}}</p>
+    {% if product.available %}
+        <p class="card-text" style="color:green"> In Stock</p>
+    {% else %}
+        <p class="card-text" style="color:red"> Out of Stock </p>
+    {% endif %}
+    <p class="card-text"><small class="text-muted">{{product.description}}</small></p>
+
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+<!-- table of products -->
+<!-- <table class="table table-light table-striped table-hover container">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Category</th>
+      <th scope="col">Price</th>
+      <th scope="col">Available</th>
+      <th scope="col">Rating</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products %}
+    <tr onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
+      <th scope="row">{{ product.id }}</th>
+      <td>{{ product.name }}</td>
+      <td>{{ product.cat_name }}</td>
+      <td>${{ product.price }}</td>
+      <td>{{ product.available }}</td>
+      <td>{{ product.rating }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table> -->
+
+{% endblock %}

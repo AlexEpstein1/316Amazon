@@ -13,6 +13,7 @@ from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
 from .models.cart import cart
+from .models.categories import Category
 
 
 from flask import Blueprint
@@ -32,24 +33,10 @@ def get_avg(id):
 @bp.route('/')
 def index():
     # get all available products for sale:
-    products = Product.get_all(available=True)
-    for x in products:
-        x.rating = get_avg(x.id)
-    categories = []
-    for x in products:
-        categories.append(x.cat_name)
-    categories = set(categories)
-    # find the products current user has bought:
-    if current_user.is_authenticated:
-        purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
-                                                       since = datetime.datetime(1980, 9, 14, 0, 0, 0))
-    else:
-        purchases = None
+    categories = Category.get_all()
 
     return render_template('index.html',
-                           avail_products=products,
-                           purchase_history=purchases,
-                           categories=categories)
+                            categories=categories)
 
 @bp.route('/createProduct', methods = ['POST', 'GET'])
 def createProduct():
@@ -73,7 +60,6 @@ def searchProducts():
                            products=products, 
                            search=body,
                            display_search=not first_search)
-
 # home_profile html
 @bp.route('/profile')
 def profile():
@@ -84,9 +70,6 @@ def profile():
     else:
         return redirect(url_for('index.index'))
 
-    return render_template('index.html',
-                           avail_products=products,
-                           purchase_history=purchases)
 
 # purchase_history html
 @bp.route('/purchase_history')

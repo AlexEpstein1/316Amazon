@@ -45,6 +45,8 @@ class Product:
             ''',
             id=id)
             return [Product(*row) for row in rows]
+
+            
     
     @staticmethod
     def search(search, available):
@@ -150,6 +152,34 @@ class ProductSellers:
                               seller_id = seller_id)
         # flash('Deleted product review for product ID: ' + product_id)
         return 'Deleted product '
+
+    @staticmethod
+    def add_new_product(user_id, request, num_products): 
+        cat_name = request.form["cat_name"]    
+        name = request.form["name"]
+        description = request.form["description"]    
+        price = request.form["price"]
+        quantity = request.form["quantity"]
+        seller_id = current_user.id
+        available = True
+        image_file='image'
+        product_id = num_products+1
+    
+        
+        app.db.execute("""
+        INSERT INTO Products(product_id, name, cat_name, description, image_file, available)
+        VALUES(:id, :name, :cat_name, :description, :image_file, :available)
+        RETURNING 
+        """,
+                            id=product_id,
+                            name=name,
+                            cat_name=cat_name,
+                            description=description,
+                            image_file=image_file,
+                            available=available
+                            )
+    
+        return 'Added product '
 
 
 
