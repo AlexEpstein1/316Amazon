@@ -87,13 +87,13 @@ class ProductReview:
         rows = app.db.execute('''
         SELECT order_id
         FROM Purchases
-        WHERE buyer_id = :buyer_id AND product_id = :product_id
+        WHERE buyer_id = :buyer_id AND product_id = :product_id AND status = 'Complete'
         ''',
                                       buyer_id = current_user.id,
                                       product_id = product_id)
         # This means that user has not bought from this seller
         if not rows:
-            return 'you have not made a purchase of this product'
+            return 'you have not had a completed purchase of this product'
 
         # Get information to add to review
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -190,4 +190,3 @@ class ProductReviewWithName:
              product_id = product_id)
 
         return [ProductReviewWithName(*row) for row in rows] if rows else None
-    

@@ -75,13 +75,13 @@ class SellerReview:
         rows = app.db.execute('''
         SELECT order_id
         FROM Purchases
-        WHERE buyer_id = :buyer_id AND seller_id = :seller_id
+        WHERE buyer_id = :buyer_id AND seller_id = :seller_id AND status = 'Complete'
         ''',
                                       buyer_id = current_user.id,
                                       seller_id = seller_id)
         # This means that user has not bought from this seller
         if not rows:
-            return 'you have not made a purchase from this seller'
+            return 'you have not had a completed purchase from this seller'
 
         # Get information to add to review
         date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
