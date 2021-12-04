@@ -5,20 +5,23 @@ from faker import Faker
 from datetime import datetime, timedelta
 
 
-num_users = 200
+num_users = 500
 num_category = 30
-num_products = 1000
-num_purchases = 2000
-num_cart = 1000
-num_item_sold = 2000
-num_product_review = 1000
-num_seller_review = 1000
+num_products = 600
+num_purchases = 6000
+num_cart = 3000
+num_item_sold = 2400
+num_product_review = 5000
+num_seller_review = 3000
 max_stock_unit = 1000
-max_purchase_unit = 10
+max_purchase_unit = 50
 status_list = ['Complete', 'Incomplete']
 purchase_user_ID = []
 purchase_seller_ID= []
 purchase_product_ID = []
+sells_seller_ID = []
+sells_product_ID = []
+
 
 Faker.seed(0)
 fake = Faker()
@@ -43,7 +46,9 @@ def gen_users(num_users):
             firstname = name_components[0]
             lastname = name_components[-1]
             balance = random.random()*10000
-            writer.writerow([uid, email, password, firstname, lastname, balance])
+            zip = fake.random_int(min=10000, max=99999)
+            street = fake.sentence(nb_words=6)[:-1]
+            writer.writerow([uid, email, password, firstname, lastname, balance, zip, street])
         print(f'{num_users} generated')
     return
 
@@ -77,7 +82,7 @@ def gen_products(num_products, available_category):
             product_description = fake.sentence(nb_words=10)[:-1];
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
             available = fake.random_element(elements=('true', 'false'))
-            img = 'img'
+            img = 'https://picsum.photos/seed/' + 'WAMYJ' + str(pid) + '/300/300'
             if name not in product_name:
                 product_dict[pid] = price
                 product_name.append(name)
@@ -106,7 +111,7 @@ def gen_purchases(num_purchases, product_dict):
                 time_processed = datetime(1, 1, 1, 1, 1, 1)
             else: 
                 status = 'Complete'
-            quantity = fake.random_int(min=0, max=max_purchase_unit)
+            quantity = fake.random_int(min=1, max=max_purchase_unit)
             payment_amount = float(product_dict.get(pid)) * int(quantity)
             writer.writerow([id, pid, uid, sid, payment_amount, quantity, time_purchased, time_processed, status])
         print(f'{num_purchases} generated')
@@ -115,13 +120,15 @@ def gen_purchases(num_purchases, product_dict):
 
 def gen_cart(num_cart, product_dict):
     cart_id = []
+    id_max = len(sells_seller_ID)
     with open('Cart.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Cart...', end=' ', flush=True)
         for id in range(num_cart):
             uid = fake.random_int(min=0, max=num_users-1)
-            sid = fake.random_int(min=0, max=num_users-1)
-            pid = fake.random_element(elements=product_dict.keys())
+            product_number = fake.random_int(min=0, max=id_max-1)
+            sid = sells_seller_ID[product_number]
+            pid = sells_product_ID[product_number]
             quantity = fake.random_int(min=1, max=max_purchase_unit)
             price = product_dict.get(pid)
             key = [uid, sid, pid]
@@ -143,6 +150,8 @@ def gen_SellsIten(num_item_sold, product_dict):
             stock = fake.random_int(min=0, max=max_stock_unit)
             key = [sid, pid]
             if key not in sold_item_id:
+                sells_seller_ID.append(sid)
+                sells_product_ID.append(pid)
                 sold_item_id.append(key)
                 writer.writerow([sid, pid, price, stock])
         print(f'{num_item_sold} generated')
@@ -192,7 +201,7 @@ gen_users(num_users)
 available_category = gen_category(num_category);
 product_dict = gen_products(num_products, available_category)
 gen_purchases(num_purchases, product_dict)
-gen_cart(num_cart, product_dict)
 gen_SellsIten(num_item_sold, product_dict)
+gen_cart(num_cart, product_dict)
 gen_ProductReview(num_product_review)
 gen_SellerReview(num_seller_review)

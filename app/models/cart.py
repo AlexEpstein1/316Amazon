@@ -73,8 +73,7 @@ class cart:
 
     @staticmethod
     # backend method to add product to cart of a user
-    def add_to_cart(user_id, seller_id, product_id, quantity):
-        quantity = int(quantity)
+    def add_item_to_cart(user_id, seller_id, product_id, quantity):
         price_per_item = cart.get_product_price(product_id, seller_id)
         app.db.execute('''
             INSERT INTO Cart(user_id, seller_id, product_id, quantity, price_per_item)
@@ -82,6 +81,8 @@ class cart:
             RETURNING user_id
             ''',
                               user_id = user_id, seller_id = seller_id, product_id = product_id, quantity=quantity, price_per_item=price_per_item)
+
+
 
     @staticmethod
     # backend method to update quantity of product in cart
@@ -140,17 +141,17 @@ class cart:
         for c in cart_content:
             if c.quantity != 0:
                 cart.remove_product_in_cart(c.user_id, c.seller_id, c.product_id)
-                cart.purchase(c.user_id, c.seller_id, c.product_id, c.quantity)
+                cart.purchase(c.user_id, c.seller_id, c.product_id, c.quantity, c.price_per_item)
 
     @staticmethod
     # backend method to order a product
-    def purchase(user_id, seller_id, product_id, quantity):
+    def purchase(user_id, seller_id, product_id, quantity, price):
         total_order = app.db.execute('''
                     SELECT COUNT(order_id)
                     FROM Purchases
                     ''',)
         order_id = total_order[0][0] + 1
-        payment_amount = cart.get_product_price(product_id, seller_id)*quantity
+        payment_amount = price*quantity
         time_purchased = datetime.now(tz=None)
         time_processed = datetime(1, 1, 1, 1, 1, 1)
         status = 'Incomplete'
@@ -170,6 +171,47 @@ class cart:
         RETURNING product_id
             ''',
                               seller_id = seller_id, product_id = product_id, quantity = quantity)
+        
+        app.db.execute('''
+        UPDATE Users
+        SET balance = balance - :payment_amount
+        WHERE id = :user_id
+        RETURNING balance
+            ''',
+                              payment_amount = payment_amount, user_id = user_id)
+        
+        app.db.execute('''
+        UPDATE Users
+        SET balance = balance + :payment_amount
+        WHERE id = :seller_id
+        RETURNING balance
+            ''',
+                              payment_amount = payment_amount, seller_id = seller_id)
+
+    @staticmethod
+    def apply_promo(code, user_id, seller_id, product_id):
+        available = app.db.execute('''
+                        SELECT stock
+                        FROM SellsItem
+                        WHERE seller_id = :seller_id AND product_id = :product_id
+                        ''',
+                                    seller_id = seller_id, product_id = product_id)
+        if(len(available) != 0 ):    
+            if(code.lower() == 'holiday' or  code.lower() == 'thanksgiving' or code.lower() == 'duke' or code.lower() == 'black friday'):
+                price_per_item = cart.get_product_price(product_id, seller_id)
+                app.db.execute('''
+                UPDATE Cart
+                SET price_per_item = 0.9*price_per_item
+                WHERE user_id = :user_id AND seller_id = :seller_id AND product_id = :product_id AND price_per_item = :price_per_item
+                RETURNING user_id
+                ''',
+                              user_id = user_id, seller_id = seller_id, product_id = product_id, price_per_item = price_per_item)
+
+    @staticmethod
+    def apply_promo_cart(code, user_id):
+        cart_content = cart.get_all_cart_input(user_id)
+        for c in cart_content:
+            cart.apply_promo(code, user_id, c.seller_id, c.product_id)
 
 
 
@@ -184,6 +226,3 @@ class cart:
                               product_id = product_id, seller_id = seller_id)
         return price_per_item[0][0]
 
-
-
-#request.form['quantity']
