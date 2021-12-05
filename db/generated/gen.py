@@ -61,6 +61,8 @@ def gen_category(num_category):
         print('Category...', end=' ', flush=True)
         for pid in range(num_category):
             name = fake.sentence(nb_words=1)[:-1]
+            while name in available_category:
+                name = fake.sentence(nb_words=2)[:-1]
             description = fake.sentence(nb_words=10)[:-1]
             if name not in available_category:
                 writer.writerow([name, description])
@@ -78,6 +80,8 @@ def gen_products(num_products, available_category):
             if pid % 100 == 0:
                 print(f'{pid}', end=' ', flush=True)
             name = fake.sentence(nb_words=2)[:-1]
+            while name in product_name:
+                name = fake.sentence(nb_words=2)[:-1]
             cat_name = fake.random_element(elements=available_category)
             product_description = fake.sentence(nb_words=10)[:-1];
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
