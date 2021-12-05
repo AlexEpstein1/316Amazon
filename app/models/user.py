@@ -8,17 +8,19 @@ from .. import login
 
 
 class User(UserMixin):
-    def __init__(self, id, email, firstname, lastname, balance):
+    def __init__(self, id, email, firstname, lastname, balance, zip, street):
         self.id = id
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
         self.balance = balance
+        self.zip = zip
+        self.street = street
 
     @staticmethod
     def get_by_auth(email, password):
         rows = app.db.execute("""
-SELECT password, id, email, firstname, lastname, balance
+SELECT password, id, email, firstname, lastname, balance, zip, street
 FROM Users
 WHERE email = :email
 """,
@@ -42,18 +44,20 @@ WHERE email = :email
         return len(rows) > 0
 
     @staticmethod
-    def register(email, password, firstname, lastname, balance):
+    def register(email, password, firstname, lastname, mailingaddress, zipcode, balance):
         try:
             rows = app.db.execute("""
-INSERT INTO Users(email, password, firstname, lastname, balance)
-VALUES(:email, :password, :firstname, :lastname, 0)
+INSERT INTO Users(email, password, firstname, lastname, balance, zip, street)
+VALUES(:email, :password, :firstname, :lastname, 0, :zip, :street)
 RETURNING id
 """,
                                   email=email,
                                   password=generate_password_hash(password),
                                   firstname=firstname,
                                   lastname=lastname,
-                                  balance=balance)
+                                  balance=balance,
+                                  zip=zipcode,
+                                  street=mailingaddress)
             id = rows[0][0]
             return User.get(id)
         except Exception:
@@ -65,7 +69,7 @@ RETURNING id
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-SELECT id, email, firstname, lastname, balance
+SELECT id, email, firstname, lastname, balance, zip, street
 FROM Users
 WHERE id = :id
 """,
