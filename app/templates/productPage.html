@@ -14,8 +14,9 @@
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
       {% for seller in sellers %}
         <div class="dropdown-item">
-          {{seller.firstname}} {{seller.lastname}} <small class="text-muted">(Stock: {{seller.stock}})</small>
-          <br>
+          {{seller.firstname}} {{seller.lastname}}  
+          <small class="text-muted">(Price: {{seller.price}}; Stock: {{seller.stock}})</small>
+          
           {% if current_user.is_authenticated %}
           <form action="{{ url_for('cartRouter.add_cart', user_id=current_user.id, seller_id=seller.seller_id, product_id=product.id, quantity = "0") }}" method="POST"> 
             <input type="number" id="quantity" name="quantity" required
@@ -30,21 +31,24 @@
   </div>
 <div style="text-align: center">
 
-		<h2> {{product.name}} </h2>
-        <h2> {{avg_rating}} Stars </h2>
-        <p>ID: {{product.id}}</p>
-		{% if product.available %}
+		<h2> {{summary.name}} </h2>
+    <img src="{{product.image_file}}">
+        <h2> {{summary.avg_rating}} Stars </h2>
+        <p>ID: {{summary.product_id}}</p>
+		{% if summary.total_stock > 0 %}
 		    <h5 style="font-size: 24px; color:green"> In Stock</h5>
-        {% else %}
+    {%else%}
             <h5 style="font-size: 24px; color:red"> Out of Stock </h5>
-        {% endif %}
-		<h5>Category: {{product.cat_name}}</h5>
-		<h5>Price: ${{product.price}}</h5>
-		<h5>Description: {{product.description}}</h5>
+    {%endif%}   
+		<h5>Category: {{summary.cat_name}}</h5>
+		<h5>Average Price: {{summary.avg_price}}</h5>
+    <h5>Total Stock: {{summary.total_stock}}</h5>
+		<h5>Description: {{summary.description}}</h5>
 </div>
-		<h5>Reviews: </h5>
+
+		<h5>Reviews: ({{summary.reviews}}) </h5>
         {% if reviews %}
-        <div class="card-deck">
+        <div class="card-columns">
         {% for review in reviews %}
             <div class="card" style="max-width: 18rem;">
               <div class="card-body" onclick="window.location.href='{{ url_for('index.review_history', page=0, type='product_history', product_id=product.id)}}'">

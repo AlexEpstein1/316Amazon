@@ -8,10 +8,10 @@
 
 <h3>Enter New Product Details:</h3>
 
-<form action="" method="post"> 
+<form action="{{ url_for('products.add_new_product') }}" method="post"> 
     <div class="form-group">
         <label for="cat_name">Category:</label>
-        <select class="form-select" aria-label="Default select example" id="cat_name">
+        <select class="form-control" aria-label="Default select example" id="cat_name">
     
             {% for cat in categories %}
             <option value="cat.cat_name">{{cat.cat_name}}</option>
@@ -29,7 +29,7 @@
 
     <div class="form-group">
         <label for="description">Description</label>
-        <textarea class="form-control" id="description" rows="3"></textarea>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
         <small id="description" class="form-text text-muted">Enter a brief description of the item</small>
     </div>
 
@@ -40,9 +40,9 @@
     </div>
 
     <div class="form-group">
-        <label for="quantity">Quantity? </label>
-        <input type="number" name="quantity" min="1">
-        <small id="quantity" class="form-text text-muted">How many of this item are you listing at this time? (Must be offering min. 1)</small>
+        <label for="Stock">Quantity? </label>
+        <input type="number" name="stock" min="1">
+        <small id="stock" class="form-text text-muted">How many of this item are you listing at this time? (Must be offering min. 1)</small>
     </div>
     <button type="submit" class="btn btn-primary">Add Product!</button>
   </form>

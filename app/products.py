@@ -43,11 +43,13 @@ def filterCat(cat):
 @bp.route('/productPage/<id>', methods = ['POST', 'GET'])
 def productPage(id):
     product = Product.get(id)
+    summary = ProductSummary.get(product_id=id)[0]
     sellers = ProductSellers.productSellers(id=id)
     reviews = ProductReviewWithName.get_reviews(product_id=id)
     avg_rating = get_avg(reviews)
     return render_template('productPage.html',
                            product=product,
+                           summary=summary,
                             sellers=sellers,
                             reviews=reviews,
                             avg_rating=avg_rating
@@ -174,10 +176,15 @@ def create_new_product():
 
 @bp.route('/add_new_product/', methods = ['POST', 'GET'])
 def add_new_product():
-    num_products = len(Product.get_all(available=True))
-    Product.add_new_product(user_id=current_user.id, request=resquest, num_products=num_products)
-    return render_template('new_product.html',
-                           categories = categories)
+    num_products = len(Product.get_all(available=False))
+    products = Product.get_all(available=False)
+    ids = [x.id for x in products]
+    new_id=num_products+1
+    while new_id in ids:
+        new_id+=1
+    Product.add_new_product(request=request, new_id=new_id)
+    return write_product(new_id,'add')
+    # ProductSellers.addProduct(id=new_id, request=request)
 
 
 
