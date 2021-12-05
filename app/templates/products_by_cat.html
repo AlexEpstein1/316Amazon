@@ -10,7 +10,7 @@
 
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     {% for name in categories %}
-    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=name) }}">{{cat_name}}</a>
+    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=name.cat_name) }}">{{name.cat_name}}</a>
     {% endfor %}
   </div>
 </div>
@@ -24,8 +24,9 @@ Filtering on: {{cat_name}}
 
 <div class="card-deck">
     {% for product in products %}
-  <div class="card" style="min-width: 18rem;">
-    <div class="card-body" onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
+  <div class="card" style="min-width: 18rem;" onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
+    <img class="card-img-top img-thumbnail" src="{{product.image_file}}" alt="">
+    <div class="card-body" >
       <h5 class="card-title">{{product.name}}</h5>
       <p class="card-text">Price: {{product.price}}</p>
     {% if product.available %}
