@@ -28,7 +28,6 @@
             <td>${{ purchase.payment_amount }}</td>
             <td>{{ purchase.status }}</td>
             <td>{{ purchase.time_purchased }}</td>
-            </tr>
             {% endfor %}
         </tbody>
     </table>
@@ -37,7 +36,6 @@
     <h6>No orders currently waiting delivery</h6>
     {% endif %}
     <h3>Completed Orders</h3>
-    <h6><i>Click on any product to write a review</i></h5>
         <table class="table table-light table-striped table-hover container">
             <thead class="thead-dark">
                 <tr>
@@ -53,7 +51,7 @@
             </thead>
             <tbody>
                 {% for purchase in complete_purchases %}
-                <tr onclick="window.location.href='{{ url_for('index.reviews_landing', order_id=purchase.order_id) }}'">
+                <tr>
                     <th scope="row">{{ purchase.order_id }}</th>
                     <td>{{ purchase.product_id }}</td>
                     <td>{{ purchase.quantity }}</td>

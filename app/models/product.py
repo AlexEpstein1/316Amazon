@@ -54,20 +54,20 @@ class Product:
             id=id)
             return [Product(*row) for row in rows]
 
-            
-    
+
+
     @staticmethod
     def search(search, available):
-        # search products for product name 
+        # search products for product name
             rows = app.db.execute('''
-            SELECT id, name, price, cat_name, description, image_file, available
+            SELECT id, name, cat_name, description, image_file, available
             FROM Products
             WHERE lower(name) LIKE lower(CONCAT(:search, '%'))
             '''.format(available),
             search=search,
             available=available)
             return [Product(*row) for row in rows]
-       
+
 
     @staticmethod
     def get_by_cat(cat):
@@ -80,17 +80,17 @@ class Product:
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def add_new_product(request, new_id): 
-        #cat_name = request.form.get("cat_name")  
+    def add_new_product(request, new_id):
+        #cat_name = request.form.get("cat_name")
         cat_name = 'North'
         name = request.form["name"]
-        #description = request.form.get("description")   
+        #description = request.form.get("description")
         description = ''
         available = True
         image_file='image'
-        
-    
-        
+
+
+
         app.db.execute("""
         INSERT INTO Products(id, name, cat_name, description, image_file, available)
         VALUES(:id, :name, :cat_name, :description, :image_file, :available)
@@ -103,7 +103,7 @@ class Product:
                             image_file=image_file,
                             available=available
                             )
-    
+
         return 'Added product '
 
 
@@ -138,11 +138,11 @@ class ProductSellers:
 
 
     @staticmethod
-    def addProduct(id, request): 
-        stock = request.form["stock"]    
+    def addProduct(id, request):
+        stock = request.form["stock"]
         price = request.form["price"]
         seller_id = current_user.id
-    
+
         try:
             rows = app.db.execute("""
             INSERT INTO SellsItem(seller_id, product_id, price, stock)
@@ -159,11 +159,11 @@ class ProductSellers:
         return 'Added product '
 
     @staticmethod
-    def editProduct(id, request): 
-        stock = request.form["stock"]    
+    def editProduct(id, request):
+        stock = request.form["stock"]
         price = request.form["price"]
         seller_id = current_user.id
-    
+
         rows = app.db.execute("""
         UPDATE SellsItem
         SET stock = :stock, price = :price
@@ -177,7 +177,7 @@ class ProductSellers:
         return "Edited Product "
 
     @staticmethod
-    def deleteProduct(id): 
+    def deleteProduct(id):
         seller_id=current_user.id
         rows = app.db.execute("""
         DELETE FROM SellsItem
@@ -213,5 +213,3 @@ class ProductSummary:
              product_id=product_id)
 
         return [ProductSummary(*row) for row in rows] if rows else None
-
-
