@@ -80,3 +80,7 @@ def register():
 def logout():
     logout_user()
     return redirect(url_for('index.index'))
+
+@bp.route('/account_balance', methods=['GET', 'POST'])
+def view_balance():
+    return render_template('account_balance.html')

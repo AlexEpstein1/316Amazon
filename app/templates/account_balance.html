@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{%if editing != null%}
+<h2>EDITING</h2>
+{%endif%}
+
+<div style="border-style: solid; border-width: 2px; border-color: #e3e3e3; border-radius: 5px; margin-top: 1%; padding: 1%;">
+  <h5><b>Your Account Balance:</b> ${{ current_user.balance }}</h5>
+  <button style="background-color: #ffd812;">Reload Balance</button>
+  <button>Withdraw Balance</button>
+</div>
+
+
+
+
+
+
+{% endblock %}
