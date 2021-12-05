@@ -28,14 +28,14 @@ def cart_update(uid, sid, pid, quan, price):
                            price_per_item = price)
 
 
-# delete_cart_element
+# connects to backend for delete_cart_element
 @bp.route('/delete_cart_element/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def delete_cart_element(user_id, seller_id, product_id):
     cart.remove_product_in_cart(user_id = user_id, seller_id = seller_id, product_id = product_id)
 
     return redirect(url_for('index.cart_page'))
 
-#update_cart_quantity
+# connects to backend for update_cart_quantity
 @bp.route('/update_cart_quantity/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def update_cart_quantity(user_id, seller_id, product_id):
     quantity = request.form['quantity']
@@ -43,22 +43,25 @@ def update_cart_quantity(user_id, seller_id, product_id):
 
     return redirect(url_for('index.cart_page'))
 
-#update_cart_quantity
+# connects to backend for update_cart_quantity
 @bp.route('/purchase_from_cart/<user_id>/', methods = ['POST', 'GET'])
 def purchase_from_cart(user_id):
     order_status = cart.check_order(user_id = user_id)
     print('tracking order satus:')
     print( order_status)
-    if order_status == 0: 
+    # order is successful
+    if order_status == 0:  
         cart.make_cart_order(user_id = user_id)
         return redirect(url_for('cartRouter.order_result_page', type= 'sucess'))
+    # not enough balance
     if order_status == 1:
         render_template('order_result.html',
                            type = 'balance')
         return redirect(url_for('cartRouter.order_result_page', type= 'balance'))
+    # not enough stock
     if order_status == 2:
         return redirect(url_for('cartRouter.order_result_page', type= 'stock'))
-# reviews_landing html
+
 
 @bp.route('/order_result_page/<type>', methods = ['POST', 'GET'])
 def order_result_page(type):
@@ -67,7 +70,7 @@ def order_result_page(type):
                            type = type)
 
 
-# add_to_cart
+# connects to backend for add_to_cart
 @bp.route('/add_cart/<user_id>/<seller_id>/<product_id>/<quantity>/', methods = ['POST', 'GET'])
 def add_cart(user_id, seller_id, product_id, quantity):
     quantity = request.form['quantity']
@@ -75,7 +78,7 @@ def add_cart(user_id, seller_id, product_id, quantity):
     return redirect(url_for('index.cart_page'))
 
 
-#save_for_later
+# connects to backend for save_for_later
 @bp.route('/save_for_later/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def save_for_later(user_id, seller_id, product_id):
     quantity = 0
@@ -83,7 +86,7 @@ def save_for_later(user_id, seller_id, product_id):
 
     return redirect(url_for('index.cart_page'))
 
-#apply_promo_product
+# connects to backend for apply_promo_product
 @bp.route('/apply_promo_product/<user_id>/<seller_id>/<product_id>/', methods = ['POST', 'GET'])
 def apply_promo_product(user_id, seller_id, product_id):
     code = request.form['code']
@@ -91,7 +94,7 @@ def apply_promo_product(user_id, seller_id, product_id):
     return redirect(url_for('index.cart_page'))
 
 
-#apply_promo_cart
+# connects to backend for apply_promo_cart
 @bp.route('/apply_promo_cart/<user_id>/', methods = ['POST', 'GET'])
 def apply_promo_cart(user_id):
     code = request.form['code']
