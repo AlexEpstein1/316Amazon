@@ -7,6 +7,8 @@
 <!-- SEARCH FOR PRODUCT -->
 <br>
 
+<!-- <h5><i>Showing page {{ page+1 }}</i></h5> -->
+<!-- No previous page -->
 
 <!-- 
 <form action="{{ url_for('index.createProduct') }}" method="POST">
@@ -48,17 +50,7 @@
 </form>
 {% if search != null and search != '' %}
 <b>Search results for '{{ search }}':</b>
-{% if page == 0 %}
-<a href="{{ url_for('index.searchProducts', page=page+1, search=search) }}" class="btn btn-dark" role="button"
-  style="float: right;">Next</a>
-{% elif count != null and count>(page+1)*10 %}
-<a href="{{ url_for('index.searchProducts', page=page+1, search=search) }}" class="btn btn-dark" role="button"
-  style="float: right;">Next</a><a href="{{ url_for('index.searchProducts', page=page-1, search=search) }}" class="btn btn-dark"
-  role="button" style="float: right;">Previous</a>
-{% else %}
-<a href="{{ url_for('index.searchProducts', page=page-1, search=search) }}" class="btn btn-dark" role="button"
-  style="float: right;">Previous</a>
-{% endif %}
+
 {% endif %}
 
 

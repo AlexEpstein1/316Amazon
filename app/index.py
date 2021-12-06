@@ -41,7 +41,7 @@ def index():
 @bp.route('/createProduct', methods = ['POST', 'GET'])
 def createProduct():
     # get all available products for sale:
-    products = Product.get_all(available=True)
+    products = Product.get_first_ten(available=True, id = None)
     
     return render_template('create_product.html',
                            products=products,page=0)
@@ -57,7 +57,7 @@ def searchProducts(page=0):
     if body is None:
         products = Product.get_all(available=True)
     else: 
-        products = Product.search(search=body, available=True, offset=int(page)*10)
+        products = Product.search(search=body, available=True)
         first_search = False
     return render_template('create_product.html',
                            products=products, 

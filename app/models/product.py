@@ -55,18 +55,46 @@ class Product:
             return [Product(*row) for row in rows]
 
 
+    @staticmethod
+    def get_first_ten(available, id=None):
+        if id is None and available == True:
+            rows = app.db.execute('''
+            SELECT id, name, cat_name, description, image_file, available
+            FROM Products
+            WHERE available = {0}
+            LIMIT 10
+            '''.format(available),
+            available=available)
+            return [Product(*row) for row in rows]
+        elif id is None and available == False:
+            rows = app.db.execute('''
+            SELECT *
+            FROM Products
+            ''')
+            return [Product(*row) for row in rows]
+
+
+        else:
+            rows = app.db.execute('''
+            SELECT DISTINCT id, name, cat_name, description, image_file, available
+            FROM Products
+            WHERE id = :id
+            LIMIT 10
+            ''',
+            id=id)
+            return [Product(*row) for row in rows]
+
 
     @staticmethod
-    def search(search, available, offset = 0):
+    def search(search, available):
         # search products for product name
             rows = app.db.execute('''
             SELECT id, name, cat_name, description, image_file, available
             FROM Products
             WHERE lower(name) LIKE lower(CONCAT(:search, '%'))
-            LIMIT 10 OFFSET :offset
             '''.format(available),
             search=search,
-            available=available, offset=offset)
+            available=available)
             return [Product(*row) for row in rows]
 
 
