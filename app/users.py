@@ -95,6 +95,11 @@ def add_balance():
     User.add_balance(request)
     return redirect(url_for('users.view_balance'))
 
-@bp.route('/edit_account', methods=['GET', 'POST'])
-def edit_account():
+@bp.route('/view_account_info', methods=['GET', 'POST'])
+def view_account_info():
     return render_template('edit_account.html')
+
+@bp.route('/edit_account_info', methods=['GET', 'POST'])
+def edit_account_info():
+    User.update_account_info(request)
+    return redirect(url_for('index.profile'))

@@ -29,7 +29,7 @@
           <option value="2">Bank Account</option>
         </select>
         <div class="form-group" style="margin-top: 2%;">
-          <label for="txt" class="control-label"><b>Specify amount to add:</b></label>
+          <label for="add-amount" class="control-label"><b>Specify amount to add:</b></label>
           <input required name="add-amount" type="number" max="10000.00" min="0.00" id="add-amount" class="form-control" autofocus="autofocus" placeholder="0.00"/>
           <p style="color: rgb(196, 196, 196); font-size: smaller; padding-top: 0.5%;">Note: Only $10,000.00 can be added in a single deposit. Do not use commas in deposit quantity.</p>
         </div>
@@ -58,7 +58,7 @@
       <div class="modal-body">
         <p>You can withdraw up to ${{ current_user.balance }} from your account. It may take up to 48 hours for the transfer to process and be reflected in your bank account.</p>
         <div class="form-group">
-          <label for="txt" class="control-label"><b>Specify withdrawal amount:</b></label>
+          <label for="withdrawal-amount" class="control-label"><b>Specify withdrawal amount:</b></label>
           <input required name="withdrawal-amount" type="number" max={{current_user.balance}} min="0.00" id="withdrawal-amount" class="form-control" autofocus="autofocus" placeholder="0.00"/>
           <p style="color: rgb(196, 196, 196); font-size: smaller; padding-top: 0.5%;">Note: if the amount is greater than the current balance of the account, the withdrawal will simply be equal to the current balance.</p>
         </div>

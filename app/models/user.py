@@ -122,3 +122,26 @@ WHERE id = :id
                              balance=final_balance)
         return True
 
+    @staticmethod
+    def update_account_info(request):
+        user_id = current_user.id
+        fname = request.form["fname-value"]
+        lname = request.form["lname-value"]
+        email = request.form["email-value"]
+        street = request.form["street-value"]
+        zip = request.form["zip-value"]
+    
+        rows = app.db.execute("""
+        UPDATE Users
+        SET email = :email, firstname = :firstname, lastname = :lastname, zip = :zip, street = :street
+        WHERE id = :id
+        RETURNING id
+        """,
+                            email=email,
+                            firstname=fname,
+                            lastname=lname,
+                            zip=zip,
+                            street=street,
+                            id=user_id)
+        return True
+
