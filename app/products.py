@@ -28,22 +28,6 @@ def get_avg(reviews):
         avg_rating = avg_rating / len(reviews)
     return avg_rating
 
-def format_value(value, type):
-
-    if value is None:
-        if type == 'avg_price':
-            value = 'No current listings'
-        else:
-            value = 'No reviews'
-    else:
-        if type == 'avg_price':
-            value = '$' + str(round(value, 2))
-        else:
-            value = str(round(value, 2))
-
-    return value
-
-
 @bp.route('/filterCat/<cat>', methods = ['POST', 'GET'])
 def filterCat(cat):
     products = Product.get_by_cat(cat=cat_name)
