@@ -102,4 +102,23 @@ WHERE id = :id
                              id=user_id,
                              balance=final_balance)
         return True
+    
+    @staticmethod
+    def add_balance(request):
+        amount = request.form["add-amount"]  
+        add_amount = float(amount)
+        user_id = current_user.id
+        curr_balance = float(current_user.balance)
+
+        final_balance = curr_balance + add_amount
+    
+        rows = app.db.execute("""
+        UPDATE Users
+        SET balance = cast(:balance as decimal)
+        WHERE id = :id
+        RETURNING id
+        """,
+                             id=user_id,
+                             balance=final_balance)
+        return True
 

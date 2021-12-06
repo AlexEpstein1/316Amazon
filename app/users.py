@@ -89,3 +89,8 @@ def view_balance():
 def withdraw_balance():
     User.withdraw_balance(request)
     return redirect(url_for('users.view_balance'))
+
+@bp.route('/add_balance', methods=['GET', 'POST'])
+def add_balance():
+    User.add_balance(request)
+    return redirect(url_for('users.view_balance'))

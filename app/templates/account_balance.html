@@ -17,6 +17,7 @@
 <div class="modal fade" id="reloadBalanceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
+      <form action="{{ url_for('users.add_balance') }}" method="POST">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Reload Balance</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -24,18 +25,24 @@
         </button>
       </div>
       <div class="modal-body">
+        <p>Add money to your account in order to fund purchases.</p>
         <p>Select a payment method:</p>
         <select class="form-select" aria-label="Default select example">
           <option selected>Credit Card</option>
           <option value="1">Debit Card</option>
           <option value="2">Bank Account</option>
         </select>
-        <p>Specify deposit amount:</p>
+        <div class="form-group" style="margin-top: 2%;">
+          <label for="txt" class="control-label"><b>Specify amount to add:</b></label>
+          <input required name="add-amount" type="number" max="10000.00" min="0.00" step="0.01" id="add-amount" class="form-control" autofocus="autofocus" placeholder="0.00"/>
+          <p style="color: rgb(196, 196, 196); font-size: smaller; padding-top: 0.5%;">Note: Only $10,000.00 can be added in a single deposit. Do not use commas in deposit quantity.</p>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" class="btn btn-primary" style="background-color: green; border-color: green;">Confirm Deposit</button>
+        <button type="submit" class="btn btn-primary" id="confirm-deposit" style="background-color: green; border-color: green;">Confirm Deposit</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
