@@ -12,6 +12,9 @@ from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
 from .models.inventory import Inventory
 from .models.categories import Category
+from .reviews import format_value
+
+
 
 
 from flask import Blueprint
@@ -24,6 +27,21 @@ def get_avg(reviews):
             avg_rating+=x.rating
         avg_rating = avg_rating / len(reviews)
     return avg_rating
+
+def format_value(value, type):
+
+    if value is None:
+        if type == 'avg_price':
+            value = 'No current listings'
+        else:
+            value = 'No reviews'
+    else:
+        if type == 'avg_price':
+            value = '$' + str(round(value, 2))
+        else:
+            value = str(round(value, 2))
+
+    return value
 
 
 @bp.route('/filterCat/<cat>', methods = ['POST', 'GET'])
@@ -44,7 +62,12 @@ def filterCat(cat):
 def productPage(id):
     product = Product.get(id)
     summary = ProductSummary.get(product_id=id)[0]
+    summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
+    summary.avg_rating = format_value(summary.avg_rating, type = 'avg_rating')
     sellers = ProductSellers.productSellers(id=id)
+    for seller in sellers:
+        seller.price = format_value(seller.price, type = "avg_price")
+
     reviews = ProductReviewWithName.get_reviews(product_id=id)
     avg_rating = get_avg(reviews)
     return render_template('productPage.html',
@@ -159,10 +182,17 @@ def delete_product(id):
 def products_by_cat(cat_name):
     products = Product.get_by_cat(cat=cat_name)
     categories = Category.get_all()
+    for product in products:
+        summary = ProductSummary.get(product_id=product.id)[0]
+        summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
+        summary.avg_rating = format_value(summary.avg_rating, type = 'avg_rating')
+        product.avg_rating = summary.avg_rating
+        product.avg_price = summary.avg_price
+        product.num_sellers = summary.sellers
+        product.total_stock = summary.total_stock
     # find the products current user has bought:
     
     return render_template('products_by_cat.html',
-
                             cat_name=cat_name,
                            products=products,
                            categories = categories)

@@ -68,3 +68,12 @@ b-card.p-review {
   padding: 0px;
   margin: 0px;
 }
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row > div[class*='col-'] {
+ display: flex;
+}

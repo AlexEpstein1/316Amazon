@@ -12,6 +12,7 @@
     </button>
 
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      {% if summary.total_stock > 0 %}
       {% for seller in sellers %}
         <div class="dropdown-item">
           {{seller.firstname}} {{seller.lastname}}  
@@ -27,6 +28,14 @@
         </div>
 
       {% endfor %}
+      {% else %}
+      <div class="dropdown-item">
+        No current listings
+      </div>
+        
+      {% endif %}
+
+
     </div>
   </div>
 <div style="text-align: center">
@@ -62,5 +71,5 @@
         </div>
 
         {% endif %}
-
+<br><br><br>
 {% endblock %}
