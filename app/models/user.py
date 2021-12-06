@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+from flask_login import current_user
 from flask import current_app as app
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
@@ -75,4 +76,30 @@ WHERE id = :id
 """,
                               id=id)
         return User(*(rows[0])) if rows else None
+
+    @staticmethod
+    def withdraw_balance(request):
+        amount = request.form["withdrawal-amount"]  
+        with_amount = float(amount)
+        user_id = current_user.id
+        curr_balance = float(current_user.balance)
+
+        final_balance = 0.00
+
+        if(with_amount > curr_balance):
+            final_balance = 0.00
+        elif(with_amount == curr_balance):
+            final_balance = 0.00
+        else:
+            final_balance = curr_balance - with_amount
+    
+        rows = app.db.execute("""
+        UPDATE Users
+        SET balance = cast(:balance as decimal)
+        WHERE id = :id
+        RETURNING id
+        """,
+                             id=user_id,
+                             balance=final_balance)
+        return True
 

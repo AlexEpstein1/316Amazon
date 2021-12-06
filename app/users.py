@@ -84,3 +84,8 @@ def logout():
 @bp.route('/account_balance', methods=['GET', 'POST'])
 def view_balance():
     return render_template('account_balance.html')
+
+@bp.route('/withdraw_balance', methods=['GET', 'POST'])
+def withdraw_balance():
+    User.withdraw_balance(request)
+    return redirect(url_for('users.view_balance'))
