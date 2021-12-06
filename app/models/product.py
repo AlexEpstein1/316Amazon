@@ -80,17 +80,16 @@ class Product:
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def add_new_product(request, new_id):
-        #cat_name = request.form.get("cat_name")
-        cat_name = 'North'
+    def add_new_product(request, new_id): 
+        # cat_name = request.form.get("cat_name")  
+        cat_name = request.form["cat_name"] 
         name = request.form["name"]
-        #description = request.form.get("description")
-        description = ''
+        description = request.form["description"]   
+        image_file=request.form["image"]
         available = True
-        image_file='image'
-
-
-
+        
+    
+        
         app.db.execute("""
         INSERT INTO Products(id, name, cat_name, description, image_file, available)
         VALUES(:id, :name, :cat_name, :description, :image_file, :available)

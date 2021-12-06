@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{cat_name}}</h2>
+<a href="{{ url_for('index.index') }}" style="float:left" type="button" class="btn-close" aria-label="Close"></a><h2>{{cat_name}}</h2>
 
 <div class="dropdown">
   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -22,22 +22,31 @@ Filtering on: {{cat_name}}
 {% endif %}
 <br> -->
 
+
+
 <div class="card-deck">
     {% for product in products %}
-  <div class="card" style="min-width: 18rem;" onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
-    <img class="card-img-top img-thumbnail" src="{{product.image_file}}" alt="">
+ 
+  <div class="card text-center" style="min-width: 18rem; max-width: 20rem; margin: 1rem" onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
+    <div style="width:100%; text-align:center">
+      <img  style="max-width: 75%; height: auto; " src="{{product.image_file}}" alt="">
+    </div>
+    
     <div class="card-body" >
       <h5 class="card-title">{{product.name}}</h5>
-      <p class="card-text">Price: {{product.price}}</p>
-    {% if product.available %}
-        <p class="card-text" style="color:green"> In Stock</p>
+      <p class="card-text">Average Price: {{product.avg_price}}</p>
+    {% if product.total_stock > 0 %}
+        <p class="card-text" style="color:green"> In Stock <small class="text-muted">{{product.num_sellers}} unique sellers</small></p> 
     {% else %}
         <p class="card-text" style="color:red"> Out of Stock </p>
     {% endif %}
+    
+    <p class="card-text">Average {{product.avg_rating}} stars</p>
     <p class="card-text"><small class="text-muted">{{product.description}}</small></p>
 
     </div>
   </div>
+
   {% endfor %}
 </div>
 
@@ -67,5 +76,5 @@ Filtering on: {{cat_name}}
     {% endfor %}
   </tbody>
 </table> -->
-
+<br><br><br>
 {% endblock %}
