@@ -88,6 +88,7 @@ def add_product(id):
     mode = "add"
     # check if we already sell this item 
 
+
     if ProductSellers.alreadySells(id): 
         products = Product.get_all(available=True)
         return render_template('create_product.html',
@@ -128,8 +129,16 @@ def write_product(id, mode):
     else: 
         message = ProductSellers.editProduct(id=id, request=request)
     
+    product=Product.get(id)
+
     # else prompt the user again 
     inventory = Inventory.get_all(available=True, seller_id=current_user.id)
+    if message == False:
+        return render_template('add_product_page.html',
+                           product=product,
+                           seller=current_user.id,
+                           mode=mode,
+                           error=True)
 
     product=Product.get(id)
 

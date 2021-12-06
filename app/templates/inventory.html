@@ -33,7 +33,6 @@
   <tbody>
     {% for inventory in sold_products %}
     <tr>
-    <tr onclick="window.location.href='{{ url_for('products.seller_product', id=inventory.product_id)}}'">
       <th scope="row">{{ inventory.seller_id }}</th>
       <td>{{ inventory.lastname + ", " + inventory.firstname }}</td>
       <td>{{ inventory.prod_name }}</td>
@@ -41,12 +40,14 @@
       <td>{{ inventory.stock }}</td>
       <td>
         <div>
-          <p><a href="{{ url_for('products.edit_product', id=inventory.product_id)}}" class="btn btn-dark" role="button">Edit</a></p>
+          <p><a href="{{ url_for('products.edit_product', id=inventory.product_id)}}" class="btn btn-dark"
+              role="button">Edit</a></p>
         </div>
       </td>
       <td>
         <div>
-          <p><a href="{{ url_for('products.delete_product', id=inventory.product_id)}}" class="btn btn-dark" role="button">Delete</a></p>
+          <p><a href="{{ url_for('products.delete_product', id=inventory.product_id)}}" class="btn btn-dark"
+              role="button">Delete</a></p>
         </div>
       </td>
     </tr>

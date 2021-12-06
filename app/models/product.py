@@ -146,6 +146,19 @@ class ProductSellers:
         seller_id = current_user.id
 
         try:
+            float(price)
+        except ValueError:
+            return False
+
+        try:
+            int(stock)
+        except ValueError:
+            return False
+
+        if int(stock) < 0 or float(price) < 0: 
+            return False 
+
+        try:
             rows = app.db.execute("""
             INSERT INTO SellsItem(seller_id, product_id, price, stock)
             VALUES(:seller_id, :product_id, :price, :stock)
