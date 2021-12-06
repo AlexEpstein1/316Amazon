@@ -43,7 +43,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr onclick="window.location.href='{{ url_for('products.productPage', id=summary.product_id)}}'">
+    <tr onclick="window.location.href='{{ url_for('products.productPage', id=summary.product_id, page = 0)}}'">
       <th scope="row">{{ summary.sellers }}</th>
       <td>{{ summary.total_stock }}</td>
       <td>{{ summary.avg_price }}</td>
@@ -84,7 +84,7 @@
   </thead>
   <tbody>
     <tr>
-    <!-- <tr onclick="window.location.href='{{ url_for('products.productPage', id=summary.product_id)}}'"> -->
+    <!-- <tr onclick="window.location.href='{{ url_for('products.productPage', id=summary.product_id, page = 0)}}'"> -->
       <th scope="row">{{ summary.products }}</th>
       <td>{{ summary.total_stock }}</td>
       <td>{{ summary.avg_price }}</td>

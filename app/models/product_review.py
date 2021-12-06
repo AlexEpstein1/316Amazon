@@ -180,13 +180,15 @@ class ProductReviewWithName:
         self.rating = rating
 
     @staticmethod
-    def get_reviews(product_id):
+    def get_reviews(product_id, offset):
         rows = app.db.execute('''
         SELECT user_id, firstname, lastname, product_id, date_time, description, rating
         FROM ProductReview, Users
         WHERE product_id = :product_id AND user_id = id
         ORDER BY date_time DESC
+        LIMIT 6 OFFSET :offset
         ''',
-             product_id = product_id)
+             product_id = product_id,
+             offset=offset)
 
         return [ProductReviewWithName(*row) for row in rows] if rows else None

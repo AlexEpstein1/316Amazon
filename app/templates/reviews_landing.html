@@ -18,7 +18,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr onclick="window.location.href='{{ url_for('products.productPage', id=purchase.product_id)}}'">
+    <tr onclick="window.location.href='{{ url_for('products.productPage', id=purchase.product_id, page = 0)}}'">
       <th scope="row">{{ purchase.order_id }}</th>
       <td>{{ purchase.product_id }}</td>
       <td>{{ purchase.quantity }}</td>

@@ -42,8 +42,10 @@ def filterCat(cat):
 
 
 
-@bp.route('/productPage/<id>', methods = ['POST', 'GET'])
-def productPage(id):
+@bp.route('/productPage/<id>/<page>', methods = ['POST', 'GET'])
+def productPage(id,page=0):
+    page = int(page)
+    offset = page * 6
     product = Product.get(id)
     summary = ProductSummary.get(product_id=id)[0]
     summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
@@ -52,14 +54,15 @@ def productPage(id):
     for seller in sellers:
         seller.price = format_value(seller.price, type = "avg_price")
 
-    reviews = ProductReviewWithName.get_reviews(product_id=id)
-    avg_rating = get_avg(reviews)
+    reviews = ProductReviewWithName.get_reviews(product_id=id, offset=offset)
+    
     return render_template('productPage.html',
                            product=product,
                            summary=summary,
                             sellers=sellers,
                             reviews=reviews,
-                            avg_rating=avg_rating
+                            page=page
+    
                             )
 
 @bp.route('/seller_product/<id>', methods = ['POST', 'GET'])
@@ -162,9 +165,13 @@ def delete_product(id):
                            message=message+product.name + " from your inventory")
 
 
-@bp.route('/products_by_cat/<cat_name>', methods = ['POST', 'GET'])
-def products_by_cat(cat_name):
-    products = Product.get_by_cat(cat=cat_name)
+@bp.route('/products_by_cat/<cat_name>/<page>/<amount>', methods = ['POST', 'GET'])
+def products_by_cat(cat_name, page = 0, amount = 10):
+    amounts = [10,15,25,50]
+    amount = int(amount)
+    page = int(page)
+    offset = page * amount
+    products = Product.get_by_cat(cat=cat_name, amount=amount, offset=offset)
     categories = Category.get_all()
     for product in products:
         summary = ProductSummary.get(product_id=product.id)[0]
@@ -179,7 +186,10 @@ def products_by_cat(cat_name):
     return render_template('products_by_cat.html',
                             cat_name=cat_name,
                            products=products,
-                           categories = categories)
+                           amounts=amounts,
+                           chosen_amount=amount,
+                           categories = categories,
+                           page=page)
 
 
 @bp.route('/create_new_product/', methods = ['POST', 'GET'])
@@ -199,6 +209,9 @@ def add_new_product():
     Product.add_new_product(request=request, new_id=new_id)
     return write_product(new_id,'add')
     # ProductSellers.addProduct(id=new_id, request=request)
+
+
+
 
 
 
