@@ -4,19 +4,25 @@
 
 <br>
 
-<div style="text-align: center">
-		<h3>Account Information: </h3>
-		<h5>ID: {{ current_user.id }}</h5>
-		<h5>Name: {{ current_user.firstname }}  {{ current_user.lastname }}</h5>
-		<h5>Email: {{ current_user.email }}</h5>
-		<h5>Mailing Address: {{ current_user.street }}</h5>
-		<h5>ZIP Code: {{ current_user.zip }}</h5>
-		<h5 style="font-size: 24px">Current balance: <b>${{ current_user.balance }}</b></h5>
-		<h5><a href="{{ url_for('users.logout') }}">Cart</a></h5>
-		<h5><a href="{{ url_for('users.view_balance') }}">Edit Balance</a></h5>
-		<h5><a href="{{ url_for('index.purchase_history') }}">Purchase History</a></h5>
-		<h5><a href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a></h5>
-		<h5><a href="{{ url_for('index.inventory') }}">Seller Inventory</a></h5>
-		<h5><a href="{{ url_for('index.index') }}">Back to Front Page</a></h5>
-	</div>
+<h3><b>Your Account:</b></h3>
+
+<div style="border-style: solid; border-width: 2px; border-color: #e3e3e3; border-radius: 5px; margin-top: 1%; padding: 1%;">
+	<h3 style="padding-bottom: 1%;">Account Info</h3>
+	<h5>Name: {{ current_user.firstname }}  {{ current_user.lastname }}</h5>
+	<h5>Email: {{ current_user.email }}</h5>
+	<h5>Mailing Address: {{ current_user.street }}</h5>
+	<h5>ZIP Code: {{ current_user.zip }}</h5>
+	<h6><a href="{{ url_for('users.edit_account') }}">Edit Account Info</a></h6>
+	<br>
+	<h5 style="font-size: 24px">Current balance: <b>${{ current_user.balance }}</b></h5>
+	<h6><a href="{{ url_for('users.view_balance') }}">Edit Balance</a></h6>
+	<br>
+	<h5 style="font-size: 24px">Cart: <b>10 items</b> (this is hard-coded)</h5>
+	<h6><a href="{{ url_for('users.logout') }}">View Cart</a></h6>
+	<br>
+	<h6><a href="{{ url_for('index.purchase_history') }}">Purchase History</a></h6>
+	<h6><a href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a></h6>
+	<h6><a href="{{ url_for('index.inventory') }}">Seller Inventory</a></h6>
+	<h6><a href="{{ url_for('index.index') }}">Back to Front Page</a></h6>
+</div>
 {% endblock %}
