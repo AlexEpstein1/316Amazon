@@ -118,9 +118,10 @@ class cart:
         WHERE id = :id 
             ''',
                               id = id)
-
+        #checks if user has enough balance 
         if(balance[0][0] < total_price): return 1
         else :
+            # check if all products in cart have enough stock
             for c in cart_content:
                 seller_id = c.seller_id
                 product_id = c.product_id
@@ -134,8 +135,8 @@ class cart:
                 if(available[0][0] < c.quantity): return 2
         return 0
 
-    @staticmethod
     # backend method to order all products inside cart
+    @staticmethod
     def make_cart_order(user_id):
         cart_content = cart.get_all_cart_input(user_id)
         for c in cart_content:
@@ -146,6 +147,7 @@ class cart:
     @staticmethod
     # backend method to order a product
     def purchase(user_id, seller_id, product_id, quantity, price):
+        # finds the number of total purchases to generate order id
         total_order = app.db.execute('''
                     SELECT COUNT(order_id)
                     FROM Purchases
@@ -156,7 +158,7 @@ class cart:
         time_processed = datetime(1, 1, 1, 1, 1, 1)
         status = 'Incomplete'
 
-        
+        # inserts in to purchases a new order
         app.db.execute('''
             INSERT INTO Purchases(order_id, product_id, buyer_id, seller_id, payment_amount, quantity,time_purchased, time_processed, status)
             VALUES(:order_id, :product_id, :buyer_id, :seller_id, :payment_amount, :quantity, :time_purchased, :time_processed, :status) 
@@ -164,6 +166,7 @@ class cart:
             ''',
                               order_id = order_id, buyer_id = user_id, seller_id=seller_id, product_id = product_id, payment_amount = payment_amount, quantity=quantity, time_purchased=time_purchased, time_processed = time_processed, status = status)
         
+        # deduct purchases quantity from seller's stock
         app.db.execute('''
         UPDATE SellsItem
         SET stock = stock - :quantity
@@ -172,6 +175,7 @@ class cart:
             ''',
                               seller_id = seller_id, product_id = product_id, quantity = quantity)
         
+        # deduct total payment amount from buyer's account
         app.db.execute('''
         UPDATE Users
         SET balance = balance - :payment_amount
@@ -180,6 +184,7 @@ class cart:
             ''',
                               payment_amount = payment_amount, user_id = user_id)
         
+        # add total payment amount to seller's account
         app.db.execute('''
         UPDATE Users
         SET balance = balance + :payment_amount
@@ -188,17 +193,22 @@ class cart:
             ''',
                               payment_amount = payment_amount, seller_id = seller_id)
 
+    # backend method to apply 10% promotion on a specific product on a cart
     @staticmethod
     def apply_promo(code, user_id, seller_id, product_id):
+        # check if product is available 
         available = app.db.execute('''
                         SELECT stock
                         FROM SellsItem
                         WHERE seller_id = :seller_id AND product_id = :product_id
                         ''',
                                     seller_id = seller_id, product_id = product_id)
+
         if(len(available) != 0 ):    
+            # if user enters an eligible code, apply 10% promotion
             if(code.lower() == 'holiday' or  code.lower() == 'thanksgiving' or code.lower() == 'duke' or code.lower() == 'black friday'):
                 price_per_item = cart.get_product_price(product_id, seller_id)
+                # update row with 10% discounted price
                 app.db.execute('''
                 UPDATE Cart
                 SET price_per_item = 0.9*price_per_item
@@ -207,6 +217,7 @@ class cart:
                 ''',
                               user_id = user_id, seller_id = seller_id, product_id = product_id, price_per_item = price_per_item)
 
+    # backend method to apply 10% promotion on all cart products
     @staticmethod
     def apply_promo_cart(code, user_id):
         cart_content = cart.get_all_cart_input(user_id)
@@ -214,9 +225,8 @@ class cart:
             cart.apply_promo(code, user_id, c.seller_id, c.product_id)
 
 
-
-    @staticmethod
     # method to get price of a product
+    @staticmethod
     def get_product_price(product_id, seller_id):
         price_per_item = app.db.execute('''
             SELECT price

@@ -19,6 +19,7 @@
     </thead>
     <tbody>
         {% for purchase in incomplete_purchases %}
+        <tr>
         <td>{{ purchase.product_id }}</td>
         <td>{{ purchase.quantity }}</td>
         <td>{{ purchase.seller_id }}</td>
@@ -30,7 +31,7 @@
     </tbody>
     </table>
     <h3>Completed Orders</h3>
-    <h6><i>Click on any product to write a review</i></h5>
+    <h6><i>Click on any order to write a review</i></h6>
     <table class="table table-light table-striped table-hover container">
     <thead class="thead-dark">
         <tr>

@@ -12,6 +12,9 @@ from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
 from .models.inventory import Inventory
 from .models.categories import Category
+from .reviews import format_value
+
+
 
 
 from flask import Blueprint
@@ -24,7 +27,6 @@ def get_avg(reviews):
             avg_rating+=x.rating
         avg_rating = avg_rating / len(reviews)
     return avg_rating
-
 
 @bp.route('/filterCat/<cat>', methods = ['POST', 'GET'])
 def filterCat(cat):
@@ -43,11 +45,18 @@ def filterCat(cat):
 @bp.route('/productPage/<id>', methods = ['POST', 'GET'])
 def productPage(id):
     product = Product.get(id)
+    summary = ProductSummary.get(product_id=id)[0]
+    summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
+    summary.avg_rating = format_value(summary.avg_rating, type = 'avg_rating')
     sellers = ProductSellers.productSellers(id=id)
+    for seller in sellers:
+        seller.price = format_value(seller.price, type = "avg_price")
+
     reviews = ProductReviewWithName.get_reviews(product_id=id)
     avg_rating = get_avg(reviews)
     return render_template('productPage.html',
                            product=product,
+                           summary=summary,
                             sellers=sellers,
                             reviews=reviews,
                             avg_rating=avg_rating
@@ -157,10 +166,17 @@ def delete_product(id):
 def products_by_cat(cat_name):
     products = Product.get_by_cat(cat=cat_name)
     categories = Category.get_all()
+    for product in products:
+        summary = ProductSummary.get(product_id=product.id)[0]
+        summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
+        summary.avg_rating = format_value(summary.avg_rating, type = 'avg_rating')
+        product.avg_rating = summary.avg_rating
+        product.avg_price = summary.avg_price
+        product.num_sellers = summary.sellers
+        product.total_stock = summary.total_stock
     # find the products current user has bought:
     
     return render_template('products_by_cat.html',
-
                             cat_name=cat_name,
                            products=products,
                            categories = categories)
@@ -174,10 +190,15 @@ def create_new_product():
 
 @bp.route('/add_new_product/', methods = ['POST', 'GET'])
 def add_new_product():
-    num_products = len(Product.get_all(available=True))
-    Product.add_new_product(user_id=current_user.id, request=resquest, num_products=num_products)
-    return render_template('new_product.html',
-                           categories = categories)
+    num_products = len(Product.get_all(available=False))
+    products = Product.get_all(available=False)
+    ids = [x.id for x in products]
+    new_id=num_products+1
+    while new_id in ids:
+        new_id+=1
+    Product.add_new_product(request=request, new_id=new_id)
+    return write_product(new_id,'add')
+    # ProductSellers.addProduct(id=new_id, request=request)
 
 
 

@@ -177,10 +177,12 @@ def inventory():
 # cart_page html
 @bp.route('/cart_page')
 def cart_page():
-    # find the products current user has bought:
     if current_user.is_authenticated:
+        # find the products current user has in carts:
         carts = cart.get_all_cart_input(user_id = current_user.id)
+        # find the products current user has saved:
         saved = cart.get_save_cart(user_id = current_user.id)
+        # find total price of products in carts:
         price = cart.get_total_price(user_id = current_user.id)
     else:
         carts = None

@@ -30,7 +30,7 @@ fake = Faker()
 def get_csv_writer(f):
     return csv.writer(f, dialect='unix')
 
-
+# generate users 
 def gen_users(num_users):
     with open('Users.csv', 'w') as f:
         writer = get_csv_writer(f)
@@ -52,8 +52,7 @@ def gen_users(num_users):
         print(f'{num_users} generated')
     return
 
-
-
+# generate categories
 def gen_category(num_category):
     available_category = []
     with open('Category.csv', 'w') as f:
@@ -61,6 +60,8 @@ def gen_category(num_category):
         print('Category...', end=' ', flush=True)
         for pid in range(num_category):
             name = fake.sentence(nb_words=1)[:-1]
+            while name in available_category:
+                name = fake.sentence(nb_words=2)[:-1]
             description = fake.sentence(nb_words=10)[:-1]
             if name not in available_category:
                 writer.writerow([name, description])
@@ -68,6 +69,7 @@ def gen_category(num_category):
         print(f'{num_category} generated; {len(available_category)} available')
     return available_category
 
+# generate products
 def gen_products(num_products, available_category):
     product_name = []
     product_dict = {}
@@ -78,6 +80,8 @@ def gen_products(num_products, available_category):
             if pid % 100 == 0:
                 print(f'{pid}', end=' ', flush=True)
             name = fake.sentence(nb_words=2)[:-1]
+            while name in product_name:
+                name = fake.sentence(nb_words=2)[:-1]
             cat_name = fake.random_element(elements=available_category)
             product_description = fake.sentence(nb_words=10)[:-1];
             price = f'{str(fake.random_int(max=500))}.{fake.random_int(max=99):02}'
@@ -90,7 +94,7 @@ def gen_products(num_products, available_category):
         print(f'{num_products} generated; {len(product_dict)} available')
     return product_dict
 
-
+# generate purchases
 def gen_purchases(num_purchases, product_dict):
     with open('Purchases.csv', 'w') as f:
         writer = get_csv_writer(f)
@@ -117,7 +121,7 @@ def gen_purchases(num_purchases, product_dict):
         print(f'{num_purchases} generated')
     return
 
-
+# generate cart inputs
 def gen_cart(num_cart, product_dict):
     cart_id = []
     id_max = len(sells_seller_ID)
@@ -138,6 +142,7 @@ def gen_cart(num_cart, product_dict):
         print(f'{num_cart} generated')
     return
 
+# generate items sold by users
 def gen_SellsIten(num_item_sold, product_dict):
     sold_item_id = []
     with open('SellsItem.csv', 'w') as f:
@@ -157,7 +162,7 @@ def gen_SellsIten(num_item_sold, product_dict):
         print(f'{num_item_sold} generated')
     return
 
-
+# generate product reviews 
 def gen_ProductReview(num_product_review):
     key_list = []
     with open('ProductReview.csv', 'w') as f:
@@ -177,6 +182,7 @@ def gen_ProductReview(num_product_review):
         print(f'{num_product_review} generated')
     return 
 
+# generate seller reviews 
 def gen_SellerReview(num_seller_review):
     key_list = []
     with open('SellerReview.csv', 'w') as f:

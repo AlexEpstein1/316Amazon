@@ -28,8 +28,8 @@ class Product:
         return Product(*(rows[0])) if rows is not None else None
 
     @staticmethod
-    def get_all(available=True, id=None):
-        if id is None:
+    def get_all(available, id=None):
+        if id is None and available == True:
             rows = app.db.execute('''
             SELECT id, name, cat_name, description, image_file, available
             FROM Products
@@ -37,6 +37,14 @@ class Product:
             '''.format(available),
             available=available)
             return [Product(*row) for row in rows]
+        elif id is None and available == False:
+            rows = app.db.execute('''
+            SELECT *
+            FROM Products
+            ''')
+            return [Product(*row) for row in rows]
+
+
         else:
             rows = app.db.execute('''
             SELECT DISTINCT id, name, cat_name, description, image_file, available
@@ -46,20 +54,20 @@ class Product:
             id=id)
             return [Product(*row) for row in rows]
 
-            
-    
+
+
     @staticmethod
     def search(search, available):
-        # search products for product name 
+        # search products for product name
             rows = app.db.execute('''
-            SELECT id, name, price, cat_name, description, image_file, available
+            SELECT id, name, cat_name, description, image_file, available
             FROM Products
             WHERE lower(name) LIKE lower(CONCAT(:search, '%'))
             '''.format(available),
             search=search,
             available=available)
             return [Product(*row) for row in rows]
-       
+
 
     @staticmethod
     def get_by_cat(cat):
@@ -70,6 +78,33 @@ class Product:
         ''',
         cat=cat)
         return [Product(*row) for row in rows]
+
+    @staticmethod
+    def add_new_product(request, new_id): 
+        # cat_name = request.form.get("cat_name")  
+        cat_name = request.form["cat_name"] 
+        name = request.form["name"]
+        description = request.form["description"]   
+        image_file=request.form["image"]
+        available = True
+        
+    
+        
+        app.db.execute("""
+        INSERT INTO Products(id, name, cat_name, description, image_file, available)
+        VALUES(:id, :name, :cat_name, :description, :image_file, :available)
+        RETURNING id
+        """,
+                            id=new_id,
+                            name=name,
+                            cat_name=cat_name,
+                            description=description,
+                            image_file=image_file,
+                            available=available
+                            )
+
+        return 'Added product '
+
 
 class ProductSellers:
     def __init__(self, id, price, stock, seller_id, firstname, lastname):
@@ -102,11 +137,11 @@ class ProductSellers:
 
 
     @staticmethod
-    def addProduct(id, request): 
-        stock = request.form["stock"]    
+    def addProduct(id, request):
+        stock = request.form["stock"]
         price = request.form["price"]
         seller_id = current_user.id
-    
+
         try:
             rows = app.db.execute("""
             INSERT INTO SellsItem(seller_id, product_id, price, stock)
@@ -123,11 +158,11 @@ class ProductSellers:
         return 'Added product '
 
     @staticmethod
-    def editProduct(id, request): 
-        stock = request.form["stock"]    
+    def editProduct(id, request):
+        stock = request.form["stock"]
         price = request.form["price"]
         seller_id = current_user.id
-    
+
         rows = app.db.execute("""
         UPDATE SellsItem
         SET stock = :stock, price = :price
@@ -141,7 +176,7 @@ class ProductSellers:
         return "Edited Product "
 
     @staticmethod
-    def deleteProduct(id): 
+    def deleteProduct(id):
         seller_id=current_user.id
         rows = app.db.execute("""
         DELETE FROM SellsItem
@@ -152,34 +187,6 @@ class ProductSellers:
                               seller_id = seller_id)
         # flash('Deleted product review for product ID: ' + product_id)
         return 'Deleted product '
-
-    @staticmethod
-    def add_new_product(user_id, request, num_products): 
-        cat_name = request.form["cat_name"]    
-        name = request.form["name"]
-        description = request.form["description"]    
-        price = request.form["price"]
-        quantity = request.form["quantity"]
-        seller_id = current_user.id
-        available = True
-        image_file='image'
-        product_id = num_products+1
-    
-        
-        app.db.execute("""
-        INSERT INTO Products(product_id, name, cat_name, description, image_file, available)
-        VALUES(:id, :name, :cat_name, :description, :image_file, :available)
-        RETURNING 
-        """,
-                            id=product_id,
-                            name=name,
-                            cat_name=cat_name,
-                            description=description,
-                            image_file=image_file,
-                            available=available
-                            )
-    
-        return 'Added product '
 
 
 
@@ -205,5 +212,3 @@ class ProductSummary:
              product_id=product_id)
 
         return [ProductSummary(*row) for row in rows] if rows else None
-
-

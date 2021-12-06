@@ -8,7 +8,7 @@ CREATE TABLE Users (
 	lastname VARCHAR(255) NOT NULL,
 	balance DECIMAL(10,2) NOT NULL,
 	zip INT NOT NULL,
-	street VARCHAR(255) UNIQUE NOT NULL
+	street VARCHAR(255) NOT NULL
 );
 -- Sellers
 -- CREATE TABLE Sellers (
