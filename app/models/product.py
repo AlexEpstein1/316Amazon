@@ -57,15 +57,16 @@ class Product:
 
 
     @staticmethod
-    def search(search, available):
+    def search(search, available, offset = 0):
         # search products for product name
             rows = app.db.execute('''
             SELECT id, name, cat_name, description, image_file, available
             FROM Products
             WHERE lower(name) LIKE lower(CONCAT(:search, '%'))
+            LIMIT 10 OFFSET :offset
             '''.format(available),
             search=search,
-            available=available)
+            available=available, offset=offset)
             return [Product(*row) for row in rows]
 
 

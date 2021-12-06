@@ -145,12 +145,14 @@ def write_product(id, mode):
     if mode == "add":
         return render_template('inventory.html',
                            sold_products=inventory,
-                           message=message + product.name + " to your inventory")
+                           message=message + product.name + " to your inventory", 
+                           page=0)
     else: 
         message = ProductSellers.editProduct(id=id, request=request)
         return render_template('inventory.html',
                            sold_products=inventory,
-                           message=message + product.name)
+                           message=message + product.name,
+                           page=0)
                         #    Need to have this go to seller_product page once it's added to the DB 
 
 @bp.route('/delete_product/<id>', methods = ['POST', 'GET'])

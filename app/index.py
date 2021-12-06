@@ -44,22 +44,26 @@ def createProduct():
     products = Product.get_all(available=True)
     
     return render_template('create_product.html',
-                           products=products)
+                           products=products,page=0)
 
 @bp.route('/search_product', methods = ['POST', 'GET'])
-def searchProducts():
+def searchProducts(page=0):
     # get all available products for sale:
-    body = request.form['body']
+    if request is not None:
+        body = request.form['body']
+    else: 
+        body=""
     first_search = True
     if body is None:
         products = Product.get_all(available=True)
     else: 
-        products = Product.search(search=body, available=True)
+        products = Product.search(search=body, available=True, offset=int(page)*10)
         first_search = False
     return render_template('create_product.html',
                            products=products, 
                            search=body,
-                           display_search=not first_search)
+                           display_search=not first_search,
+                           page=page)
 # home_profile html
 @bp.route('/profile')
 def profile():
@@ -160,10 +164,12 @@ def reviews_landing(order_id):
                            product_summary = product_summary,
                            seller_summary = seller_summary)
 
-@bp.route('/inventory')
-def inventory():
+@bp.route('/inventory/<page>')
+def inventory(page = 0):
+
     # if user is authenticated, go to home profile
-    inventory = Inventory.get_all(available=True, seller_id=current_user.id)
+    inventory = Inventory.get_all(available=True, seller_id=current_user.id, offset=int(page)*10)
+    
     # find the products current user has bought:
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
@@ -171,8 +177,13 @@ def inventory():
     else:
         purchases = None
 
+    count = Inventory.countItems(current_user.id)
+    
+
     return render_template('inventory.html',
-                           sold_products=inventory)
+                           sold_products=inventory,
+                           page = int(page), 
+                           count = count)
 
 # cart_page html
 @bp.route('/cart_page')
