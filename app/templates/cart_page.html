@@ -25,12 +25,12 @@
     <tbody>
         {% for cart in cart_content %}
         <tr>
-        <onclick="window.location.href='{{ url_for('products.productPage', id = cart.product_id)}}'">
-        <td>{{ cart.seller_id }}<onclick="window.location.href='{{ url_for('products.productPage', id = cart.product_id)}}'"></td>
+        <onclick="window.location.href='{{ url_for('products.productPage', id = cart.product_id, page=0)}}'">
+        <td>{{ cart.seller_id }}<onclick="window.location.href='{{ url_for('products.productPage', id = cart.product_id, page = 0)}}'"></td>
         <td>{{ cart.product_id }}</td>
         <td>{{ cart.quantity }}</td>
         <td>{{ cart.price_per_item }}</td>
-        <td><form action="{{ url_for('products.productPage', id = cart.product_id) }}" method="POST">
+        <td><form action="{{ url_for('products.productPage', id = cart.product_id, page = 0) }}" method="POST">
             <button class = "button" type="submit">Product Page</button>
         </form></td>
         <td><form action="{{ url_for('cartRouter.delete_cart_element', user_id=cart.user_id, seller_id=cart.seller_id, product_id=cart.product_id) }}" method="POST">
@@ -82,7 +82,7 @@
             <td>{{ cart.seller_id }}</td>
             <td>{{ cart.product_id }}</td>
             <td>{{ cart.price_per_item }}</td>
-            <td><form action="{{ url_for('products.productPage', id = cart.product_id) }}" method="POST">
+            <td><form action="{{ url_for('products.productPage', id = cart.product_id, page = 0) }}" method="POST">
                 <button class = "button" type="submit">Product Page</button>
             </form></td>
             <td><form action="{{ url_for('cartRouter.delete_cart_element', user_id=cart.user_id, seller_id=cart.seller_id, product_id=cart.product_id) }}" method="POST">

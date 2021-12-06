@@ -70,13 +70,16 @@ class Product:
 
 
     @staticmethod
-    def get_by_cat(cat):
+    def get_by_cat(cat, amount, offset):
         rows = app.db.execute('''
         SELECT id, name, cat_name, description, image_file, available
         FROM Products
         WHERE cat_name = :cat
+        LIMIT :amount OFFSET :offset
         ''',
-        cat=cat)
+        cat=cat,
+        amount=amount,
+        offset=offset)
         return [Product(*row) for row in rows]
 
     @staticmethod
