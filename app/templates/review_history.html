@@ -8,22 +8,25 @@
 	{% elif type == 'sellers' %}
 		<h2 style="margin-top: 2vh; margin-bottom: 2vh;">Your History of Seller Reviews</h2>
 	{% elif type == 'product_history' %}
-		<h2 style="margin-top: 2vh; margin-bottom: 2vh;">History of Product ID {{product_id}} Reviews</h2>
+		<h2 style="margin-top: 2vh; margin-bottom: 2vh;">History of Product ID {{id}} Reviews</h2>
+		<a href="{{ url_for('products.productPage', id=id, page=0) }}" class="btn btn-dark" role="button">Back to product page</a>
+	{% elif type == 'seller_history' %}
+		<h2 style="margin-top: 2vh; margin-bottom: 2vh;">History of Seller ID {{id}} Reviews</h2>
 	{% endif %}
 
 	<h5><i>Showing page {{ page+1 }}</i></h5>
 	<!-- No previous page -->
 	{% if page == 0 %}
-		<a href="{{ url_for('index.review_history', type=type, page=page+1, product_id=product_id) }}" class="btn btn-dark" role="button" style="float: right;">Next</a>
+		<a href="{{ url_for('index.review_history', type=type, page=page+1, id=id) }}" class="btn btn-dark" role="button" style="float: right;">Next</a>
 	{% else %}
-		<a href="{{ url_for('index.review_history', type=type, page=page+1, product_id=product_id) }}" class="btn btn-dark" role="button" style="float: right;">Next</a><a href="{{ url_for('index.review_history', type=type, page=page-1, product_id=product_id) }}" class="btn btn-dark" role="button" style="float: right;">Previous</a>
+		<a href="{{ url_for('index.review_history', type=type, page=page+1, id=id) }}" class="btn btn-dark" role="button" style="float: right;">Next</a><a href="{{ url_for('index.review_history', type=type, page=page-1, id=id) }}" class="btn btn-dark" role="button" style="float: right;">Previous</a>
 	{% endif %}
 
 	<table class="table table-light table-striped table-hover container">
 		<tr>
 			{% if type == 'products' or type == 'product_history' %}
 			<th scope="col">Prouduct ID</th>
-			{% elif type == 'sellers' %}
+			{% elif type == 'sellers' or type == 'seller_history' %}
 			<th scope="col">Seller ID</th>
 			{% endif %}
 			<th scope="col">Date</th>
@@ -37,7 +40,7 @@
 			<tr>
 				{% if type == 'products' or type == 'product_history' %}
 				<td><p>{{ review.product_id }}</p></td>
-				{% elif type == 'sellers' %}
+				{% elif type == 'sellers' or type == 'seller_history' %}
 				<td><p>{{ review.seller_id }}</p></td>
 				{% endif %}
 				<td><p>{{ review.date_time }}</p></td>
