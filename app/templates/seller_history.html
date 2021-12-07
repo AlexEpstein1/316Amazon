@@ -21,20 +21,22 @@
             </tr>
         </thead>
         <tbody>
-            {% for purchase in incomplete_purchases %}
-            <th scope="row">{{ purchase.order_id }}</th>
-            <td>{{ purchase.product_id }}</td>
-            <td>{{ purchase.quantity }}</td>
-            <td>{{ purchase.address }}</td>
-            <td>${{ purchase.payment_amount }}</td>
-            <td>{{ purchase.address }}</td>
-            <td>{{ purchase.time_purchased }}</td>
-            <td>
-                <div>
-                  <p><a href="{{ url_for('index.seller_history') }}" class="btn btn-dark"
-                      role="button">Complete Order</a></p>
-                </div>
-              </td>
+            <tr>{% for purchase in incomplete_purchases %}
+                <th scope="row">{{ purchase.order_id }}</th>
+                <td>{{ purchase.product_id }}</td>
+                <td>{{ purchase.quantity }}</td>
+                <td>{{ purchase.address }}</td>
+                <td>${{ purchase.payment_amount }}</td>
+                <td>{{ purchase.address }}</td>
+                <td>{{ purchase.time_purchased }}</td>
+                <td>
+                    <div>
+                        <p><a href="{{ url_for('index.complete_order', order_id=purchase.order_id) }}"
+                                class="btn btn-dark" role="button">Complete Order</a></p>
+                    </div>
+                </td>
+            </tr>
+
             {% endfor %}
         </tbody>
     </table>
@@ -44,46 +46,46 @@
     {% endif %}
     {% if complete_purchases != None %}
     <h3>Completed Orders</h3>
-        <table class="table table-light table-striped table-hover container">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Purchase ID</th>
-                    <th scope="col">Product ID</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Buyer ID</th>
-                    <th scope="col">Buyer Name</th>
-                    <th scope="col">Address</th>
-                    <th scope="col">Total</th>
-                    <th scope="col">Date/Time Purchased</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for purchase in complete_purchases %}
-                <tr>
-                    <th scope="row">{{ purchase.order_id }}</th>
-                    <td>{{ purchase.product_id }}</td>
-                    <td>{{ purchase.quantity }}</td>
-                    <td>{{ purchase.buyer_id }}</td>
-                    <td>{{ purchase.buyer_name }}</td>
-                    <td>{{ purchase.address }}</td>
-                    <td>${{ purchase.payment_amount }}</td>
-                    <td>{{ purchase.time_purchased }}</td>
-                    
+    <table class="table table-light table-striped table-hover container">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Purchase ID</th>
+                <th scope="col">Product ID</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Buyer ID</th>
+                <th scope="col">Buyer Name</th>
+                <th scope="col">Address</th>
+                <th scope="col">Total</th>
+                <th scope="col">Date/Time Purchased</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in complete_purchases %}
+            <tr>
+                <th scope="row">{{ purchase.order_id }}</th>
+                <td>{{ purchase.product_id }}</td>
+                <td>{{ purchase.quantity }}</td>
+                <td>{{ purchase.buyer_id }}</td>
+                <td>{{ purchase.buyer_name }}</td>
+                <td>{{ purchase.address }}</td>
+                <td>${{ purchase.payment_amount }}</td>
+                <td>{{ purchase.time_purchased }}</td>
 
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %} 
-        <h3>Completed Orders</h3>
-        <h6>No orders currently completed</h6>
-        {% endif %}
-        {% else %}
-        <div>
-            <p><a href="{{ url_for('users.register') }}" class="btn btn-dark" role="button">Register</a>&nbsp;<a
-                    href="{{ url_for('users.login') }}" class="btn btn-dark" role="button">Log in</a></p>
-        </div>
-        {% endif %}
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h3>Completed Orders</h3>
+    <h6>No orders currently completed</h6>
+    {% endif %}
+    {% else %}
+    <div>
+        <p><a href="{{ url_for('users.register') }}" class="btn btn-dark" role="button">Register</a>&nbsp;<a
+                href="{{ url_for('users.login') }}" class="btn btn-dark" role="button">Log in</a></p>
+    </div>
+    {% endif %}
 </div>
 
 <br><br>
