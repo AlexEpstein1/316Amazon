@@ -77,7 +77,7 @@ def add_product(id):
 
 
     if ProductSellers.alreadySells(id): 
-        products = Product.get_all(available=True)
+        products = Product.get_first_ten(available=True)
         return render_template('create_product.html',
                            products=products,
                            message="You already sell this item!")
@@ -160,7 +160,7 @@ def delete_product(id):
 
     return render_template('inventory.html',
                            sold_products=inventory,
-                           message=message+product.name + " from your inventory")
+                           message=message+product.name + " from your inventory", page=0)
 
 
 @bp.route('/products_by_cat/<cat_name>/<page>/<amount>/<sort_by>/<direction>', methods = ['POST', 'GET'])

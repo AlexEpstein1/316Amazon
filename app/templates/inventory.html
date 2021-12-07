@@ -19,18 +19,16 @@
     <p> {{message}} </p>
     {%endif%}
   </div>
-  
-  <div>
-    {%if count != null%}
-    <p> {{count}} </p>
-    {%endif%}
-  </div>
 
   <h5><i>Showing page {{ page+1 }}</i></h5>
   <!-- No previous page -->
-  {% if page == 0 %}
+  {% if page == 0 and count != null and count > 10 %}
     <a href="{{ url_for('index.inventory', page=page+1) }}" class="btn btn-dark" role="button"
       style="float: right;">Next</a>
+  {% elif page == 0 and count == null %}
+    <a href="{{ url_for('index.inventory', page=page+1) }}" class="btn btn-dark" role="button"
+      style="float: right;">Next</a>
+  {% elif page == 0%}
   {% elif count != null and count>(page+1)*10 %}
     <a href="{{ url_for('index.inventory', page=page+1) }}" class="btn btn-dark" role="button"
       style="float: right;">Next</a><a href="{{ url_for('index.inventory', page=page-1) }}" class="btn btn-dark"

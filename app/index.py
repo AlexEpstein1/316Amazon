@@ -9,6 +9,7 @@ from .models.product import ProductSummary
 from .models.product_sellers import SellerSummary
 from .models.inventory import Inventory
 from .models.purchase import Purchase
+from .models.purchase import SellerTransaction
 from .models.seller_review import SellerReview
 from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
@@ -212,8 +213,17 @@ def cart_page():
 @bp.route('/seller_history')
 def seller_history():
     # find the products current user has bought:
-    complete_purchases = Purchase.get_all_by_seller_id(seller_id = current_user.id, complete=True)
-    incomplete_purchases = Purchase.get_all_by_seller_id(seller_id = current_user.id, complete=False)
+
+    # completeCount = SellerTransaction.count(seller_id=current_user.id, complete=True)
+    # incompleteCount = SellerTransaction.count(seller_id=current_user.id, complete=False)
+
+    # if (completeCount == 0 and incompleteCount == 0): 
+    #     return render_template('seller_history.html',
+    #                        no_purchases = True)
+
+
+    complete_purchases = SellerTransaction.get_all_by_seller_id(seller_id = current_user.id, complete=True)
+    incomplete_purchases = SellerTransaction.get_all_by_seller_id(seller_id = current_user.id, complete=False)
 
     return render_template('seller_history.html',
                            complete_purchases=complete_purchases,
