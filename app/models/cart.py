@@ -39,7 +39,7 @@ class cart:
     # get all cart input of a user
     def get_all_cart_input(user_id):
         rows = app.db.execute('''
-            SELECT user_id, seller_id, product_id, quantity, price_per_item
+            SELECT *
             FROM Cart
             WHERE user_id = :user_id AND quantity > 0
             ORDER BY seller_id 
@@ -51,7 +51,7 @@ class cart:
     # get all cart input of a user
     def get_save_cart(user_id):
         rows = app.db.execute('''
-            SELECT user_id, seller_id, product_id, quantity, price_per_item
+            SELECT *
             FROM Cart
             WHERE user_id = :user_id AND quantity = 0
             ORDER BY seller_id 
@@ -208,6 +208,7 @@ class cart:
             # if user enters an eligible code, apply 10% promotion
             if(code.lower() == 'holiday' or  code.lower() == 'thanksgiving' or code.lower() == 'duke' or code.lower() == 'black friday'):
                 price_per_item = cart.get_product_price(product_id, seller_id)
+                print(price_per_item)
                 # update row with 10% discounted price
                 app.db.execute('''
                 UPDATE Cart

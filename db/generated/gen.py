@@ -21,6 +21,7 @@ purchase_seller_ID= []
 purchase_product_ID = []
 sells_seller_ID = []
 sells_product_ID = []
+sells_price = []
 
 
 Faker.seed(0)
@@ -98,7 +99,9 @@ def gen_products(num_products, available_category):
     return product_dict
 
 # generate purchases
-def gen_purchases(num_purchases, product_dict):
+def gen_purchases(num_purchases):
+    id_max = len(sells_seller_ID)
+
     with open('Purchases.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Purchases...', end=' ', flush=True)
@@ -106,8 +109,10 @@ def gen_purchases(num_purchases, product_dict):
             if id % 100 == 0:
                 print(f'{id}', end=' ', flush=True)
             uid = fake.random_int(min=0, max=num_users-1)
-            sid = fake.random_int(min=0, max=num_users-1)
-            pid = fake.random_element(elements=product_dict.keys())
+            product_number = fake.random_int(min=0, max=id_max-1)
+
+            sid = sells_seller_ID[product_number]
+            pid = sells_product_ID[product_number]
             purchase_user_ID.append(uid)
             purchase_seller_ID.append(sid)
             purchase_product_ID.append(pid)
@@ -118,14 +123,14 @@ def gen_purchases(num_purchases, product_dict):
                 time_processed = datetime(1, 1, 1, 1, 1, 1)
             else: 
                 status = 'Complete'
-            quantity = fake.random_int(min=1, max=max_purchase_unit)
-            payment_amount = float(product_dict.get(pid)) * int(quantity)
+            quantity = fake.random_int(min=1, max=30)
+            payment_amount = float(sells_price[product_number]) * int(quantity)
             writer.writerow([id, pid, uid, sid, payment_amount, quantity, time_purchased, time_processed, status])
         print(f'{num_purchases} generated')
     return
 
 # generate cart inputs
-def gen_cart(num_cart, product_dict):
+def gen_cart(num_cart):
     cart_id = []
     id_max = len(sells_seller_ID)
     with open('Cart.csv', 'w') as f:
@@ -136,8 +141,8 @@ def gen_cart(num_cart, product_dict):
             product_number = fake.random_int(min=0, max=id_max-1)
             sid = sells_seller_ID[product_number]
             pid = sells_product_ID[product_number]
-            quantity = fake.random_int(min=1, max=max_purchase_unit)
-            price = product_dict.get(pid)
+            quantity = fake.random_int(min=1, max=10)
+            price = sells_price[product_number]
             key = [uid, sid, pid]
             if key not in cart_id:
                 cart_id.append(key)
@@ -160,6 +165,7 @@ def gen_SellsIten(num_item_sold, product_dict):
             if key not in sold_item_id:
                 sells_seller_ID.append(sid)
                 sells_product_ID.append(pid)
+                sells_price.append(price)
                 sold_item_id.append(key)
                 writer.writerow([sid, pid, price, stock])
         print(f'{num_item_sold} generated')
@@ -209,8 +215,8 @@ def gen_SellerReview(num_seller_review):
 gen_users(num_users)
 available_category = gen_category(num_category);
 product_dict = gen_products(num_products, available_category)
-gen_purchases(num_purchases, product_dict)
 gen_SellsIten(num_item_sold, product_dict)
-gen_cart(num_cart, product_dict)
+gen_purchases(num_purchases)
+gen_cart(num_cart)
 gen_ProductReview(num_product_review)
 gen_SellerReview(num_seller_review)
