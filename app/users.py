@@ -64,7 +64,7 @@ class UpdatePasswordForm(FlaskForm):
                                            EqualTo('password')])
     submit = SubmitField(_l('Confirm Password Change'))
 
-    def validate_password(self, oldpassword):
+    def validate_oldpassword(self, oldpassword):
         if User.password_match(current_user.email, oldpassword.data) == False:
             raise ValidationError(_('This does not match the password associated with your account.'))
 
@@ -121,7 +121,8 @@ def change_password():
     form = UpdatePasswordForm()
 
     if form.validate_on_submit():
-        User.register(form.password.data)          
+        User.update_password(form.password2.data)        
+        logout_user()  
         flash('Your password has been updated. Please login.')
         return redirect(url_for('users.login'))
     return render_template('change_password.html', title='Change Password', form=form)

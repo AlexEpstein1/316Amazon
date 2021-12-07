@@ -150,15 +150,35 @@ WHERE id = :id
         return True
 
     @staticmethod
+    def password_match(email, password):
+        print("new password passed:", password)
+        rows = app.db.execute("""
+SELECT password, id, email
+FROM Users
+WHERE email = :email
+""",
+                              email=email)
+        if not rows:  # email not found
+            print("User email not found")
+            return None
+        elif not check_password_hash(rows[0][0], password):
+            print(rows[0][0])
+            # incorrect password
+            print("Passwords did not match.")
+            return False
+        else:
+            return True
+
+    @staticmethod
     def update_password(newPassword):
         user_id = current_user.id
         try:
             rows = app.db.execute("""
-INSERT INTO Users(password)
-VALUES(:password)
-WHERE id = :id
-RETURNING id
-""",
+            UPDATE Users
+            SET password = :password
+            WHERE id = :id
+            RETURNING id
+            """,
                                   id=user_id,
                                   password=generate_password_hash(newPassword))
             return User.get(id)
