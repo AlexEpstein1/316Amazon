@@ -49,6 +49,22 @@ class cart:
 
     @staticmethod
     # get all cart input of a user
+    def get_cart_input_by_page(user_id, page):
+        cart_content = cart.get_all_cart_input(user_id=user_id)
+        start = page*10
+        end = (page+1)*10
+        if end > len(cart_content):
+            end = len(cart_content)
+            start = len(cart_content) - 10
+            if start < 0:
+                start = 0
+        return cart_content[page*10:(page+1)*10]
+
+        
+
+
+    @staticmethod
+    # get all cart input of a user
     def get_save_cart(user_id):
         rows = app.db.execute('''
             SELECT user_id, seller_id, product_id, quantity, price_per_item

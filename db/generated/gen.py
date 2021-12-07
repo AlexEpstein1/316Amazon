@@ -46,9 +46,9 @@ def gen_users(num_users):
             firstname = name_components[0]
             lastname = name_components[-1]
             balance = random.random()*10000
-            zip = fake.random_int(min=10000, max=99999)
-            street = fake.sentence(nb_words=6)[:-1]
-            writer.writerow([uid, email, password, firstname, lastname, balance, zip, street])
+            phone = fake.phone_number()
+            street = fake.address()
+            writer.writerow([uid, email, password, firstname, lastname, balance, phone, street])
         print(f'{num_users} generated')
     return
 
@@ -151,7 +151,7 @@ def gen_SellsIten(num_item_sold, product_dict):
         for id in range(num_item_sold):
             sid = fake.random_int(min=0, max=num_users-1)
             pid = fake.random_element(elements=product_dict.keys())
-            price = product_dict.get(pid)
+            price = round(product_dict.get(pid)*(random.random + 0.5),2)
             stock = fake.random_int(min=0, max=max_stock_unit)
             key = [sid, pid]
             if key not in sold_item_id:
@@ -182,7 +182,7 @@ def gen_ProductReview(num_product_review):
         print(f'{num_product_review} generated')
     return 
 
-# generate seller reviews 
+# generate seller reviews  
 def gen_SellerReview(num_seller_review):
     key_list = []
     with open('SellerReview.csv', 'w') as f:

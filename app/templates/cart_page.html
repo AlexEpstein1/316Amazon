@@ -50,6 +50,9 @@
             <input type="submit" value="Apply">
         </form></td>
     </tr>
+    <td><form action="{{ url_for('cartRouter.next_cart_element', id = current_user.id) }}" method="POST">
+        <button class = "button" type="submit">Next</button>
+    </form></td>
         {% endfor %}
     </tbody>
     </table>
