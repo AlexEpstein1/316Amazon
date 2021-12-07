@@ -38,7 +38,7 @@
 
     </div>
   </div>
-
+<a href="{{ url_for('products.products_by_cat', cat_name=summary.cat_name, page=0, amount=10, sort_by='none', direction='none' )}}">Other {{summary.cat_name}} products</a>
 <div style="text-align: center">
 		<h2> {{summary.name}} </h2>
     <img src="{{product.image_file}}">
