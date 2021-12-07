@@ -42,10 +42,14 @@ def productPage(id,page=0):
         seller.price = format_value(seller.price, type = "avg_price")
 
     reviews = ProductReviewWithName.get_reviews(product_id=id, offset=offset)
+    stop = False
+    if not(reviews):
+        stop = True
     
     return render_template('productPage.html',
                            product=product,
                            summary=summary,
+                           stop=stop,
                             sellers=sellers,
                             reviews=reviews,
                             page=page
@@ -171,19 +175,14 @@ def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction
     page = int(page)
     offset = page * amount
     if request.form:
-        price = request.form.get("price")
-        rating = request.form.get("rating")
+        sort_by = request.form.get("sort_type")
         direction = request.form.get("direction")
-        if price != None and rating == None:
-            sort_by="price"
-        elif price == None and rating != None:
-            sort_by='rating'
-        elif price != None and rating != None:
-            sort_by = 'both'
-        else:
-            sort_by='none'
 
     products = ProductSummary.get_summaries_by_cat(cat_name=cat_name, amount=amount, offset=offset, sort_by=sort_by, direction=direction)
+    if products: 
+        for product in products:
+            product.avg_price = format_value(product.avg_price, type = 'avg_price')
+            product.avg_rating = format_value(product.avg_rating, type = 'avg_rating')
     # find the products current user has bought:
     return render_template('products_by_cat.html',
                             direction=direction,
