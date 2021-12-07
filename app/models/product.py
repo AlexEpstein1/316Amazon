@@ -236,11 +236,12 @@ class ProductSellers:
 
 
 class ProductSummary:
-    def __init__(self, product_id, name, cat_name, description, sellers, avg_price, total_stock, reviews, avg_rating):
+    def __init__(self, product_id, name, cat_name, description, image_file, sellers, avg_price, total_stock, reviews, avg_rating):
         self.product_id = product_id
         self.name = name
         self.cat_name = cat_name
         self.description = description
+        self.image_file = image_file
         self.sellers = sellers
         self.avg_price = avg_price
         self.total_stock = total_stock
@@ -255,5 +256,42 @@ class ProductSummary:
         WHERE product_id = :product_id
         ''',
              product_id=product_id)
+
+        return [ProductSummary(*row) for row in rows] if rows else None
+
+    @staticmethod
+    def get_summaries_by_cat(cat_name, amount, offset, sort_by, direction):
+
+        if sort_by == 'none':
+            rows = app.db.execute('''
+            SELECT *
+            FROM ProductSummary
+            WHERE cat_name = :cat_name
+            LIMIT :amount OFFSET :offset
+            ''',
+                cat_name=cat_name,
+                amount=amount,
+                offset=offset)
+        else:
+            rows = app.db.execute('''
+            SELECT *
+            FROM ProductSummary
+            WHERE cat_name = :cat_name
+            ORDER BY 
+            case when :sort_by = 'price' and :direction = 'asc' THEN avg_price END ASC,  
+            case when :sort_by = 'price' and :direction = 'desc' THEN avg_price END DESC,  
+            case when :sort_by = 'rating' and :direction = 'asc' THEN avg_rating END ASC,  
+            case when :sort_by = 'rating' and :direction = 'desc' THEN avg_rating END DESC, 
+            case when :sort_by = 'both' and :direction = 'asc' THEN avg_rating END, avg_price  ASC,  
+            case when :sort_by = 'both' and :direction = 'desc' THEN avg_rating END, avg_price  DESC   
+            LIMIT :amount OFFSET :offset
+            ''',
+                    cat_name=cat_name,
+                    amount=amount,
+                    offset=offset,
+                    direction=direction,
+                    sort_by=sort_by)
+
+
 
         return [ProductSummary(*row) for row in rows] if rows else None

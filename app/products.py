@@ -28,19 +28,6 @@ def get_avg(reviews):
         avg_rating = avg_rating / len(reviews)
     return avg_rating
 
-@bp.route('/filterCat/<cat>', methods = ['POST', 'GET'])
-def filterCat(cat):
-    products = Product.get_by_cat(cat=cat_name)
-    categories = Category.get_all()
-    
-    # find the products current user has bought:
-    
-    return render_template('product_by_cat.html',
-                            cat_name=cat,
-                           products=products,
-                           categories = categories)
-
-
 
 @bp.route('/productPage/<id>/<page>', methods = ['POST', 'GET'])
 def productPage(id,page=0):
@@ -176,25 +163,31 @@ def delete_product(id):
                            message=message+product.name + " from your inventory")
 
 
-@bp.route('/products_by_cat/<cat_name>/<page>/<amount>', methods = ['POST', 'GET'])
-def products_by_cat(cat_name, page = 0, amount = 10):
+@bp.route('/products_by_cat/<cat_name>/<page>/<amount>/<sort_by>/<direction>', methods = ['POST', 'GET'])
+def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction='none'):
+    categories = Category.get_all()
     amounts = [10,15,25,50]
     amount = int(amount)
     page = int(page)
     offset = page * amount
-    products = Product.get_by_cat(cat=cat_name, amount=amount, offset=offset)
-    categories = Category.get_all()
-    for product in products:
-        summary = ProductSummary.get(product_id=product.id)[0]
-        summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
-        summary.avg_rating = format_value(summary.avg_rating, type = 'avg_rating')
-        product.avg_rating = summary.avg_rating
-        product.avg_price = summary.avg_price
-        product.num_sellers = summary.sellers
-        product.total_stock = summary.total_stock
+    if request.form:
+        price = request.form.get("price")
+        rating = request.form.get("rating")
+        direction = request.form.get("direction")
+        if price != None and rating == None:
+            sort_by="price"
+        elif price == None and rating != None:
+            sort_by='rating'
+        elif price != None and rating != None:
+            sort_by = 'both'
+        else:
+            sort_by='none'
+
+    products = ProductSummary.get_summaries_by_cat(cat_name=cat_name, amount=amount, offset=offset, sort_by=sort_by, direction=direction)
     # find the products current user has bought:
-    
     return render_template('products_by_cat.html',
+                            direction=direction,
+                            sort_by=sort_by,
                             cat_name=cat_name,
                            products=products,
                            amounts=amounts,
