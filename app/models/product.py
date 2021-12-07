@@ -39,7 +39,7 @@ class Product:
             return [Product(*row) for row in rows]
         elif id is None and available == False:
             rows = app.db.execute('''
-            SELECT *
+            SELECT id, name, cat_name, description, image_file, available
             FROM Products
             ''')
             return [Product(*row) for row in rows]
@@ -278,12 +278,16 @@ class ProductSummary:
             FROM ProductSummary
             WHERE cat_name = :cat_name
             ORDER BY 
-            case when :sort_by = 'price' and :direction = 'asc' THEN avg_price END ASC,  
-            case when :sort_by = 'price' and :direction = 'desc' THEN avg_price END DESC,  
-            case when :sort_by = 'rating' and :direction = 'asc' THEN avg_rating END ASC,  
-            case when :sort_by = 'rating' and :direction = 'desc' THEN avg_rating END DESC, 
-            case when :sort_by = 'both' and :direction = 'asc' THEN avg_rating END, avg_price  ASC,  
-            case when :sort_by = 'both' and :direction = 'desc' THEN avg_rating END, avg_price  DESC   
+            case when :sort_by = 'avg_price' and :direction = 'asc' THEN avg_price END ASC,  
+            case when :sort_by = 'avg_price' and :direction = 'desc' THEN avg_price END DESC,  
+            case when :sort_by = 'avg_Rating' and :direction = 'asc' THEN avg_rating END ASC,  
+            case when :sort_by = 'avg_rating' and :direction = 'desc' THEN avg_rating END DESC,
+            case when :sort_by = 'sellers' and :direction = 'asc' THEN sellers END ASC,  
+            case when :sort_by = 'sellers' and :direction = 'desc' THEN sellers END DESC,  
+            case when :sort_by = 'reviews' and :direction = 'asc' THEN reviews END ASC,  
+            case when :sort_by = 'reviews' and :direction = 'desc' THEN reviews END DESC, 
+            case when :sort_by = 'total_stock' and :direction = 'asc' THEN total_stock END ASC,  
+            case when :sort_by = 'total_stock' and :direction = 'desc' THEN total_stock END DESC       
             LIMIT :amount OFFSET :offset
             ''',
                     cat_name=cat_name,
