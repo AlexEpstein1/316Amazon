@@ -56,6 +56,18 @@ class RegistrationForm(FlaskForm):
         if User.email_exists(email.data):
             raise ValidationError(_('There is already an account associated with this email address.'))
 
+class UpdatePasswordForm(FlaskForm):
+    oldpassword = PasswordField(_l('Confirm Current Password'), validators=[DataRequired()])
+    password = PasswordField(_l('New Password'), validators=[DataRequired()])
+    password2 = PasswordField(
+        _l('Repeat New Password'), validators=[DataRequired(),
+                                           EqualTo('password')])
+    submit = SubmitField(_l('Confirm Password Change'))
+
+    def validate_password(self, oldpassword):
+        if User.password_match(current_user.email, oldpassword.data) == False:
+            raise ValidationError(_('This does not match the password associated with your account.'))
+
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -103,3 +115,13 @@ def view_account_info():
 def edit_account_info():
     User.update_account_info(request)
     return redirect(url_for('index.profile'))
+
+@bp.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    form = UpdatePasswordForm()
+
+    if form.validate_on_submit():
+        User.register(form.password.data)          
+        flash('Your password has been updated. Please login.')
+        return redirect(url_for('users.login'))
+    return render_template('change_password.html', title='Change Password', form=form)

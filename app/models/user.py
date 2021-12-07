@@ -46,12 +46,18 @@ WHERE email = :email
 
     @staticmethod
     def register(email, password, firstname, lastname, mailingaddress, zipcode, balance):
+        get_new_id = app.db.execute("""
+                    SELECT COUNT(id)
+                    FROM Users
+                    """)
+        highest_id = get_new_id[0][0]
         try:
             rows = app.db.execute("""
-INSERT INTO Users(email, password, firstname, lastname, balance, zip, street)
-VALUES(:email, :password, :firstname, :lastname, 0, :zip, :street)
-RETURNING id
+INSERT INTO Users(id, email, password, firstname, lastname, balance, zip, street)
+VALUES(:id, :email, :password, :firstname, :lastname, 0, :zip, :street)
+RETURNING :id
 """,
+                                  id=highest_id,
                                   email=email,
                                   password=generate_password_hash(password),
                                   firstname=firstname,
@@ -59,11 +65,9 @@ RETURNING id
                                   balance=balance,
                                   zip=zipcode,
                                   street=mailingaddress)
-            id = rows[0][0]
+            #id = rows[0][0]
             return User.get(id)
-        except Exception:
-            # likely email already in use; better error checking and
-            # reporting needed
+        except Exception as e:
             return None
 
     @staticmethod
@@ -144,4 +148,23 @@ WHERE id = :id
                             street=street,
                             id=user_id)
         return True
+
+    @staticmethod
+    def update_password(newPassword):
+        user_id = current_user.id
+        try:
+            rows = app.db.execute("""
+INSERT INTO Users(password)
+VALUES(:password)
+WHERE id = :id
+RETURNING id
+""",
+                                  id=user_id,
+                                  password=generate_password_hash(newPassword))
+            return User.get(id)
+        except Exception as e:
+            # likely email already in use; better error checking and
+            # reporting needed
+            print(e)
+            return None
 

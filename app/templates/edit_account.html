@@ -8,22 +8,22 @@
         <div class="form-group" style="margin-top: 2%;">
             <!-- FIRST NAME -->
             <label for="fname-value" class="control-label" style="margin-top: 0.5%;"><b>First Name:</b></label>
-            <input name="fname-value" type="text" id="fname-value" class="form-control" autofocus="autofocus" value={{current_user.firstname}} />
+            <input name="fname-value" type="text" id="fname-value" class="form-control" autofocus="autofocus" value="{{current_user.firstname}}" />
         </div>
         <div class="form-group" style="margin-top: 2%;">
             <!-- LAST NAME -->
             <label for="lname-value" class="control-label" style="margin-top: 0.5%;"><b>Last Name:</b></label>
-            <input name="lname-value" type="text" id="lname-value" class="form-control" autofocus="autofocus" value={{current_user.lastname}} />
+            <input name="lname-value" type="text" id="lname-value" class="form-control" autofocus="autofocus" value="{{current_user.lastname}}" />
         </div>
         <div class="form-group" style="margin-top: 2%;">
             <!-- EMAIL -->
             <label for="email-value" class="control-label" style="margin-top: 0.5%;"><b>Email:</b></label>
-            <input name="email-value" type="text" id="email-value" class="form-control" autofocus="autofocus" value={{current_user.email}} />
+            <input name="email-value" type="text" id="email-value" class="form-control" autofocus="autofocus" value="{{current_user.email}}" />
         </div>
         <div class="form-group" style="margin-top: 2%;">
             <!-- MAILING ADDRESS -->
             <label for="street-value" class="control-label" style="margin-top: 0.5%;"><b>Mailing Address:</b></label>
-            <input name="street-value" type="text" id="street-value" class="form-control" autofocus="autofocus" value={{current_user.street}} />
+            <input name="street-value" type="text" id="street-value" class="form-control" autofocus="autofocus" value="{{current_user.street}}" />
         </div>
         <div class="form-group" style="margin-top: 2%;">
             <!-- ZIP CODE -->
@@ -34,7 +34,5 @@
         </div>
     </form>
 </div>
-
-
 
 {% endblock %}

@@ -13,6 +13,7 @@
 	<h5>Mailing Address: {{ current_user.street }}</h5>
 	<h5>ZIP Code: {{ current_user.zip }}</h5>
 	<h6><a href="{{ url_for('users.view_account_info') }}">Edit Account Info</a></h6>
+	<h6><a href="{{ url_for('users.change_password') }}">Change Password</a></h6>
 	<br>
 	<h5 style="font-size: 24px">Current balance: <b>${{ current_user.balance }}</b></h5>
 	<h6><a href="{{ url_for('users.view_balance') }}">Edit Balance</a></h6>
