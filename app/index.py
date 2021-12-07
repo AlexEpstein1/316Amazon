@@ -42,7 +42,7 @@ def index():
 def createProduct():
     # get all available products for sale:
     products = Product.get_first_ten(available=True, id = None)
-    
+
     return render_template('create_product.html',
                            products=products,page=0)
 
@@ -51,16 +51,16 @@ def searchProducts(page=0):
     # get all available products for sale:
     if request is not None:
         body = request.form['body']
-    else: 
+    else:
         body=""
     first_search = True
     if body is None:
         products = Product.get_all(available=True)
-    else: 
+    else:
         products = Product.search(search=body, available=True)
         first_search = False
     return render_template('create_product.html',
-                           products=products, 
+                           products=products,
                            search=body,
                            display_search=not first_search,
                            page=page)
@@ -100,18 +100,24 @@ def review_history(type, page = 0):
     page = int(page)
     offset = page * 10
     if type == 'products':
-        product_id = ''
+        id = ''
         reviews = ProductReview.get(user_id = current_user.id,
                                     offset = offset)
     elif type == 'sellers':
-        product_id = ''
+        id = ''
         reviews = SellerReview.get(user_id = current_user.id,
                                    offset = offset)
     elif type == 'product_history':
-        product_id = request.args.get('product_id')
+        id = request.args.get('id')
         reviews = ProductReview.get(user_id = None,
-                                    product_id = product_id,
+                                    product_id = id,
                                     offset = offset)
+    elif type == 'seller_history':
+        id = request.args.get('id')
+        reviews = SellerReview.get(user_id = None,
+                                   seller_id = id,
+                                   offset = offset)
+
     # If `reviews` is returned as a list (means there is data)
     if isinstance(reviews, list):
         exists = True
@@ -122,7 +128,7 @@ def review_history(type, page = 0):
     return render_template('review_history.html',
                            page = page,
                            exists = exists,
-                           product_id = product_id,
+                           id = id,
                            reviews = reviews,
                            type = type)
 
@@ -169,7 +175,7 @@ def inventory(page = 0):
 
     # if user is authenticated, go to home profile
     inventory = Inventory.get_all(available=True, seller_id=current_user.id, offset=int(page)*10)
-    
+
     # find the products current user has bought:
     if current_user.is_authenticated:
         purchases = Purchase.get_all_by_buyer_id_since(buyer_id = current_user.id,
@@ -178,11 +184,11 @@ def inventory(page = 0):
         purchases = None
 
     count = Inventory.countItems(current_user.id)
-    
+
 
     return render_template('inventory.html',
                            sold_products=inventory,
-                           page = int(page), 
+                           page = int(page),
                            count = count)
 
 # cart_page html
@@ -202,7 +208,7 @@ def cart_page(cart_page_num, save_page_num):
         carts = None
 
     return render_template('cart_page.html',
-                        saved_content = saved,  
+                        saved_content = saved,
                         cart_content = carts,
                         total_price = price)
 
@@ -211,8 +217,7 @@ def seller_history():
     # find the products current user has bought:
     complete_purchases = Purchase.get_all_by_seller_id(seller_id = current_user.id, complete=True)
     incomplete_purchases = Purchase.get_all_by_seller_id(seller_id = current_user.id, complete=False)
-    
+
     return render_template('seller_history.html',
                            complete_purchases=complete_purchases,
                            incomplete_purchases=incomplete_purchases)
-

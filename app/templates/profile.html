@@ -22,7 +22,7 @@
 	<br>
 	<h6><a href="{{ url_for('index.purchase_history') }}">Purchase History</a></h6>
 	<h6><a href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a></h6>
-	<h6><a href="{{ url_for('index.inventory') }}">Seller Inventory</a></h6>
+	<h6><a href="{{ url_for('index.inventory', page=0) }}">Seller Inventory</a></h6>
 	<h6><a href="{{ url_for('index.index') }}">Back to Front Page</a></h6>
 </div>
 {% endblock %}
