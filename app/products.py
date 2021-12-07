@@ -40,12 +40,33 @@ def productPage(id,page=0):
     sellers = ProductSellers.productSellers(id=id)
     for seller in sellers:
         seller.price = format_value(seller.price, type = "avg_price")
+    if request.form:
+        sort_by = request.form.get("sort_type")
+        direction = request.form.get("direction")
+        if sort_by == 'stock' and direction == 'asc':
+            sellers = sorted(sellers, key=lambda x: x.stock)
+        elif sort_by == 'stock' and direction == 'desc':
+            sellers = sorted(sellers, key=lambda x: x.stock, reverse=True)
+        elif sort_by == 'price' and direction == 'asc':
+            sellers = sorted(sellers, key=lambda x: x.price)
+        elif sort_by == 'price' and direction == 'desc':
+            sellers = sorted(sellers, key=lambda x: x.price, reverse=True)
+        
+        
+        
+
+        
+
 
     reviews = ProductReviewWithName.get_reviews(product_id=id, offset=offset)
+    stop = False
+    if not(reviews):
+        stop = True
     
     return render_template('productPage.html',
                            product=product,
                            summary=summary,
+                           stop=stop,
                             sellers=sellers,
                             reviews=reviews,
                             page=page
@@ -77,7 +98,7 @@ def add_product(id):
 
 
     if ProductSellers.alreadySells(id): 
-        products = Product.get_all(available=True)
+        products = Product.get_first_ten(available=True)
         return render_template('create_product.html',
                            products=products,
                            message="You already sell this item!")
@@ -160,33 +181,34 @@ def delete_product(id):
 
     return render_template('inventory.html',
                            sold_products=inventory,
-                           message=message+product.name + " from your inventory")
+                           message=message+product.name + " from your inventory", page=0)
 
 
-@bp.route('/products_by_cat/<cat_name>/<page>/<amount>/<sort_by>/<direction>', methods = ['POST', 'GET'])
-def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction='none'):
+@bp.route('/products_by_cat/<cat_name>/<page>/<amount>/<sort_by>/<direction>/<search>', methods = ['POST', 'GET'])
+def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction='none', search='...'):
     categories = Category.get_all()
     amounts = [10,15,25,50]
     amount = int(amount)
     page = int(page)
     offset = page * amount
     if request.form:
-        price = request.form.get("price")
-        rating = request.form.get("rating")
-        direction = request.form.get("direction")
-        if price != None and rating == None:
-            sort_by="price"
-        elif price == None and rating != None:
-            sort_by='rating'
-        elif price != None and rating != None:
-            sort_by = 'both'
-        else:
-            sort_by='none'
+        if request.form.get("sort_type"):
+            sort_by = request.form.get("sort_type")
+        if request.form.get("direction"):
+            direction = request.form.get("direction")
+        if request.form.get("term"):
+            search = request.form.get("term")
+    
 
-    products = ProductSummary.get_summaries_by_cat(cat_name=cat_name, amount=amount, offset=offset, sort_by=sort_by, direction=direction)
+    products = ProductSummary.get_summaries_by_cat(cat_name=cat_name, amount=amount, offset=offset, sort_by=sort_by, direction=direction, search=search)
+    if products: 
+        for product in products:
+            product.avg_price = format_value(product.avg_price, type = 'avg_price')
+            product.avg_rating = format_value(product.avg_rating, type = 'avg_rating')
     # find the products current user has bought:
     return render_template('products_by_cat.html',
                             direction=direction,
+                            search_term=search,
                             sort_by=sort_by,
                             cat_name=cat_name,
                            products=products,
@@ -213,6 +235,10 @@ def add_new_product():
     Product.add_new_product(request=request, new_id=new_id)
     return write_product(new_id,'add')
     # ProductSellers.addProduct(id=new_id, request=request)
+
+
+
+
 
 
 
