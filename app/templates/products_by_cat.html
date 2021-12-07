@@ -5,7 +5,11 @@
   <h3>Page: {{page}}</h3>
   <small class="text-muted">Showing {{chosen_amount}}</small>
 </span>
+{%if search_term == '...'%}
 <a href="{{ url_for('index.index') }}" style="float:left" type="button" class="btn-close" aria-label="Close">X</a><h2>{{cat_name}}</h2>
+{% else %} 
+<h2>Search Results:</h2>
+{% endif %}
 <form class="form-inline" action="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction, search=search_term)}}" method="post">
   <input class="form-control mr-sm-2" type="search" name='term' id='term' value='{{search_term}}' placeholder="..." aria-label="Search">
   <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>

@@ -280,7 +280,7 @@ class ProductSummary:
             ORDER BY 
             case when :sort_by = 'avg_price' and :direction = 'asc' THEN avg_price END ASC,  
             case when :sort_by = 'avg_price' and :direction = 'desc' THEN avg_price END DESC,  
-            case when :sort_by = 'avg_Rating' and :direction = 'asc' THEN avg_rating END ASC,  
+            case when :sort_by = 'avg_rating' and :direction = 'asc' THEN avg_rating END ASC,  
             case when :sort_by = 'avg_rating' and :direction = 'desc' THEN avg_rating END DESC,
             case when :sort_by = 'sellers' and :direction = 'asc' THEN sellers END ASC,  
             case when :sort_by = 'sellers' and :direction = 'desc' THEN sellers END DESC,  
@@ -304,7 +304,7 @@ class ProductSummary:
             ORDER BY 
             case when :sort_by = 'avg_price' and :direction = 'asc' THEN avg_price END ASC,  
             case when :sort_by = 'avg_price' and :direction = 'desc' THEN avg_price END DESC,  
-            case when :sort_by = 'avg_Rating' and :direction = 'asc' THEN avg_rating END ASC,  
+            case when :sort_by = 'avg_rating' and :direction = 'asc' THEN avg_rating END ASC,  
             case when :sort_by = 'avg_rating' and :direction = 'desc' THEN avg_rating END DESC,
             case when :sort_by = 'sellers' and :direction = 'asc' THEN sellers END ASC,  
             case when :sort_by = 'sellers' and :direction = 'desc' THEN sellers END DESC,  
