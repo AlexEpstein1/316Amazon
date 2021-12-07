@@ -39,13 +39,13 @@ class Inventory:
     @staticmethod
     def getProduct(product_id):
         rows = app.db.execute('''
-        SELECT si.seller_id, si.product_id, si.price, p.name, si.stock, u.firstname, u.lastname
-        FROM SellsItem si, Products p, Users u
-        WHERE si.product_id = :product_id AND si.seller_id = :seller_id
+        SELECT stock, price
+        FROM SellsItem 
+        WHERE seller_id=:seller_id AND product_id = :product_id
         ''',
         product_id=product_id,
         seller_id=current_user.id)
-        return Inventory(*(rows[0])) if rows is not None else None
+        return rows[0]
 
 
 

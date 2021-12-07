@@ -34,7 +34,7 @@
             <td>
               <label for="stock"></label>
               {%if editing != null%}
-              <textarea id="stock" name="stock" rows="1" cols="15" maxlength="10">{{seller_product.stock}}</textarea>
+              <textarea id="stock" name="stock" rows="1" cols="15" maxlength="10">{{seller_product[0]}}</textarea>
               {%else%}
               <textarea id="stock" name="stock" rows="1" cols="15" maxlength="10"></textarea>
               {%endif%}
@@ -45,7 +45,7 @@
             <td>
               <label for="price"></label>
               {%if editing != null%}
-              <textarea id="price" name="price" rows="1" cols="15" maxlength="10">{{seller_product.price}}</textarea>
+              <textarea id="price" name="price" rows="1" cols="15" maxlength="10">{{seller_product[1]}}</textarea>
               {%else%}
               <textarea id="price" name="price" rows="1" cols="15" maxlength="10"></textarea>
               {%endif%}
