@@ -75,10 +75,7 @@
   <div class="sidenav">
     {% block msg %}
     <h1 style="color:white; float: left; padding-right: 3vw;"><a href="{{ url_for('index.index') }}" style="text-decoration: inherit; color: inherit;">Mini Amazon</a></h1>
-    <form class="form-inline">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search all products..." aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
+
     <div style="color:black; text-align: right; margin-bottom: 25px; float: right;">
       {% if current_user.is_authenticated %}
 
