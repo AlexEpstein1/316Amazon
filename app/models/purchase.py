@@ -161,6 +161,17 @@ ORDER BY time_purchased DESC
                               status = status,
                               time=time)
 
+    @staticmethod
+    def complete_order_manual(order_id):
+        app.db.execute('''
+            Update Purchases
+            SET status = :status
+            WHERE order_id = :order_id
+            RETURNING status
+            ''',
+                              order_id=order_id,
+                              status='Complete')
+
 
     @staticmethod
     def get_all_by_buyer_id_completed(buyer_id):

@@ -190,9 +190,12 @@ def pub_view(user_id):
 
     seller_stats.avg_rating = format_value(seller_stats.avg_rating, type = 'avg_rating')
 
+    seller_products = Inventory.get_all(available=True, seller_id=user_id, offset=0)
+
     return render_template('pub_view.html',
                                user = userobj,
-                               seller_stats = seller_stats)
+                               seller_stats = seller_stats,
+                               seller_products=seller_products)
 
 @bp.route('/inventory/<page>')
 def inventory(page = 0):
@@ -244,6 +247,26 @@ def seller_history():
     #     return render_template('seller_history.html',
     #                        no_purchases = True)
 
+
+    complete_purchases = SellerTransaction.get_all_by_seller_id(seller_id = current_user.id, complete=True)
+    incomplete_purchases = SellerTransaction.get_all_by_seller_id(seller_id = current_user.id, complete=False)
+
+    return render_template('seller_history.html',
+                           complete_purchases=complete_purchases,
+                           incomplete_purchases=incomplete_purchases)
+
+@bp.route('/complete_order/<order_id>')
+def complete_order(order_id):
+    # find the products current user has bought:
+
+    # completeCount = SellerTransaction.count(seller_id=current_user.id, complete=True)
+    # incompleteCount = SellerTransaction.count(seller_id=current_user.id, complete=False)
+
+    # if (completeCount == 0 and incompleteCount == 0):
+    #     return render_template('seller_history.html',
+    #                        no_purchases = True)
+
+    Purchase.complete_order_manual(order_id)
 
     complete_purchases = SellerTransaction.get_all_by_seller_id(seller_id = current_user.id, complete=True)
     incomplete_purchases = SellerTransaction.get_all_by_seller_id(seller_id = current_user.id, complete=False)

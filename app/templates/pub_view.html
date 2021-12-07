@@ -31,6 +31,30 @@
   </div>
 </div>
 
+<h3>Products sold by {{user.firstname + ' ' + user.lastname}}</h3>
+<table class="table table-light table-striped table-hover container">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Seller ID</th>
+      <th scope="col">Seller Name</th>
+      <th scope="col">Product</th>
+      <th scope="col">Price</th>
+      <th scope="col">Stock</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for inventory in seller_products %}
+    <tr>
+      <tr onclick="window.location.href='{{ url_for('products.productPage', id=inventory.product_id ,page=0)}}'">
+      <th scope="row">{{ inventory.seller_id }}</th>
+      <td>{{ inventory.lastname + ", " + inventory.firstname }}</td>
+      <td>{{ inventory.prod_name }}</td>
+      <td>{{ inventory.price }}</td>
+      <td>{{ inventory.stock }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+
 
 <br><br>
 
