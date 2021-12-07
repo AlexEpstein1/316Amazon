@@ -6,10 +6,14 @@
   <small class="text-muted">Showing {{chosen_amount}}</small>
 </span>
 <a href="{{ url_for('index.index') }}" style="float:left" type="button" class="btn-close" aria-label="Close">X</a><h2>{{cat_name}}</h2>
-<form class="form-inline">
-  <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+<form class="form-inline" action="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction, search=search_term)}}" method="post">
+  <input class="form-control mr-sm-2" type="search" name='term' id='term' value='{{search_term}}' placeholder="..." aria-label="Search">
   <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  
 </form>
+{% if search_term != '...' %}
+<p><a href="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction, search='...')}}" style="float:left" type="button" class="btn-close" aria-label="Close">X</a>{{search_term}}</p>
+{% endif %}
 <br>
 
 
@@ -20,7 +24,7 @@
 
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     {% for name in categories %}
-    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=name.cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction)}}">{{name.cat_name}}</a>
+    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=name.cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction, search=search_term)}}">{{name.cat_name}}</a>
     {% endfor %}
   </div>
   
@@ -28,14 +32,14 @@
 
 
 <div style=" margin-top: 1%; padding: 1%;">
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sortModal">Sort/Filter</button>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sortModal">Sort</button>
 </div>
 
 
 <div class="modal fade" id="sortModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <form action="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction)}}" method="post">
+      <form action="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction, search=search_term)}}" method="post">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Sort by:</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -87,7 +91,7 @@
 {% if sort_by == 'none' %}
   <small class="text-muted">Sorting on: </small>
 {% else %}
-  <a href="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by='none', direction='none')}}" style="float:left" type="button" class="btn-close" aria-label="Close">X</a>
+  <a href="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by='none', direction='none', search=search_term)}}" style="float:left" type="button" class="btn-close" aria-label="Close">X</a>
 <small class="text-muted">Sorting on: {{sort_by}}, {{direction}}</small>
 {% endif %}
 
@@ -102,7 +106,7 @@
 
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     {% for num in amounts %}
-    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount=num, sort_by=sort_by, direction=direction )}}">{{num}}</a>
+    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount=num, sort_by=sort_by, direction=direction, search=search_term )}}">{{num}}</a>
     {% endfor %}
   </div>
 </div>
@@ -111,21 +115,21 @@
 <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
   <ul class="pagination">
     <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Next</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }}">Next</a></li>
   </ul>
 </nav>
 	{% elif products == None %}
   <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
     <ul class="pagination">
-      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }}">Previous</a></li>
       <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
     </ul>
   </nav>
   {% else %}
   <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
     <ul class="pagination">
-      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Previous</a></li>
-      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }} ">Next</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }}">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }} ">Next</a></li>
     </ul>
   </nav>
 	{% endif %}
@@ -148,7 +152,7 @@
         <p class="card-text" style="color:red"> Out of Stock </p>
     {% endif %}
     
-    <p class="card-text">Average {{product.avg_rating}} stars</p>
+    <p class="card-text">Average rating: {{product.avg_rating}} </p>
     <p class="card-text"><small class="text-muted">{{product.description}}</small></p>
 
     </div>
@@ -161,21 +165,21 @@
 <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
   <ul class="pagination">
     <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-    <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Next</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }}">Next</a></li>
   </ul>
 </nav>
 	{% elif products == None %}
   <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
     <ul class="pagination">
-      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }}">Previous</a></li>
       <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
     </ul>
   </nav>
   {% else %}
   <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
     <ul class="pagination">
-      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Previous</a></li>
-      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Next</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }}">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction, search=search_term ) }}">Next</a></li>
     </ul>
   </nav>
 	{% endif %}
