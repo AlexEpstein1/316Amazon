@@ -40,6 +40,23 @@ def productPage(id,page=0):
     sellers = ProductSellers.productSellers(id=id)
     for seller in sellers:
         seller.price = format_value(seller.price, type = "avg_price")
+    if request.form:
+        sort_by = request.form.get("sort_type")
+        direction = request.form.get("direction")
+        if sort_by == 'stock' and direction == 'asc':
+            sellers = sorted(sellers, key=lambda x: x.stock)
+        elif sort_by == 'stock' and direction == 'desc':
+            sellers = sorted(sellers, key=lambda x: x.stock, reverse=True)
+        elif sort_by == 'price' and direction == 'asc':
+            sellers = sorted(sellers, key=lambda x: x.price)
+        elif sort_by == 'price' and direction == 'desc':
+            sellers = sorted(sellers, key=lambda x: x.price, reverse=True)
+        
+        
+        
+
+        
+
 
     reviews = ProductReviewWithName.get_reviews(product_id=id, offset=offset)
     stop = False
@@ -167,18 +184,23 @@ def delete_product(id):
                            message=message+product.name + " from your inventory")
 
 
-@bp.route('/products_by_cat/<cat_name>/<page>/<amount>/<sort_by>/<direction>', methods = ['POST', 'GET'])
-def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction='none'):
+@bp.route('/products_by_cat/<cat_name>/<page>/<amount>/<sort_by>/<direction>/<search>', methods = ['POST', 'GET'])
+def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction='none', search='...'):
     categories = Category.get_all()
     amounts = [10,15,25,50]
     amount = int(amount)
     page = int(page)
     offset = page * amount
     if request.form:
-        sort_by = request.form.get("sort_type")
-        direction = request.form.get("direction")
+        if request.form.get("sort_type"):
+            sort_by = request.form.get("sort_type")
+        if request.form.get("direction"):
+            direction = request.form.get("direction")
+        if request.form.get("term"):
+            search = request.form.get("term")
+    
 
-    products = ProductSummary.get_summaries_by_cat(cat_name=cat_name, amount=amount, offset=offset, sort_by=sort_by, direction=direction)
+    products = ProductSummary.get_summaries_by_cat(cat_name=cat_name, amount=amount, offset=offset, sort_by=sort_by, direction=direction, search=search)
     if products: 
         for product in products:
             product.avg_price = format_value(product.avg_price, type = 'avg_price')
@@ -186,6 +208,7 @@ def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction
     # find the products current user has bought:
     return render_template('products_by_cat.html',
                             direction=direction,
+                            search_term=search,
                             sort_by=sort_by,
                             cat_name=cat_name,
                            products=products,
@@ -212,6 +235,10 @@ def add_new_product():
     Product.add_new_product(request=request, new_id=new_id)
     return write_product(new_id,'add')
     # ProductSellers.addProduct(id=new_id, request=request)
+
+
+
+
 
 
 

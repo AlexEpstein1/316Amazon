@@ -16,7 +16,7 @@
 <div class="card-deck">
     {%for cat in categories%}
   <div class="card" style="min-width: 18rem; margin: 1rem">
-    <div class="card-body" onclick="window.location.href='{{ url_for('products.products_by_cat', cat_name=cat.cat_name, page=0, amount=10, sort_by='none', direction='none' )}}'">
+    <div class="card-body" onclick="window.location.href='{{ url_for('products.products_by_cat', cat_name=cat.cat_name, page=0, amount=10, sort_by='none', direction='none', search='...' )}}'">
       <h5 class="card-title">{{cat.cat_name}}</h5>
       <p class="card-text"><i>{{cat.description}}</i></p>
     </div>

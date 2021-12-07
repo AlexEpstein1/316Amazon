@@ -260,9 +260,9 @@ class ProductSummary:
         return [ProductSummary(*row) for row in rows] if rows else None
 
     @staticmethod
-    def get_summaries_by_cat(cat_name, amount, offset, sort_by, direction):
+    def get_summaries_by_cat(cat_name, amount, offset, sort_by, direction, search):
 
-        if sort_by == 'none':
+        if sort_by == 'none' and search == '...':
             rows = app.db.execute('''
             SELECT *
             FROM ProductSummary
@@ -272,7 +272,7 @@ class ProductSummary:
                 cat_name=cat_name,
                 amount=amount,
                 offset=offset)
-        else:
+        elif sort_by != 'none' and search == '...':
             rows = app.db.execute('''
             SELECT *
             FROM ProductSummary
@@ -295,6 +295,44 @@ class ProductSummary:
                     offset=offset,
                     direction=direction,
                     sort_by=sort_by)
+
+        elif sort_by != 'none' and search != '...':
+            rows = app.db.execute('''
+            SELECT *
+            FROM ProductSummary
+            WHERE cat_name = :cat_name AND LOWER(name) LIKE :search OR LOWER(description) LIKE :search
+            ORDER BY 
+            case when :sort_by = 'avg_price' and :direction = 'asc' THEN avg_price END ASC,  
+            case when :sort_by = 'avg_price' and :direction = 'desc' THEN avg_price END DESC,  
+            case when :sort_by = 'avg_Rating' and :direction = 'asc' THEN avg_rating END ASC,  
+            case when :sort_by = 'avg_rating' and :direction = 'desc' THEN avg_rating END DESC,
+            case when :sort_by = 'sellers' and :direction = 'asc' THEN sellers END ASC,  
+            case when :sort_by = 'sellers' and :direction = 'desc' THEN sellers END DESC,  
+            case when :sort_by = 'reviews' and :direction = 'asc' THEN reviews END ASC,  
+            case when :sort_by = 'reviews' and :direction = 'desc' THEN reviews END DESC, 
+            case when :sort_by = 'total_stock' and :direction = 'asc' THEN total_stock END ASC,  
+            case when :sort_by = 'total_stock' and :direction = 'desc' THEN total_stock END DESC       
+            LIMIT :amount OFFSET :offset
+            ''',
+                    cat_name=cat_name,
+                    amount=amount,
+                    offset=offset,
+                    direction=direction,
+                    sort_by=sort_by,
+                    search='%'+search+'%')
+        else:
+            rows = app.db.execute('''
+            SELECT *
+            FROM ProductSummary
+            WHERE cat_name = :cat_name AND LOWER(name) LIKE :search OR LOWER(description) LIKE :search  
+            LIMIT :amount OFFSET :offset
+            ''',
+                    cat_name=cat_name,
+                    amount=amount,
+                    offset=offset,
+                    search='%'+search+'%')
+
+        
 
 
 
