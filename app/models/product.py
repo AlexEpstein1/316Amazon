@@ -319,7 +319,7 @@ class ProductSummary:
                     offset=offset,
                     direction=direction,
                     sort_by=sort_by,
-                    search='%'+search+'%')
+                    search='%'+search.lower()+'%')
         else:
             rows = app.db.execute('''
             SELECT *
@@ -330,7 +330,7 @@ class ProductSummary:
                     cat_name=cat_name,
                     amount=amount,
                     offset=offset,
-                    search='%'+search+'%')
+                    search='%'+search.lower()+'%')
 
         
 
