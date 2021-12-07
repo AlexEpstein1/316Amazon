@@ -50,26 +50,39 @@ class Inventory:
 
 
     @staticmethod
-    def get_all(available, seller_id):
+    def get_all(available, seller_id, offset=0):
         if seller_id is None:
             rows = app.db.execute('''
             SELECT si.seller_id, si.product_id, si.price, p.name, si.stock, u.firstname, u.lastname
             FROM SellsItem si, Products p, Users u
             WHERE si.product_id = p.id AND u.id = si.seller_id
             ORDER BY si.seller_id
-            
+            LIMIT 10 OFFSET :offest
             '''.format(available),
-            available=available)
+            available=available, offset=offset)
             return [Inventory(*row) for row in rows]
         else:
             rows = app.db.execute('''
             SELECT s.seller_id, s.product_id, s.price, p.name, s.stock, u.firstname, u.lastname
             FROM SellsItem s, Products p, Users u
             WHERE s.seller_id = :seller_id AND s.product_id = p.id AND u.id = s.seller_id
+            LIMIT 10 OFFSET :offset
             ''',
-            seller_id=seller_id)
+            seller_id=seller_id, offset=offset)
             return [Inventory(*row) for row in rows]
     
+    @staticmethod
+    def countItems(seller_id) : 
+        c = app.db.execute('''
+        SELECT COUNT(seller_id)
+        FROM SellsItem s
+        WHERE s.seller_id= :seller_id
+        ''',
+        seller_id=seller_id) 
+        return c[0][0]
+
+
+
     @staticmethod
     def productList(id):
         rows = app.db.execute('''

@@ -55,6 +55,35 @@ class Product:
             return [Product(*row) for row in rows]
 
 
+    @staticmethod
+    def get_first_ten(available, id=None):
+        if id is None and available == True:
+            rows = app.db.execute('''
+            SELECT id, name, cat_name, description, image_file, available
+            FROM Products
+            WHERE available = {0}
+            LIMIT 10
+            '''.format(available),
+            available=available)
+            return [Product(*row) for row in rows]
+        elif id is None and available == False:
+            rows = app.db.execute('''
+            SELECT *
+            FROM Products
+            ''')
+            return [Product(*row) for row in rows]
+
+
+        else:
+            rows = app.db.execute('''
+            SELECT DISTINCT id, name, cat_name, description, image_file, available
+            FROM Products
+            WHERE id = :id
+            LIMIT 10
+            ''',
+            id=id)
+            return [Product(*row) for row in rows]
+
 
     @staticmethod
     def search(search, available):
@@ -144,6 +173,19 @@ class ProductSellers:
         stock = request.form["stock"]
         price = request.form["price"]
         seller_id = current_user.id
+
+        try:
+            float(price)
+        except ValueError:
+            return False
+
+        try:
+            int(stock)
+        except ValueError:
+            return False
+
+        if int(stock) < 0 or float(price) < 0: 
+            return False 
 
         try:
             rows = app.db.execute("""
