@@ -5,14 +5,14 @@ from faker import Faker
 from datetime import datetime, timedelta
 
 
-num_users = 500
-num_category = 30
-num_products = 600
-num_purchases = 6000
-num_cart = 3000
-num_item_sold = 2400
-num_product_review = 5000
-num_seller_review = 3000
+num_users = 2000
+num_category = 10
+num_products = 1000
+num_purchases = 30000
+num_cart = 16000
+num_item_sold = 5000
+num_product_review = 25000
+num_seller_review = 25000
 max_stock_unit = 1000
 max_purchase_unit = 50
 status_list = ['Complete', 'Incomplete']
@@ -32,6 +32,7 @@ def get_csv_writer(f):
 
 # generate users 
 def gen_users(num_users):
+    email_list = []
     with open('Users.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Users...', end=' ', flush=True)
@@ -40,32 +41,34 @@ def gen_users(num_users):
                 print(f'{uid}', end=' ', flush=True)
             profile = fake.profile()
             email = profile['mail']
+            while email in email_list:
+                profile = fake.profile()
+                email = profile['mail']
+            email_list.append(email)
             plain_password = f'pass{uid}'
             password = generate_password_hash(plain_password)
             name_components = profile['name'].split(' ')
             firstname = name_components[0]
             lastname = name_components[-1]
             balance = random.random()*10000
-            phone = fake.phone_number()
             street = fake.address()
-            writer.writerow([uid, email, password, firstname, lastname, balance, phone, street])
+            zip = street[-5:]
+            writer.writerow([uid, email, password, firstname, lastname, balance, zip, street])
         print(f'{num_users} generated')
     return
 
 # generate categories
 def gen_category(num_category):
-    available_category = []
+    available_category = ['Clothing', 'Books', 'Electronics', 'Home', 'Pet Supplies', 'Beauty', 'Health', 'Sports', 'Outdoors', 'Food']
     with open('Category.csv', 'w') as f:
         writer = get_csv_writer(f)
         print('Category...', end=' ', flush=True)
-        for pid in range(num_category):
-            name = fake.sentence(nb_words=1)[:-1]
-            while name in available_category:
-                name = fake.sentence(nb_words=2)[:-1]
+        for num in range(len(available_category)):
+            name = available_category[num]
+
             description = fake.sentence(nb_words=10)[:-1]
-            if name not in available_category:
-                writer.writerow([name, description])
-                available_category.append(name)
+            writer.writerow([name, description])
+            available_category.append(name)
         print(f'{num_category} generated; {len(available_category)} available')
     return available_category
 
@@ -151,7 +154,7 @@ def gen_SellsIten(num_item_sold, product_dict):
         for id in range(num_item_sold):
             sid = fake.random_int(min=0, max=num_users-1)
             pid = fake.random_element(elements=product_dict.keys())
-            price = round(product_dict.get(pid)*(random.random + 0.5),2)
+            price = round(float(product_dict.get(pid))*(random.random() + 0.5),2)
             stock = fake.random_int(min=0, max=max_stock_unit)
             key = [sid, pid]
             if key not in sold_item_id:

@@ -14,11 +14,7 @@ from .models.cart import cart
 
 
 from flask import Blueprint
-
-
 bp = Blueprint('cartRouter', __name__)
-cart_number = 0
-saved_number = 0
 
 # cart_update html
 @bp.route('/cart_update/<uid>/<sid>/<pid>/<quan>/<price>', methods = ['POST', 'GET'])
@@ -30,17 +26,6 @@ def cart_update(uid, sid, pid, quan, price):
                            product_id = pid,
                            quantity = quan,
                            price_per_item = price)
-
-# connects to backend to show next cart rows
-@bp.route('/next_cart_element/', methods = ['POST', 'GET'])
-def next_cart_element(user_id):
-    cart_number = cart_number + 1
-
-
-    return redirect(url_for('index.cart_page')
-                            ,cart_page_num = cart_number
-                            , save_page_num = saved_number)
-
 
 
 # connects to backend for delete_cart_element
