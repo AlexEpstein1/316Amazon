@@ -151,7 +151,6 @@ WHERE id = :id
 
     @staticmethod
     def password_match(email, password):
-        print("new password passed:", password)
         rows = app.db.execute("""
 SELECT password, id, email
 FROM Users
@@ -159,12 +158,9 @@ WHERE email = :email
 """,
                               email=email)
         if not rows:  # email not found
-            print("User email not found")
             return None
         elif not check_password_hash(rows[0][0], password):
-            print(rows[0][0])
             # incorrect password
-            print("Passwords did not match.")
             return False
         else:
             return True
@@ -183,8 +179,5 @@ WHERE email = :email
                                   password=generate_password_hash(newPassword))
             return User.get(id)
         except Exception as e:
-            # likely email already in use; better error checking and
-            # reporting needed
-            print(e)
             return None
 

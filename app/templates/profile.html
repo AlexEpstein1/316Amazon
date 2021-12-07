@@ -18,12 +18,12 @@
 	<h5 style="font-size: 24px">Current balance: <b>${{ current_user.balance }}</b></h5>
 	<h6><a href="{{ url_for('users.view_balance') }}">Edit Balance</a></h6>
 	<br>
-	<h5 style="font-size: 24px">Cart: <b>10 items</b> (this is hard-coded)</h5>
-	<h6><a href="{{ url_for('users.logout') }}">View Cart</a></h6>
+	<h5 style="font-size: 24px">Products in Cart: <b>{{ cart_quantity }}</b></h5>
+	<h6><a href="{{ url_for('index.cart_page') }}">View Cart</a></h6>
 	<br>
+	<h5 style="font-size: 24px">Other Helpful Links</h5>
 	<h6><a href="{{ url_for('index.purchase_history') }}">Purchase History</a></h6>
 	<h6><a href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a></h6>
 	<h6><a href="{{ url_for('index.inventory', page=0) }}">Seller Inventory</a></h6>
-	<h6><a href="{{ url_for('index.index') }}">Back to Front Page</a></h6>
 </div>
 {% endblock %}

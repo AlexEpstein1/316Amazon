@@ -25,6 +25,17 @@ class cart:
         self.price_per_item = price_per_item
     
     @staticmethod
+    # method to get current quantity of prdoucts in cart
+    def get_current_quantity(user_id):
+        rows = app.db.execute('''
+            SELECT COUNT(DISTINCT product_id)
+            FROM Cart
+            WHERE user_id = :user_id
+            ''',
+                              user_id = user_id)
+        return rows[0][0] if rows else None
+    
+    @staticmethod
     # method to get the exact line in the cart 
     def get(user_id, seller_id, product_id):
         rows = app.db.execute('''

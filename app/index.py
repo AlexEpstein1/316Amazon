@@ -67,9 +67,11 @@ def searchProducts(page=0):
 # home_profile html
 @bp.route('/profile')
 def profile():
+    print(cart.get_current_quantity(current_user.id))
+    cart_quantity = cart.get_current_quantity(current_user.id)
     # if user is authenticated, go to home profile
     if current_user.is_authenticated:
-        return render_template('profile.html')
+        return render_template('profile.html', cart_quantity=cart_quantity)
     # otherwise, back to index
     else:
         return redirect(url_for('index.index'))
