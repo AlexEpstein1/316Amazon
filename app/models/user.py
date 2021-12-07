@@ -180,4 +180,3 @@ WHERE email = :email
             return User.get(id)
         except Exception as e:
             return None
-

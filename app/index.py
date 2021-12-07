@@ -14,6 +14,7 @@ from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
 from .models.cart import cart
 from .models.categories import Category
+from .models.user import User
 
 
 from flask import Blueprint
@@ -67,11 +68,19 @@ def searchProducts(page=0):
 # home_profile html
 @bp.route('/profile')
 def profile():
-    print(cart.get_current_quantity(current_user.id))
     cart_quantity = cart.get_current_quantity(current_user.id)
+    reward_status = "Default"
     # if user is authenticated, go to home profile
     if current_user.is_authenticated:
-        return render_template('profile.html', cart_quantity=cart_quantity)
+        purchases = Purchase.get_all_by_buyer_id(buyer_id = current_user.id)
+        if purchases is not None:
+            trailing_year_purchase_sum = 0
+            for purchase in purchases:
+                if purchase.time_purchased.date() > (datetime.date.today() - datetime.timedelta(days=365)):
+                    trailing_year_purchase_sum += purchase.payment_amount
+            if trailing_year_purchase_sum > 10000:
+                reward_status = "Diamond Shopper"
+        return render_template('profile.html', cart_quantity=cart_quantity, reward_status=reward_status)
     # otherwise, back to index
     else:
         return redirect(url_for('index.index'))
@@ -88,7 +97,6 @@ def purchase_history():
         incomplete_purchases = Purchase.get_all_by_buyer_id_incomplete(buyer_id = current_user.id)
     else:
         purchases = None
-
     return render_template('purchase_history.html',
                            purchase_history=purchases,
                            complete_purchases= complete_purchases,
@@ -171,6 +179,20 @@ def reviews_landing(order_id):
                            purchase = purchase[0],
                            product_summary = product_summary,
                            seller_summary = seller_summary)
+
+# pub_view html -- public user landing page
+@bp.route('/pub_view/<user_id>', methods = ['POST', 'GET'])
+def pub_view(user_id):
+    userobj = User.get(user_id)
+    print(userobj.firstname)
+    # Get user information on their review history
+    seller_stats = SellerReview.get_review_stats(user_id)
+
+    seller_stats.avg_rating = format_value(seller_stats.avg_rating, type = 'avg_rating')
+
+    return render_template('pub_view.html',
+                               user = userobj,
+                               seller_stats = seller_stats)
 
 @bp.route('/inventory/<page>')
 def inventory(page = 0):
