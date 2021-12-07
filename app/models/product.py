@@ -55,6 +55,35 @@ class Product:
             return [Product(*row) for row in rows]
 
 
+    @staticmethod
+    def get_first_ten(available, id=None):
+        if id is None and available == True:
+            rows = app.db.execute('''
+            SELECT id, name, cat_name, description, image_file, available
+            FROM Products
+            WHERE available = {0}
+            LIMIT 10
+            '''.format(available),
+            available=available)
+            return [Product(*row) for row in rows]
+        elif id is None and available == False:
+            rows = app.db.execute('''
+            SELECT *
+            FROM Products
+            ''')
+            return [Product(*row) for row in rows]
+
+
+        else:
+            rows = app.db.execute('''
+            SELECT DISTINCT id, name, cat_name, description, image_file, available
+            FROM Products
+            WHERE id = :id
+            LIMIT 10
+            ''',
+            id=id)
+            return [Product(*row) for row in rows]
+
 
     @staticmethod
     def search(search, available):
@@ -70,27 +99,29 @@ class Product:
 
 
     @staticmethod
-    def get_by_cat(cat):
+    def get_by_cat(cat, amount, offset):
         rows = app.db.execute('''
         SELECT id, name, cat_name, description, image_file, available
         FROM Products
         WHERE cat_name = :cat
+        LIMIT :amount OFFSET :offset
         ''',
-        cat=cat)
+        cat=cat,
+        amount=amount,
+        offset=offset)
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def add_new_product(request, new_id):
-        #cat_name = request.form.get("cat_name")
-        cat_name = 'North'
+    def add_new_product(request, new_id): 
+        # cat_name = request.form.get("cat_name")  
+        cat_name = request.form["cat_name"] 
         name = request.form["name"]
-        #description = request.form.get("description")
-        description = ''
+        description = request.form["description"]   
+        image_file=request.form["image"]
         available = True
-        image_file='image'
-
-
-
+        
+    
+        
         app.db.execute("""
         INSERT INTO Products(id, name, cat_name, description, image_file, available)
         VALUES(:id, :name, :cat_name, :description, :image_file, :available)
@@ -144,6 +175,19 @@ class ProductSellers:
         seller_id = current_user.id
 
         try:
+            float(price)
+        except ValueError:
+            return False
+
+        try:
+            int(stock)
+        except ValueError:
+            return False
+
+        if int(stock) < 0 or float(price) < 0: 
+            return False 
+
+        try:
             rows = app.db.execute("""
             INSERT INTO SellsItem(seller_id, product_id, price, stock)
             VALUES(:seller_id, :product_id, :price, :stock)
@@ -192,11 +236,12 @@ class ProductSellers:
 
 
 class ProductSummary:
-    def __init__(self, product_id, name, cat_name, description, sellers, avg_price, total_stock, reviews, avg_rating):
+    def __init__(self, product_id, name, cat_name, description, image_file, sellers, avg_price, total_stock, reviews, avg_rating):
         self.product_id = product_id
         self.name = name
         self.cat_name = cat_name
         self.description = description
+        self.image_file = image_file
         self.sellers = sellers
         self.avg_price = avg_price
         self.total_stock = total_stock
@@ -211,5 +256,42 @@ class ProductSummary:
         WHERE product_id = :product_id
         ''',
              product_id=product_id)
+
+        return [ProductSummary(*row) for row in rows] if rows else None
+
+    @staticmethod
+    def get_summaries_by_cat(cat_name, amount, offset, sort_by, direction):
+
+        if sort_by == 'none':
+            rows = app.db.execute('''
+            SELECT *
+            FROM ProductSummary
+            WHERE cat_name = :cat_name
+            LIMIT :amount OFFSET :offset
+            ''',
+                cat_name=cat_name,
+                amount=amount,
+                offset=offset)
+        else:
+            rows = app.db.execute('''
+            SELECT *
+            FROM ProductSummary
+            WHERE cat_name = :cat_name
+            ORDER BY 
+            case when :sort_by = 'price' and :direction = 'asc' THEN avg_price END ASC,  
+            case when :sort_by = 'price' and :direction = 'desc' THEN avg_price END DESC,  
+            case when :sort_by = 'rating' and :direction = 'asc' THEN avg_rating END ASC,  
+            case when :sort_by = 'rating' and :direction = 'desc' THEN avg_rating END DESC, 
+            case when :sort_by = 'both' and :direction = 'asc' THEN avg_rating END, avg_price  ASC,  
+            case when :sort_by = 'both' and :direction = 'desc' THEN avg_rating END, avg_price  DESC   
+            LIMIT :amount OFFSET :offset
+            ''',
+                    cat_name=cat_name,
+                    amount=amount,
+                    offset=offset,
+                    direction=direction,
+                    sort_by=sort_by)
+
+
 
         return [ProductSummary(*row) for row in rows] if rows else None

@@ -1,71 +1,151 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{cat_name}}</h2>
+<span style="float: right;">
+  <h3>Page: {{page}}</h3>
+  <small class="text-muted">Showing {{chosen_amount}}</small>
+</span>
+<a href="{{ url_for('index.index') }}" style="float:left" type="button" class="btn-close" aria-label="Close"></a><h2>{{cat_name}}</h2>
 
-<div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div class="dropdown" >
+  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Filter by Category
   </button>
 
   <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
     {% for name in categories %}
-    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=name.cat_name) }}">{{name.cat_name}}</a>
+    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=name.cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction)}}">{{name.cat_name}}</a>
     {% endfor %}
   </div>
+  
 </div>
+
+<form action="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction)}}" method="post">
+<h3>Sort by: </h3>
+{% if sort_by == 'none' %}
+  <small class="text-muted">Sorting on: </small>
+{% else %}
+  <a href="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by='none', direction='none')}}" style="float:left" type="button" class="btn-close" aria-label="Close">X</a>
+<small class="text-muted">Sorting on: {{sort_by}}, {{direction}}</small>
+{% endif %}
+
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="price" id="price" name="price">
+  <label class="form-check-label" for="price">
+    Price
+  </label>
+</div>
+<div class="form-check">
+  <input class="form-check-input" type="checkbox" value="rating" name="rating" id="rating">
+  <label class="form-check-label" for="rating">
+    Rating
+  </label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="direction" id="asc" value="asc" required>
+  <label class="form-check-label" for="asc">Asc</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="direction" id="desc" value="desc">
+  <label class="form-check-label" for="desc">Desc</label>
+</div>
+<button type="submit" class="btn btn-primary">Apply</button>
+</form>
+
+
+
+
+<!-- <h3>Filter by Price: </h3>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="{{range}}" value="{{range}}">
+  <label class="form-check-label" for="inlineRadio1">1</label>
+</div>
+
+<h3>Filter by Rating: </h3>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+  <label class="form-check-label" for="inlineRadio1">1</label>
+</div> -->
+
 <br>
+
 <!-- how to stop filtering by category -->
 <!-- {% if cat_name %}
 <a href="{{ url_for('index.index') }}" style="float:left" type="button" class="btn-close" aria-label="Close"></a>
 Filtering on: {{cat_name}}
 {% endif %}
 <br> -->
+<div class="dropdown" style="display: flex; justify-content: flex-end">
+  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Items per page: 
+  </button>
+
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    {% for num in amounts %}
+    <a class="dropdown-item" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount=num, sort_by=sort_by, direction=direction )}}">{{num}}</a>
+    {% endfor %}
+  </div>
+</div>
+<br>
+{% if page == 0 %}
+<nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
+  <ul class="pagination">
+    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Next</a></li>
+  </ul>
+</nav>
+	{% else %}
+  <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
+    <ul class="pagination">
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Next</a></li>
+    </ul>
+  </nav>
+	{% endif %}
 
 <div class="card-deck">
     {% for product in products %}
-  <div class="card" style="min-width: 18rem;" onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
-    <img class="card-img-top img-thumbnail" src="{{product.image_file}}" alt="">
+ 
+  <div class="card text-center" style="min-width: 18rem; max-width: 20rem; margin: 1rem" onclick="window.location.href='{{ url_for('products.productPage', id=product.product_id, page = 0)}}'">
+    <div style="width:100%; text-align:center">
+      <img  style="max-width: 75%; height: auto; " src="{{product.image_file}}" alt="">
+    </div>
+    
     <div class="card-body" >
       <h5 class="card-title">{{product.name}}</h5>
-      <p class="card-text">Price: {{product.price}}</p>
-    {% if product.available %}
-        <p class="card-text" style="color:green"> In Stock</p>
+      <p class="card-text">Average Price: {{product.avg_price}}</p>
+    {% if product.total_stock > 0 %}
+        <p class="card-text" style="color:green"> In Stock <small class="text-muted">{{product.num_sellers}} unique sellers</small></p> 
     {% else %}
         <p class="card-text" style="color:red"> Out of Stock </p>
     {% endif %}
+    
+    <p class="card-text">Average {{product.avg_rating}} stars</p>
     <p class="card-text"><small class="text-muted">{{product.description}}</small></p>
 
     </div>
   </div>
+
   {% endfor %}
 </div>
+{% if page == 0 %}
+<nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
+  <ul class="pagination">
+    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+    <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Next</a></li>
+  </ul>
+</nav>
+	{% else %}
+  <nav aria-label="product pagination" style="display: flex; justify-content: flex-end">
+    <ul class="pagination">
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page-1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="{{ url_for('products.products_by_cat', cat_name=cat_name, page=page+1, amount=chosen_amount, sort_by=sort_by, direction=direction ) }}">Next</a></li>
+    </ul>
+  </nav>
+	{% endif %}
+  <small class="text-muted">Page: {{page}}</small>
 
 
-<!-- table of products -->
-<!-- <table class="table table-light table-striped table-hover container">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">Product ID</th>
-      <th scope="col">Product Name</th>
-      <th scope="col">Category</th>
-      <th scope="col">Price</th>
-      <th scope="col">Available</th>
-      <th scope="col">Rating</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for product in products %}
-    <tr onclick="window.location.href='{{ url_for('products.productPage', id=product.id)}}'">
-      <th scope="row">{{ product.id }}</th>
-      <td>{{ product.name }}</td>
-      <td>{{ product.cat_name }}</td>
-      <td>${{ product.price }}</td>
-      <td>{{ product.available }}</td>
-      <td>{{ product.rating }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table> -->
 
+<br><br><br>
 {% endblock %}

@@ -6,14 +6,17 @@
 <a href="{{ url_for('index.createProduct') }}">Add a different product</a>
 <br>
 
-{%if editing != null%}
+<!-- {%if editing != null%}
 <h2>EDITING</h2>
-{%endif%}
+{%endif%} -->
 
 
 <form action="{{ url_for('products.write_product', id=product.id, mode=mode) }}" method="POST">
   <div class="row">
     <div class="col-sm-6">
+      {% if error %}
+      <h3>There was an error in adding your product. Please make sure you are inputting positive numbers only</h3>
+      {% endif %}
       <table class="table">
         <thead>
           <tr>
@@ -62,15 +65,17 @@
 
         </tbody>
       </table>
-      {%if editing != null%}
-      <input type="submit" value="Edit Product">
-      {%else%}
-      <input type="submit" value="Add Product">
-      {%endif%}
+
     </div>
   </div>
-</form>
+  {%if editing != null%}
+  <input type="submit" value="Edit Product">
+  {%else%}
+  <input type="submit" value="Add Product">
+  {%endif%}
 
+</form>
+<br><br><br>
 
 
 

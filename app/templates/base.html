@@ -87,11 +87,11 @@
           <p style="font-size: 16px">Current balance: <b>${{ current_user.balance }}</b></p>
           <a class="dropdown-item" href="{{ url_for('index.index') }}">Home Page</a>
           <a class="dropdown-item" href="{{ url_for('index.profile') }}">View Profile</a>
-          <a class="dropdown-item" href="{{ url_for('index.cart_page',cart_page_num='0', save_page_num='0')}}">View Cart</a>
-          <a class="dropdown-item" href="{{ url_for('users.logout') }}">Add Balance</a>
+          <a class="dropdown-item" href="{{ url_for('index.cart_page') }}">View Cart</a>
+          <a class="dropdown-item" href="{{ url_for('users.view_balance') }}">Edit Balance</a>
           <a class="dropdown-item" href="{{ url_for('index.purchase_history') }}">Order History</a>
           <a class="dropdown-item" href="{{ url_for('index.reviews_landing', order_id='nav') }}">Review History</a>
-          <a class="dropdown-item" href="{{ url_for('index.inventory') }}">Your Inventory</a>
+          <a class="dropdown-item" href="{{ url_for('index.inventory', page=0) }}">Your Inventory</a>
           <a class="dropdown-item" href="{{ url_for('index.seller_history') }}">Seller History</a>
 
         </div>
@@ -107,8 +107,5 @@
     {% block content %}{% endblock %}
   </div>
 </body>
-<div class="footer">
-  <p style="margin-top: 1vh;"><i>Created by Team WAMYJ</i></p>
-</div>
 
 </html>

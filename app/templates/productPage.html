@@ -12,6 +12,7 @@
     </button>
 
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      {% if summary.total_stock > 0 %}
       {% for seller in sellers %}
         <div class="dropdown-item">
           {{seller.firstname}} {{seller.lastname}}  
@@ -27,10 +28,18 @@
         </div>
 
       {% endfor %}
+      {% else %}
+      <div class="dropdown-item">
+        No current listings
+      </div>
+        
+      {% endif %}
+
+
     </div>
   </div>
+<a href="{{ url_for('products.products_by_cat', cat_name=summary.cat_name, page=0, amount=10, sort_by='none', direction='none' )}}">Other {{summary.cat_name}} products</a>
 <div style="text-align: center">
-
 		<h2> {{summary.name}} </h2>
     <img src="{{product.image_file}}">
         <h2> {{summary.avg_rating}} Stars </h2>
@@ -60,7 +69,22 @@
             </div>
         {% endfor %}
         </div>
-
         {% endif %}
-
+        {% if page == 0 %}
+        <nav aria-label="product pagination">
+          <ul class="pagination">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="{{ url_for('products.productPage', id=product.id, page = page + 1)}}">Next</a></li>
+          </ul>
+        </nav>
+          {% else %}
+          <nav aria-label="product pagination">
+            <ul class="pagination">
+              <li class="page-item"><a class="page-link" href="{{ url_for('products.productPage', id=product.id, page = page - 1)}}">Previous</a></li>
+              <li class="page-item"><a class="page-link" href="{{ url_for('products.productPage', id=product.id, page = page + 1)}}">Next</a></li>
+            </ul>
+          </nav>
+          {% endif %}
+          <small class="text-muted">Page: {{page}}</small>
+<br><br><br>
 {% endblock %}

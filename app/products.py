@@ -12,6 +12,9 @@ from .models.product_review import ProductReview
 from .models.product_review import ProductReviewWithName
 from .models.inventory import Inventory
 from .models.categories import Category
+from .reviews import format_value
+
+
 
 
 from flask import Blueprint
@@ -26,33 +29,27 @@ def get_avg(reviews):
     return avg_rating
 
 
-@bp.route('/filterCat/<cat>', methods = ['POST', 'GET'])
-def filterCat(cat):
-    products = Product.get_by_cat(cat=cat_name)
-    categories = Category.get_all()
-    
-    # find the products current user has bought:
-    
-    return render_template('product_by_cat.html',
-                            cat_name=cat,
-                           products=products,
-                           categories = categories)
-
-
-
-@bp.route('/productPage/<id>', methods = ['POST', 'GET'])
-def productPage(id):
+@bp.route('/productPage/<id>/<page>', methods = ['POST', 'GET'])
+def productPage(id,page=0):
+    page = int(page)
+    offset = page * 6
     product = Product.get(id)
     summary = ProductSummary.get(product_id=id)[0]
+    summary.avg_price = format_value(summary.avg_price, type = 'avg_price')
+    summary.avg_rating = format_value(summary.avg_rating, type = 'avg_rating')
     sellers = ProductSellers.productSellers(id=id)
-    reviews = ProductReviewWithName.get_reviews(product_id=id)
-    avg_rating = get_avg(reviews)
+    for seller in sellers:
+        seller.price = format_value(seller.price, type = "avg_price")
+
+    reviews = ProductReviewWithName.get_reviews(product_id=id, offset=offset)
+    
     return render_template('productPage.html',
                            product=product,
                            summary=summary,
                             sellers=sellers,
                             reviews=reviews,
-                            avg_rating=avg_rating
+                            page=page
+    
                             )
 
 @bp.route('/seller_product/<id>', methods = ['POST', 'GET'])
@@ -77,6 +74,7 @@ def add_product(id):
     seller_id = current_user.id
     mode = "add"
     # check if we already sell this item 
+
 
     if ProductSellers.alreadySells(id): 
         products = Product.get_all(available=True)
@@ -118,20 +116,30 @@ def write_product(id, mode):
     else: 
         message = ProductSellers.editProduct(id=id, request=request)
     
+    product=Product.get(id)
+
     # else prompt the user again 
     inventory = Inventory.get_all(available=True, seller_id=current_user.id)
+    if message == False:
+        return render_template('add_product_page.html',
+                           product=product,
+                           seller=current_user.id,
+                           mode=mode,
+                           error=True)
 
     product=Product.get(id)
 
     if mode == "add":
         return render_template('inventory.html',
                            sold_products=inventory,
-                           message=message + product.name + " to your inventory")
+                           message=message + product.name + " to your inventory", 
+                           page=0)
     else: 
         message = ProductSellers.editProduct(id=id, request=request)
         return render_template('inventory.html',
                            sold_products=inventory,
-                           message=message + product.name)
+                           message=message + product.name,
+                           page=0)
                         #    Need to have this go to seller_product page once it's added to the DB 
 
 @bp.route('/delete_product/<id>', methods = ['POST', 'GET'])
@@ -155,17 +163,37 @@ def delete_product(id):
                            message=message+product.name + " from your inventory")
 
 
-@bp.route('/products_by_cat/<cat_name>', methods = ['POST', 'GET'])
-def products_by_cat(cat_name):
-    products = Product.get_by_cat(cat=cat_name)
+@bp.route('/products_by_cat/<cat_name>/<page>/<amount>/<sort_by>/<direction>', methods = ['POST', 'GET'])
+def products_by_cat(cat_name, page = 0, amount = 10, sort_by = 'none', direction='none'):
     categories = Category.get_all()
-    # find the products current user has bought:
-    
-    return render_template('products_by_cat.html',
+    amounts = [10,15,25,50]
+    amount = int(amount)
+    page = int(page)
+    offset = page * amount
+    if request.form:
+        price = request.form.get("price")
+        rating = request.form.get("rating")
+        direction = request.form.get("direction")
+        if price != None and rating == None:
+            sort_by="price"
+        elif price == None and rating != None:
+            sort_by='rating'
+        elif price != None and rating != None:
+            sort_by = 'both'
+        else:
+            sort_by='none'
 
+    products = ProductSummary.get_summaries_by_cat(cat_name=cat_name, amount=amount, offset=offset, sort_by=sort_by, direction=direction)
+    # find the products current user has bought:
+    return render_template('products_by_cat.html',
+                            direction=direction,
+                            sort_by=sort_by,
                             cat_name=cat_name,
                            products=products,
-                           categories = categories)
+                           amounts=amounts,
+                           chosen_amount=amount,
+                           categories = categories,
+                           page=page)
 
 
 @bp.route('/create_new_product/', methods = ['POST', 'GET'])
@@ -185,6 +213,9 @@ def add_new_product():
     Product.add_new_product(request=request, new_id=new_id)
     return write_product(new_id,'add')
     # ProductSellers.addProduct(id=new_id, request=request)
+
+
+
 
 
 

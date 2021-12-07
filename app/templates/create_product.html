@@ -7,6 +7,8 @@
 <!-- SEARCH FOR PRODUCT -->
 <br>
 
+<!-- <h5><i>Showing page {{ page+1 }}</i></h5> -->
+<!-- No previous page -->
 
 <!-- 
 <form action="{{ url_for('index.createProduct') }}" method="POST">
@@ -18,17 +20,21 @@
     </div>
   </div>
 </form> -->
-<h2><a href="{{ url_for('products.create_new_product') }}">Click here to add something new to the marketplace!</a></h2> <br>
+<h2><a href="{{ url_for('products.create_new_product') }}">Click here to add something new to the marketplace!</a></h2>
+<br>
 
 
-<h2>Search for a product to add to your inventory!</h2> <br> 
+<h2>Search for a product to add to your inventory!</h2> <br>
 <div>
   {%if message != null%}
   <p> {{message}} </p>
   {%endif%}
 </div>
 
-<form action="{{ url_for('index.searchProducts') }}" method="POST">
+<form action="{{ url_for('index.searchProducts',page=0) }}" method="POST">
+
+
+
   <div class="container">
     <div class="row height d-flex justify-content-center align-items-center">
       <div class="col-md-6">
@@ -44,6 +50,7 @@
 </form>
 {% if search != null and search != '' %}
 <b>Search results for '{{ search }}':</b>
+
 {% endif %}
 
 
@@ -73,17 +80,6 @@
   </tbody>
 </table>
 <!-- PRODUCT INPUTS -->
-
-<!-- Name -->
-<label for="body"><b> Product Name: </b></label><br>
-<label for="body"><b>{{ products }}</b></label><br>
-<textarea id="body" name="body" rows="1" cols="50" maxlength="256"></textarea><br><br>
-
-<!-- Description -->
-<label for="body"><b> Product Name: </b></label><br>
-<textarea id="body" name="body" rows="1" cols="50" maxlength="256"></textarea><br><br>
-
-<input type="submit" value="Submit">
 
 <!-- </form> -->
 
