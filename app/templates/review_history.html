@@ -12,6 +12,7 @@
 		<a href="{{ url_for('products.productPage', id=id, page=0) }}" class="btn btn-dark" role="button">Back to product page</a>
 	{% elif type == 'seller_history' %}
 		<h2 style="margin-top: 2vh; margin-bottom: 2vh;">History of Seller ID {{id}} Reviews</h2>
+		<a href="{{ url_for('index.pub_view', user_id=id) }}" class="btn btn-dark" role="button">Back to seller page</a>
 	{% endif %}
 
 	<h5><i>Showing page {{ page+1 }}</i></h5>

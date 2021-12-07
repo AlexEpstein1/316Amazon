@@ -185,7 +185,6 @@ def reviews_landing(order_id):
 @bp.route('/pub_view/<user_id>', methods = ['POST', 'GET'])
 def pub_view(user_id):
     userobj = User.get(user_id)
-    print(userobj.firstname)
     # Get user information on their review history
     seller_stats = SellerReview.get_review_stats(user_id)
 
@@ -241,7 +240,7 @@ def seller_history():
     # completeCount = SellerTransaction.count(seller_id=current_user.id, complete=True)
     # incompleteCount = SellerTransaction.count(seller_id=current_user.id, complete=False)
 
-    # if (completeCount == 0 and incompleteCount == 0): 
+    # if (completeCount == 0 and incompleteCount == 0):
     #     return render_template('seller_history.html',
     #                        no_purchases = True)
 

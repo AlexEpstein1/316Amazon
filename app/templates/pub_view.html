@@ -8,8 +8,11 @@
     <div class="card-body">
       <h5 class="card-title"><b>User Info</b></h5>
       <p class="card-text">Account ID: {{ user.id }}</p>
+      {% if seller_stats.exists %}
       <p class="card-text">Email: {{ user.email }}</p>
       <p class="card-text">Address: {{ user.street }}, {{ user.zip }}</p>
+      {% else %}
+      {% endif %}
     </div>
   </div>
 </div>

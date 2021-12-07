@@ -28,8 +28,19 @@ class SellerReview:
 
     @staticmethod
     def get(user_id, offset = 0, seller_id = None):
-        # If no passed in `seller_id`, then just return all reviews from that user
-        if seller_id is None:
+        # If no passed in `user_id`, then return all reviews for that seller
+        if user_id is None:
+            rows = app.db.execute('''
+            SELECT user_id, seller_id, date_time, description, rating
+            FROM SellerReview
+            WHERE seller_id = :seller_id
+            ORDER BY date_time DESC
+            LIMIT 10 OFFSET :offset
+            ''',
+                                  seller_id = seller_id,
+                                  offset = offset)
+        # If no passed in `seller_id`, then return all reviews from that user
+        elif seller_id is None:
             rows = app.db.execute('''
             SELECT user_id, seller_id, date_time, description, rating
             FROM SellerReview
@@ -39,8 +50,8 @@ class SellerReview:
             ''',
                                   user_id = user_id,
                                   offset = offset)
-        # If `seller_id` passed in, then return review from that user for the given seller_id
-        else:
+        # If `seller_id` passed in, then return review from that user for the given seller
+        elif seller_id is not None:
             rows = app.db.execute('''
             SELECT user_id, seller_id, date_time, description, rating
             FROM SellerReview
@@ -60,7 +71,7 @@ class SellerReview:
                                     rating = row[4],
                                     exists = True) for row in rows]
             # If no seller_id passed in, return just the first element, not the list
-            if seller_id is None:
+            if seller_id is None or user_id is None:
                 return reviews
             else:
                 return reviews[0]
