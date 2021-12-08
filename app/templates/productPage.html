@@ -85,7 +85,7 @@
 
   <div style="width: 70%;text-align: center;float:center">
     <h2 style="text-align: center;"> {{summary.name}} </h2>
-      {% if image_file == 0 %}
+      {% if summary.image_file == '0' %}
       <small class="text-muted">No image listed</small>
       {% else %}
         <img style="text-align: center;" src="{{product.image_file}}">
@@ -99,7 +99,7 @@
     {%else%}
             <h5 style="font-size: 24px; color:red"> Out of Stock </h5>
     {%endif%}
-		<h5>Category: {{summary.cat_name}}</h5>
+		<h5>Category: <a href="{{ url_for('products.products_by_cat', cat_name=summary.cat_name, page=0, amount=10, sort_by='none', direction='none', search='...' )}}">{{summary.cat_name}}</a></h5>
 		<h5>Average Price: {{summary.avg_price}}</h5>
     <h5>Total Stock: {{summary.total_stock}}</h5>
 		<h5>Description: {{summary.description}}</h5>

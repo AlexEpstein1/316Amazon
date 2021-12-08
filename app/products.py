@@ -236,6 +236,14 @@ def add_new_product():
     return write_product(new_id,'add')
     # ProductSellers.addProduct(id=new_id, request=request)
 
+@bp.route('/most_popular/', methods = ['POST', 'GET'])
+def most_popular():
+    products = ProductSummary.most_popular()
+    for product in products:
+            product.avg_price = format_value(product.avg_price, type = 'avg_price')
+            product.avg_rating = format_value(product.avg_rating, type = 'avg_rating')
+    return render_template('most_popular.html',
+                           products=products)
 
 
 
