@@ -7,7 +7,8 @@
 </span>
 {%if search_term == '...'%}
 <a href="{{ url_for('index.index') }}" style="float:left" type="button" class="btn-close" aria-label="Close">X</a><h2>{{cat_name}}</h2>
-{% else %} 
+{% else %}
+<a href="{{ url_for('index.index') }}">Home</a> 
 <h2>Search Results:</h2>
 {% endif %}
 <form class="form-inline" action="{{ url_for('products.products_by_cat', cat_name=cat_name, page = 0, amount = 10, sort_by=sort_by, direction=direction, search=search_term)}}" method="post">
